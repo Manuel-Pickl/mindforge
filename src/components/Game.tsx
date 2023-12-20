@@ -6,7 +6,7 @@ const Game: React.FC = () => {
   const usernameRef = useRef<string>("");
   const [roomId, setRoomId] = useState<string>("");
   const [joinedRoom, setJoinedRoom] = useState<boolean>(false);
-  const [online, setOnline] = useState<boolean>(false);
+  const [_online, setOnline] = useState<boolean>(false);
   const [players, setPlayers] = useState<string[]>([]);
 
   useEffect(() => {

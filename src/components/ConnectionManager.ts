@@ -58,7 +58,8 @@ export function useConnectionManager({
   }
   
   function onJoin(aUsername: string) {
-    setPlayers(players => {
+    // @ts-ignore
+    setPlayers((players) => {
       const updatedPlayers = [... players, aUsername];
       clientRef.current?.publish(Topic.LobbyData, JSON.stringify(updatedPlayers));
 
