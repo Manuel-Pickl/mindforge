@@ -1,44 +1,27 @@
 // ConnectionManager.ts
-import { useRef } from 'react';
 import { Topic } from './Topic';
-import mqtt, { MqttClient } from 'mqtt';
+import { MqttClient } from 'mqtt';
 
 interface ConnectionManagerProps {
-  setOnline: (value: boolean) => void;
+  clientRef: React.MutableRefObject<MqttClient | null>;
   setJoinedRoom: (value: boolean) => void;
   setPlayers: (value: string[]) => void;
   usernameRef: React.MutableRefObject<string>;
 }
 
 export function useConnectionManager({
-  setOnline,
+  clientRef,
   setJoinedRoom,
   setPlayers,
   usernameRef
-}: ConnectionManagerProps) {
-  const clientRef = useRef<MqttClient | null>(null);
-
-  // const protocoll: string = "mqtt";
-  const protocoll: string = "wss";
-  const address: string = "test.mosquitto.org";
-  const port: string = "8081";
-  const mqttClient = mqtt.connect(`${protocoll}://${address}:${port}`, {
-    keepalive: 10,
-  });
-  
-  mqttClient.on('connect', () => {
-    console.log("connected to: ", mqttClient)
-    clientRef.current = mqttClient;
-    setOnline(true);
-  });
-  
-  mqttClient.on('close', () => {
+}: ConnectionManagerProps) {  
+  clientRef.current?.on('close', () => {
     // Handle disconnection, and optionally attempt to reconnect
     console.log('Connection closed. Reconnecting...');
     // Implement your reconnection logic here
   });
   
-  mqttClient.on('message', onMessage);
+  clientRef.current?.on('message', onMessage);
   
   // host & client
   function onMessage(aTopic: string, aData: any) {

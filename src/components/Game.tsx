@@ -1,6 +1,7 @@
 // Game.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { useConnectionManager } from './ConnectionManager';
+import mqtt, { MqttClient } from 'mqtt';
 
 const Game: React.FC = () => {
   const usernameRef = useRef<string>("");
@@ -8,17 +9,31 @@ const Game: React.FC = () => {
   const [joinedRoom, setJoinedRoom] = useState<boolean>(false);
   const [_online, setOnline] = useState<boolean>(false);
   const [players, setPlayers] = useState<string[]>([]);
+  const clientRef = useRef<MqttClient | null>(null);
 
   useEffect(() => {
+    console.log("Game component rendered");
     const randomNumber = Math.floor(Math.random() * 100).toString();
     usernameRef.current = randomNumber;
     setPlayers([usernameRef.current]);
+    
+    const protocoll: string = "wss";
+    const address: string = "test.mosquitto.org";
+    const port: string = "8081";
+    const mqttClient = mqtt.connect(
+      `${protocoll}://${address}:${port}`);
+    
+    mqttClient.on('connect', () => {
+      console.log("connected to broker");
+      clientRef.current = mqttClient;
+      setOnline(true);
+    });
   }, []);
-
+  
   const {
     createRoom,
     joinRoom
-  } = useConnectionManager({ setOnline, setJoinedRoom, setPlayers, usernameRef });  
+  } = useConnectionManager({ clientRef, setJoinedRoom, setPlayers, usernameRef });  
     
   return (
     <div>
