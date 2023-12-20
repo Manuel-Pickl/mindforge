@@ -1,45 +1,41 @@
 // Game.tsx
 import React, { useEffect, useRef, useState } from 'react';
-import { useConnectionManager } from './ConnectionManager';
-import mqtt, { MqttClient } from 'mqtt';
+import { connect, useConnectionManager } from './ConnectionManager';
+import { MqttClient } from 'mqtt';
 
 const Game: React.FC = () => {
   const usernameRef = useRef<string>("");
   const [roomId, setRoomId] = useState<string>("");
   const [joinedRoom, setJoinedRoom] = useState<boolean>(false);
-  const [_online, setOnline] = useState<boolean>(false);
-  const [players, setPlayers] = useState<string[]>([]);
+  const [online, setOnline] = useState<boolean>(false);
+  const [players, setPlayers] = useState<Set<string>>(new Set<string>());
   const clientRef = useRef<MqttClient | null>(null);
 
   useEffect(() => {
     console.log("Game component rendered");
+
     const randomNumber = Math.floor(Math.random() * 100).toString();
     usernameRef.current = randomNumber;
-    setPlayers([usernameRef.current]);
-    
-    const protocoll: string = "wss";
-    const address: string = "test.mosquitto.org";
-    const port: string = "8081";
-    const mqttClient = mqtt.connect(
-      `${protocoll}://${address}:${port}`);
-    
-    mqttClient.on('connect', () => {
-      console.log("connected to broker");
-      clientRef.current = mqttClient;
-      setOnline(true);
-    });
+
+    setPlayers(new Set([usernameRef.current]));
+    console.log(new Set([usernameRef.current]))
+    clientRef.current = connect();
   }, []);
   
   const {
     createRoom,
     joinRoom
-  } = useConnectionManager({ clientRef, setJoinedRoom, setPlayers, usernameRef });  
-    
+  } = useConnectionManager({ clientRef, setOnline, setJoinedRoom, setPlayers, usernameRef });  
+  
+  if (!online) {
+    return <div>Not online</div>;
+  }
+
   return (
     <div>
       {joinedRoom ? (
         <div>
-          {players.length} players: {players.join(", ")}<br />
+          {players.size} players: {[...players].join(", ")}<br />
           <button 
             // onClick={() => clientRef.current?.publish('lobbyData', 'test')}
           >
@@ -58,7 +54,7 @@ const Game: React.FC = () => {
             type="text"
             placeholder="Room ID (only for joining)"
             value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
+            onChange={(e) => setRoomId(e.target.value.toString())}
           />
           <button onClick={createRoom}>Create Room</button>
           <button onClick={joinRoom}>Join Room</button>
