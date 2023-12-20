@@ -18,13 +18,16 @@ export function useConnectionManager({
 }: ConnectionManagerProps) {
   const clientRef = useRef<MqttClient | null>(null);
 
-  const address: string = "mqtt://test.mosquitto.org";
+  // const protocoll: string = "mqtt";
+  const protocoll: string = "wss";
+  const address: string = "test.mosquitto.org";
   const port: string = "8081";
-  const mqttClient = mqtt.connect(`${address}:${port}`, {
+  const mqttClient = mqtt.connect(`${protocoll}://${address}:${port}`, {
     keepalive: 10,
   });
   
   mqttClient.on('connect', () => {
+    console.log("connected to: ", mqttClient)
     clientRef.current = mqttClient;
     setOnline(true);
   });
