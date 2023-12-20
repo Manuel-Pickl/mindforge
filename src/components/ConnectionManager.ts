@@ -1,68 +1,84 @@
 // ConnectionManager.ts
-import { useState, useRef } from 'react';
-import Peer, { DataConnection } from 'peerjs';
-import { PeerData } from './Data';
+import { useRef } from 'react';
 import { Topic } from './Topic';
+import mqtt, { MqttClient } from 'mqtt';
 
 interface ConnectionManagerProps {
-  username: string;
-  inputValue: string;
-  onData: (data: PeerData) => void;
+  setOnline: (value: boolean) => void;
+  setJoinedRoom: (value: boolean) => void;
+  setPlayers: (value: string[]) => void;
+  usernameRef: React.MutableRefObject<string>;
 }
 
-export function useConnectionManager({ username, inputValue, onData }: ConnectionManagerProps)
-{
-  const [peer] = useState<Peer>(new Peer());
-  const guestConnectionsRef = useRef<DataConnection[]>([]);
+export function useConnectionManager({
+  setOnline,
+  setJoinedRoom,
+  setPlayers,
+  usernameRef
+}: ConnectionManagerProps) {
+  const clientRef = useRef<MqttClient | null>(null);
 
-//   useEffect(() => {
-//     guestConnectionsRef.current = [];
-//   }, [joinedRoom]);
-
-  function broadcast(data: PeerData, excludedConnection: DataConnection | undefined = undefined) {
-    guestConnectionsRef.current
-      .filter((x) => x.peer !== excludedConnection?.peer)
-      .forEach((x) => x.send(data));
-  }
-
-  function initializeHost() {
-    if (!peer) {
-      console.error('Own Peer not initialized');
-      return;
+  const address: string = "mqtt://test.mosquitto.org";
+  const port: string = "8081";
+  const mqttClient = mqtt.connect(`${address}:${port}`, {
+    keepalive: 10,
+  });
+  
+  mqttClient.on('connect', () => {
+    clientRef.current = mqttClient;
+    setOnline(true);
+  });
+  
+  mqttClient.on('close', () => {
+    // Handle disconnection, and optionally attempt to reconnect
+    console.log('Connection closed. Reconnecting...');
+    // Implement your reconnection logic here
+  });
+  
+  mqttClient.on('message', onMessage);
+  
+  // host & client
+  function onMessage(aTopic: string, aData: any) {
+    switch(aTopic) {
+      case Topic.Join:
+        onJoin(JSON.parse(aData));
+        break;
+      case Topic.LobbyData:
+        updateLobbydata(JSON.parse(aData))
+        break;
+      default:
+        console.log("error: unknown topic!")
     }
+  }
+  
+  // host
+  function createRoom() {
+    clientRef.current?.subscribe(Topic.Join);
+    setJoinedRoom(true);
+  }
+  
+  function onJoin(aUsername: string) {
+    setPlayers(players => {
+      const updatedPlayers = [... players, aUsername];
+      clientRef.current?.publish(Topic.LobbyData, JSON.stringify(updatedPlayers));
 
-    console.log(peer.id);
-
-    peer.on('connection', (guestConnection) => {
-    //   guestConnectionsRef.current = [...guestConnectionsRef.current, guestConnection];
-      guestConnection.on('data', onData);
+      return updatedPlayers;
     });
   }
-
-  function initializeGuest() {
-    if (!peer) {
-      console.error('Own Peer not initialized');
-      return;
-    }
-
-    const hostPeerConnection = peer.connect(inputValue);
-    if (!hostPeerConnection) {
-      console.error('Failed connection to room');
-      return;
-    }
-
-    hostPeerConnection.on('open', () => {
-      guestConnectionsRef.current = [hostPeerConnection];
-      hostPeerConnection.send(new PeerData(Topic.Join, username));
-    });
-
-    hostPeerConnection.on('data', onData);
+  
+  // guest
+  const joinRoom = () => {
+    clientRef.current?.publish(Topic.Join, JSON.stringify(usernameRef.current));
+    clientRef.current?.subscribe(Topic.LobbyData);
+    setJoinedRoom(true);
+  };
+  
+  function updateLobbydata(aPlayers: string[]) {
+    setPlayers([...aPlayers]);
   }
 
   return {
-    peer,
-    broadcast,
-    initializeHost,
-    initializeGuest
+    createRoom,
+    joinRoom
   };
 }

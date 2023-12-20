@@ -1,4 +1,4 @@
 export enum Topic {
-    Join,
-    LobbyData
+    Join = "Join",
+    LobbyData = "LobbyData"
 }
