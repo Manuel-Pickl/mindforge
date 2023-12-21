@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 interface GameProps
 {
     dial: number;
@@ -7,10 +9,24 @@ interface GameProps
 
 function Game ({ dial, setDial, changeDial }: GameProps)
 {
-    function onDialChange(event) {
+    const updateCooldown = 0;
+    const [lastUpdate, setLastUpdate] = useState<number>(Date.now());
+
+    function onDialChange(event: React.ChangeEvent<HTMLInputElement>) {
         const newDial = parseFloat(event.target.value);
         setDial(newDial);
-        changeDial(newDial);
+
+        updateGlobalDial(newDial);
+    }
+
+    function updateGlobalDial(dial: number) {
+        const elapsedTimeSinceLastUpdate = Date.now() - lastUpdate;
+        if (elapsedTimeSinceLastUpdate < updateCooldown) {
+            return;
+        } 
+        setLastUpdate(Date.now());
+
+        changeDial(dial);
     }
 
     return (

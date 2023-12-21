@@ -1,21 +1,27 @@
-// MqttHelper.ts
 import { MqttClient } from "mqtt";
 import { Topic } from "../types/Topic";
-import { MutableRefObject } from "react";
+import { forwardRef, useImperativeHandle } from "react";
 
-// gets added to socket topic to avoid collision on the public broker
-const applicationId: string = "fU72HrJ8fjr7fJ87fjwEjmfE5HN7Fo91Kz5DT";
+interface MqttHelperProps {
+    mqttClient: MqttClient | null;
+}
 
-export function useMqttHelper(mqttClientRef: MutableRefObject<MqttClient | null>) {
+function MqttHelper({
+    mqttClient}: MqttHelperProps,
+    ref: React.Ref<any>)
+{
+    // gets added to socket topic to avoid collision on the public broker
+    const applicationId: string = "fU72HrJ8fjr7fJ87fjwEjmfE5HN7Fo91Kz5DT";
+ 
     function publish(aTopic: Topic, aData: any = "") {
-        mqttClientRef.current?.publish(
+        mqttClient?.publish(
             padTopic(aTopic),
             JSON.stringify(aData)
         );
     }
     
     function subscribe(aTopic: Topic) {
-        mqttClientRef.current?.subscribe(padTopic(aTopic));
+        mqttClient?.subscribe(padTopic(aTopic));
     }
     
     function parseMessage(aPaddedTopic: string, aJsonData: string) {
@@ -35,9 +41,14 @@ export function useMqttHelper(mqttClientRef: MutableRefObject<MqttClient | null>
         return strippedTopic;
     }
 
-    return {
+    // Expose methods through ref forwarding
+    useImperativeHandle(ref, () => ({
         publish,
         subscribe,
         parseMessage,
-      };
+    }));
+  
+  return null;
 }
+
+export default forwardRef(MqttHelper);

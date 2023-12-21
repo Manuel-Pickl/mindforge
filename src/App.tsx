@@ -1,12 +1,11 @@
 // Game.tsx
 import { useEffect, useRef, useState } from 'react';
-import { MqttClient } from 'mqtt';
 import Home from './components/Home/Home';
-import { connect, useConnectionManager } from './services/ConnectionManager';
 import { debugLog } from './services/Logger';
 import { Page } from './types/Page';
 import Lobby from './components/Lobby/Lobby';
 import Game from './components/Game/Game';
+import ConnectionManager from './components/ConnectionManager';
 
 
 function App() {
@@ -18,47 +17,39 @@ function App() {
   const [isOnline, setIsOnline] = useState<boolean>(false);
   const [page, setPage] = useState<Page>(Page.Home);
   
-  const clientRef = useRef<MqttClient | null>(null);
-
   const [dial, setDial] = useState<number>(50);
   
   useEffect(() => {
-    debugLog("Game component rendered");
-
     const randomNumber = Math.floor(Math.random() * 100).toString();
     usernameRef.current = randomNumber;
 
     setPlayers(new Set([usernameRef.current]));
-    
-    clientRef.current = connect();
-    clientRef.current?.on('message', onMessage);
   }, []);
-  
-  const {
-    onMessage,
-    broadcast,
-    createRoom,
-    joinRoom,
-    startGame,
-    changeDial,
-  } = useConnectionManager(clientRef, setIsOnline, setPage, setPlayers, usernameRef, setIsHost, setDial);  
-  
-  // useEffect(() => {
-  //   changeDial(dial);
-  // }, [dial]);
 
-  if (!isOnline) {
-    return <div>Not online</div>;
-  }
-  
+  // if (!isOnline) {
+  //   return <div>Not online</div>;
+  // }
+   
+  const connectionManagerRef = useRef<any>();
+
   return (
     <>
+      <ConnectionManager
+        ref={connectionManagerRef}
+        setIsOnline={setIsOnline}
+        setPage={setPage}
+        setPlayers={setPlayers}
+        usernameRef={usernameRef}
+        setIsHost={setIsHost}
+        setDial={setDial}
+      />
+
       {page == Page.Home && (
         <Home 
           usernameRef={usernameRef}
           roomIdRef={roomIdRef}
-          createRoom={createRoom}
-          joinRoom={joinRoom}
+          createRoom={connectionManagerRef.current?.createRoom}
+          joinRoom={connectionManagerRef.current?.joinRoom}
         />
       )}
     
@@ -67,8 +58,8 @@ function App() {
           usernameRef={usernameRef}
           players={players}
           isHost={isHost}
-          broadcast={broadcast}
-          startGame={startGame}
+          broadcast={connectionManagerRef.current?.broadcast}
+          startGame={connectionManagerRef.current?.startGame}
         />
       )}
 
@@ -76,7 +67,7 @@ function App() {
         <Game
           dial={dial}
           setDial={setDial}
-          changeDial={changeDial}
+          changeDial={connectionManagerRef.current?.changeDial}
         />
       )}
     </>
