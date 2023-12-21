@@ -88,7 +88,6 @@ function ConnectionManager({
       console.log("connected to broker");
     }
     
-    mqttHelperRef.current.subscribe(Topic.Broadcast);
     setPage(Page.Home);
   }
 
@@ -98,15 +97,12 @@ function ConnectionManager({
   
   function onStart() {
     setPage(Page.Game);
-    mqttHelperRef.current.subscribe(Topic.UpdateGlobalDial);
-    mqttHelperRef.current.subscribe(Topic.StartPlay);
   }
 
   // host
   function createRoom() {
     mqttHelperRef.current.subscribe(Topic.Join);
-    mqttHelperRef.current.subscribe(Topic.StartPrepare);
-
+    subscribeToEverything();
     setPage(Page.Lobby);
     setIsHost(true);
   }
@@ -117,15 +113,13 @@ function ConnectionManager({
       updatedPlayers.add(new Player(aUsername));
 
       mqttHelperRef.current.publish(Topic.LobbyData, [...updatedPlayers]);
-  
+      
       return updatedPlayers;
     });
   }
 
   function startPrepare() {
     mqttHelperRef.current.publish(Topic.StartPrepare);
-    mqttHelperRef.current.subscribe(Topic.PlayerIsReady);
-    mqttHelperRef.current.subscribe(Topic.StartPlay);
   }
 
   function onPlayerReady(aUsername: string) {
@@ -147,12 +141,10 @@ function ConnectionManager({
   }
   
   // guest
+  // ToDo: try to use this method for host as well
   function joinRoom(_roomId: string) {
-    mqttHelperRef.current.subscribe(Topic.LobbyData);
-    mqttHelperRef.current.subscribe(Topic.StartPrepare);
-    
     mqttHelperRef.current.publish(Topic.Join, usernameRef.current);
-
+    subscribeToEverything();
     setPage(Page.Lobby);
   };
   
@@ -167,6 +159,15 @@ function ConnectionManager({
 
   function playerIsReady() {
     mqttHelperRef.current.publish(Topic.PlayerIsReady, usernameRef.current);
+  }
+
+  function subscribeToEverything() {
+    mqttHelperRef.current.subscribe(Topic.Broadcast);
+    mqttHelperRef.current.subscribe(Topic.LobbyData);
+    mqttHelperRef.current.subscribe(Topic.PlayerIsReady);
+    mqttHelperRef.current.subscribe(Topic.StartPrepare);
+    mqttHelperRef.current.subscribe(Topic.StartPlay);
+    mqttHelperRef.current.subscribe(Topic.UpdateGlobalDial);
   }
 
   // Expose methods through ref forwarding
