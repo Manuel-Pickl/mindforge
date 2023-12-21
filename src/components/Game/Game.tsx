@@ -1,44 +1,33 @@
-import { useState } from "react";
+import Play from "./Play/Play";
+import Prepare from "./Prepare/Prepare";
+import { GameState } from "../../types/GameState";
 
 interface GameProps
 {
+    gameState: GameState;
+    playerIsReady: () => void;
     dial: number;
     setDial: React.Dispatch<React.SetStateAction<number>>;
-    changeDial: (aValue: number) => void;
+    updateGlobalDial: (aValue: number) => void;
 }
 
-function Game ({ dial, setDial, changeDial }: GameProps)
+function Game ({ gameState, playerIsReady, dial, setDial, updateGlobalDial }: GameProps)
 {
-    const updateCooldown = 0;
-    const [lastUpdate, setLastUpdate] = useState<number>(Date.now());
-
-    function onDialChange(event: React.ChangeEvent<HTMLInputElement>) {
-        const newDial = parseFloat(event.target.value);
-        setDial(newDial);
-
-        updateGlobalDial(newDial);
-    }
-
-    function updateGlobalDial(dial: number) {
-        const elapsedTimeSinceLastUpdate = Date.now() - lastUpdate;
-        if (elapsedTimeSinceLastUpdate < updateCooldown) {
-            return;
-        } 
-        setLastUpdate(Date.now());
-
-        changeDial(dial);
-    }
-
     return (
         <div>
-            <input
-                type="range"
-                min={0}
-                max={100}
-                step={10}
-                value={dial}
-                onChange={onDialChange}
-            />
+            {gameState == GameState.Prepare && (
+                <Prepare
+                    playerIsReady={playerIsReady}
+                />
+            )}
+
+            {gameState == GameState.Play && (
+                <Play
+                    dial={dial}
+                    setDial={setDial}
+                    updateGlobalDial={updateGlobalDial}
+                />
+            )}
         </div>
     );
 }

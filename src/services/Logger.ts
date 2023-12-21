@@ -1,4 +1,4 @@
-const debug: boolean = false;
+const debug: boolean = true;
 
 export function debugLog(message: string) {
     if (!debug) {

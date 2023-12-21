@@ -5,15 +5,18 @@ import { Page } from './types/Page';
 import Lobby from './components/Lobby/Lobby';
 import Game from './components/Game/Game';
 import ConnectionManager from './components/ConnectionManager';
+import { Player } from './types/Player';
+import { GameState } from './types/GameState';
 
 
 function App() {
   const usernameRef = useRef<string>("");
   const roomIdRef = useRef<string>("");
-  const [players, setPlayers] = useState<Set<string>>(new Set<string>());
+  const [players, setPlayers] = useState<Set<Player>>(new Set());
   const [isHost, setIsHost] = useState<boolean>(false);
   const [page, setPage] = useState<Page>(Page.Offline);  
   const [dial, setDial] = useState<number>(50);
+  const [gameState, setGameState] = useState<GameState>(GameState.Prepare);
   
   const connectionManagerRef = useRef<any>();
   
@@ -21,21 +24,12 @@ function App() {
     const randomNumber = Math.floor(Math.random() * 100).toString();
     usernameRef.current = randomNumber;
 
-    setPlayers(new Set([usernameRef.current]));
+    setPlayers(new Set([new Player(usernameRef.current)]));
   }, []);
 
 
   return (
     <>
-      <ConnectionManager
-        ref={connectionManagerRef}
-        setPage={setPage}
-        setPlayers={setPlayers}
-        usernameRef={usernameRef}
-        setIsHost={setIsHost}
-        setDial={setDial}
-      />
-
       {page == Page.Offline && (
         <>Offline</>
       )}
@@ -55,17 +49,29 @@ function App() {
           players={players}
           isHost={isHost}
           broadcast={connectionManagerRef.current?.broadcast}
-          startGame={connectionManagerRef.current?.startGame}
+          startPrepare={connectionManagerRef.current?.startPrepare}
         />
       )}
 
       {page == Page.Game && (
         <Game
+          gameState={gameState}
+          playerIsReady={connectionManagerRef.current?.playerIsReady}
           dial={dial}
           setDial={setDial}
-          changeDial={connectionManagerRef.current?.changeDial}
+          updateGlobalDial={connectionManagerRef.current?.updateGlobalDial}
         />
       )}
+
+      <ConnectionManager
+        ref={connectionManagerRef}
+        setPage={setPage}
+        setPlayers={setPlayers}
+        usernameRef={usernameRef}
+        setIsHost={setIsHost}
+        setDial={setDial}
+        setGameState={setGameState}
+      />
     </>
   );
 };

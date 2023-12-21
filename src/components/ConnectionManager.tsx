@@ -4,13 +4,16 @@ import mqtt, { MqttClient } from 'mqtt';
 import { Page } from '../types/Page';
 import { debugLog } from '../services/Logger';
 import MqttHelper from './MqttHelper';
+import { Player } from '../types/Player';
+import { GameState } from '../types/GameState';
 
 interface ConnectionManagerProps {
   setPage: Dispatch<SetStateAction<Page>>;
-  setPlayers: Dispatch<SetStateAction<Set<string>>>;
+  setPlayers: Dispatch<SetStateAction<Set<Player>>>;
   usernameRef: MutableRefObject<string>;
   setIsHost: Dispatch<SetStateAction<boolean>>;
   setDial: Dispatch<SetStateAction<number>>;
+  setGameState: Dispatch<SetStateAction<GameState>>;
 }
 
 function ConnectionManager({
@@ -18,7 +21,8 @@ function ConnectionManager({
   setPlayers,
   usernameRef,
   setIsHost,
-  setDial}: ConnectionManagerProps,
+  setDial,
+  setGameState}: ConnectionManagerProps,
   ref: React.Ref<any>)
 {
   const [mqttClient, setMqttClient] = useState<MqttClient | null>(null);
@@ -56,11 +60,19 @@ function ConnectionManager({
       case Topic.LobbyData:
         updateLobbydata(new Set(data))
         break;
-      case Topic.StartGame:
+      case Topic.StartPrepare:
         onStart();
         break;
-      case Topic.ChangeDial:
-        setDial(data);
+      case Topic.UpdateGlobalDial:
+        if (data != usernameRef.current) {
+          setDial(data);
+        }
+        break;
+      case Topic.PlayerIsReady:
+        onPlayerReady(data)
+        break;
+      case Topic.StartPlay:
+        setGameState(GameState.Play);
         break;
       default:
         console.log("error: unknown topic!")
@@ -86,13 +98,14 @@ function ConnectionManager({
   
   function onStart() {
     setPage(Page.Game);
-    mqttHelperRef.current.subscribe(Topic.ChangeDial);
+    mqttHelperRef.current.subscribe(Topic.UpdateGlobalDial);
+    mqttHelperRef.current.subscribe(Topic.StartPlay);
   }
 
   // host
   function createRoom() {
     mqttHelperRef.current.subscribe(Topic.Join);
-    mqttHelperRef.current.subscribe(Topic.StartGame);
+    mqttHelperRef.current.subscribe(Topic.StartPrepare);
 
     setPage(Page.Lobby);
     setIsHost(true);
@@ -101,7 +114,7 @@ function ConnectionManager({
   function onJoin(aUsername: string) {
     setPlayers((oldPlayers) => {
       const updatedPlayers = new Set(oldPlayers);
-      updatedPlayers.add(aUsername);
+      updatedPlayers.add(new Player(aUsername));
 
       mqttHelperRef.current.publish(Topic.LobbyData, [...updatedPlayers]);
   
@@ -109,27 +122,51 @@ function ConnectionManager({
     });
   }
 
-  function startGame() {
-    mqttHelperRef.current.publish(Topic.StartGame);
+  function startPrepare() {
+    mqttHelperRef.current.publish(Topic.StartPrepare);
+    mqttHelperRef.current.subscribe(Topic.PlayerIsReady);
+    mqttHelperRef.current.subscribe(Topic.StartPlay);
+  }
+
+  function onPlayerReady(aUsername: string) {
+    setPlayers((oldPlayers) => {
+      const updatedPlayers = new Set<Player>(
+        Array.from(oldPlayers).map((player) =>
+          player.username === aUsername ? new Player(player.username, true) : player
+        )
+      );
+      
+      const allPlayersAreReady = Array.from(updatedPlayers)
+        .every((player) => player.isReady);
+      if (allPlayersAreReady) {
+        mqttHelperRef.current.publish(Topic.StartPlay);
+      }      
+
+      return updatedPlayers;
+    });
   }
   
   // guest
   function joinRoom(_roomId: string) {
     mqttHelperRef.current.subscribe(Topic.LobbyData);
-    mqttHelperRef.current.subscribe(Topic.StartGame);
+    mqttHelperRef.current.subscribe(Topic.StartPrepare);
     
     mqttHelperRef.current.publish(Topic.Join, usernameRef.current);
 
     setPage(Page.Lobby);
   };
   
-  function updateLobbydata(aPlayers: Set<string>) {
+  function updateLobbydata(aPlayers: Set<Player>) {
     const updatedPlayers = new Set(aPlayers);
     setPlayers(updatedPlayers);
   }
 
-  function changeDial(aValue: number) {
-    mqttHelperRef.current.publish(Topic.ChangeDial, aValue);
+  function updateGlobalDial(aValue: number) {
+    mqttHelperRef.current.publish(Topic.UpdateGlobalDial, aValue);
+  }
+
+  function playerIsReady() {
+    mqttHelperRef.current.publish(Topic.PlayerIsReady, usernameRef.current);
   }
 
   // Expose methods through ref forwarding
@@ -137,8 +174,9 @@ function ConnectionManager({
     broadcast,
     createRoom,
     joinRoom,
-    startGame,
-    changeDial,
+    startPrepare,
+    updateGlobalDial,
+    playerIsReady,
   }));
   
   return (
