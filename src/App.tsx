@@ -1,7 +1,6 @@
 // Game.tsx
 import { useEffect, useRef, useState } from 'react';
 import Home from './components/Home/Home';
-import { debugLog } from './services/Logger';
 import { Page } from './types/Page';
 import Lobby from './components/Lobby/Lobby';
 import Game from './components/Game/Game';
@@ -13,11 +12,10 @@ function App() {
   const roomIdRef = useRef<string>("");
   const [players, setPlayers] = useState<Set<string>>(new Set<string>());
   const [isHost, setIsHost] = useState<boolean>(false);
-
-  const [isOnline, setIsOnline] = useState<boolean>(false);
-  const [page, setPage] = useState<Page>(Page.Home);
-  
+  const [page, setPage] = useState<Page>(Page.Offline);  
   const [dial, setDial] = useState<number>(50);
+  
+  const connectionManagerRef = useRef<any>();
   
   useEffect(() => {
     const randomNumber = Math.floor(Math.random() * 100).toString();
@@ -26,23 +24,21 @@ function App() {
     setPlayers(new Set([usernameRef.current]));
   }, []);
 
-  // if (!isOnline) {
-  //   return <div>Not online</div>;
-  // }
-   
-  const connectionManagerRef = useRef<any>();
 
   return (
     <>
       <ConnectionManager
         ref={connectionManagerRef}
-        setIsOnline={setIsOnline}
         setPage={setPage}
         setPlayers={setPlayers}
         usernameRef={usernameRef}
         setIsHost={setIsHost}
         setDial={setDial}
       />
+
+      {page == Page.Offline && (
+        <>Offline</>
+      )}
 
       {page == Page.Home && (
         <Home 

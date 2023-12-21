@@ -6,7 +6,6 @@ import { debugLog } from '../services/Logger';
 import MqttHelper from './MqttHelper';
 
 interface ConnectionManagerProps {
-  setIsOnline: Dispatch<SetStateAction<boolean>>;
   setPage: Dispatch<SetStateAction<Page>>;
   setPlayers: Dispatch<SetStateAction<Set<string>>>;
   usernameRef: MutableRefObject<string>;
@@ -15,7 +14,6 @@ interface ConnectionManagerProps {
 }
 
 function ConnectionManager({
-  setIsOnline,
   setPage,
   setPlayers,
   usernameRef,
@@ -79,7 +77,7 @@ function ConnectionManager({
     }
     
     mqttHelperRef.current.subscribe(Topic.Broadcast);
-    setIsOnline(true);
+    setPage(Page.Home);
   }
 
   function broadcast(aMessage: string) {
@@ -116,7 +114,7 @@ function ConnectionManager({
   }
   
   // guest
-  function joinRoom(roomId: string) {
+  function joinRoom(_roomId: string) {
     mqttHelperRef.current.subscribe(Topic.LobbyData);
     mqttHelperRef.current.subscribe(Topic.StartGame);
     
