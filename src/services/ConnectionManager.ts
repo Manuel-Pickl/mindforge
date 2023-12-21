@@ -23,7 +23,8 @@ export function useConnectionManager(
   setPage: Dispatch<SetStateAction<Page>>,
   setPlayers: Dispatch<SetStateAction<Set<string>>>,
   usernameRef: MutableRefObject<string>,
-  setIsHost: Dispatch<SetStateAction<boolean>>)
+  setIsHost: Dispatch<SetStateAction<boolean>>,
+  setDial: Dispatch<SetStateAction<number>>)
 {
   let connectionLostTime: number | null = null;
 
@@ -68,6 +69,9 @@ export function useConnectionManager(
       case Topic.StartGame:
         onStart();
         break;
+      case Topic.ChangeDial:
+        setDial(data);
+        break;
       default:
         console.log("error: unknown topic!")
     }
@@ -79,6 +83,7 @@ export function useConnectionManager(
   
   function onStart() {
     setPage(Page.Game);
+    subscribe(Topic.ChangeDial);
   }
 
   // host
@@ -120,11 +125,16 @@ export function useConnectionManager(
     setPlayers(updatedPlayers);
   }
 
+  function changeDial(aValue: number) {
+    publish(Topic.ChangeDial, aValue);
+  }
+
   return {
     onMessage,
     broadcast,
     createRoom,
     joinRoom,
     startGame,
+    changeDial,
   };
 }

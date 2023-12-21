@@ -3,4 +3,5 @@ export enum Topic {
     Join = "Join",
     LobbyData = "LobbyData",
     StartGame = "StartGame",
+    ChangeDial = "ChangeDial",
 }

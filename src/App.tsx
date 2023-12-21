@@ -19,6 +19,8 @@ function App() {
   const [page, setPage] = useState<Page>(Page.Home);
   
   const clientRef = useRef<MqttClient | null>(null);
+
+  const [dial, setDial] = useState<number>(50);
   
   useEffect(() => {
     debugLog("Game component rendered");
@@ -38,14 +40,13 @@ function App() {
     createRoom,
     joinRoom,
     startGame,
-  } = useConnectionManager(
-    clientRef,
-    setIsOnline,
-    setPage,
-    setPlayers,
-    usernameRef,
-    setIsHost);  
+    changeDial,
+  } = useConnectionManager(clientRef, setIsOnline, setPage, setPlayers, usernameRef, setIsHost, setDial);  
   
+  // useEffect(() => {
+  //   changeDial(dial);
+  // }, [dial]);
+
   if (!isOnline) {
     return <div>Not online</div>;
   }
@@ -72,7 +73,11 @@ function App() {
       )}
 
       {page == Page.Game && (
-        <Game />
+        <Game
+          dial={dial}
+          setDial={setDial}
+          changeDial={changeDial}
+        />
       )}
     </>
   );
