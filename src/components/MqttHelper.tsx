@@ -32,12 +32,12 @@ function MqttHelper({
     }
 
     function padTopic(aTopic: Topic): string {
-        const fullTopic = `${applicationId}/${aTopic}`
+        const fullTopic = `${applicationId}__${aTopic}`
         return fullTopic;
     }
     
     function stripTopic(aPaddedTopic: string): string {
-        const strippedTopic: string = aPaddedTopic.split('/')[1];
+        const strippedTopic: string = aPaddedTopic.split('__')[1];
         return strippedTopic;
     }
 

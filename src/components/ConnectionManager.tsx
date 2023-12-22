@@ -6,23 +6,29 @@ import { debugLog } from '../services/Logger';
 import MqttHelper from './MqttHelper';
 import { Player } from '../types/Player';
 import { GameState } from '../types/GameState';
+import { SpectrumCard } from '../types/SpectrumCard';
+import { getInitialSpectrumCards } from '../services/SpectrumCardManager';
 
 interface ConnectionManagerProps {
   setPage: Dispatch<SetStateAction<Page>>;
+  players: Set<Player>;
   setPlayers: Dispatch<SetStateAction<Set<Player>>>;
   usernameRef: MutableRefObject<string>;
   setIsHost: Dispatch<SetStateAction<boolean>>;
   setDial: Dispatch<SetStateAction<number>>;
   setGameState: Dispatch<SetStateAction<GameState>>;
+  setSpectrumCards: (aValue: SpectrumCard[]) => void;
 }
 
 function ConnectionManager({
   setPage,
+  players,
   setPlayers,
   usernameRef,
   setIsHost,
   setDial,
-  setGameState}: ConnectionManagerProps,
+  setGameState,
+  setSpectrumCards}: ConnectionManagerProps,
   ref: React.Ref<any>)
 {
   const [mqttClient, setMqttClient] = useState<MqttClient | null>(null);
@@ -52,7 +58,7 @@ function ConnectionManager({
 
     switch(topic) {
       case Topic.Broadcast:
-        console.log(data);
+        alert(data);
         break;
       case Topic.Join:
         onJoin(data);
@@ -60,8 +66,8 @@ function ConnectionManager({
       case Topic.LobbyData:
         updateLobbydata(new Set(data))
         break;
-      case Topic.StartPrepare:
-        onStart();
+      case `${Topic.StartPrepare}/${usernameRef.current}`:
+        onStart(data);
         break;
       case Topic.UpdateGlobalDial:
         if (data != usernameRef.current) {
@@ -75,7 +81,8 @@ function ConnectionManager({
         setGameState(GameState.Play);
         break;
       default:
-        console.log("error: unknown topic!")
+        console.log("error: unknown topic!");
+        console.log(topic);
     }
   }
 
@@ -91,22 +98,14 @@ function ConnectionManager({
     setPage(Page.Home);
   }
 
-  function broadcast(aMessage: string) {
-    mqttHelperRef.current.publish(Topic.Broadcast, aMessage)
-  }
-  
-  function onStart() {
-    setPage(Page.Game);
-  }
-
   // host
   function createRoom() {
     mqttHelperRef.current.subscribe(Topic.Join);
-    subscribeToEverything();
-    setPage(Page.Lobby);
     setIsHost(true);
+    joinRoom("");
   }
   
+  // host
   function onJoin(aUsername: string) {
     setPlayers((oldPlayers) => {
       const updatedPlayers = new Set(oldPlayers);
@@ -118,10 +117,19 @@ function ConnectionManager({
     });
   }
 
+  // host
   function startPrepare() {
-    mqttHelperRef.current.publish(Topic.StartPrepare);
+    const initialSpectrumCards: SpectrumCard[] = getInitialSpectrumCards(players);
+    players.forEach(player => {
+      const correspondingSpectrumCards: SpectrumCard[] = initialSpectrumCards
+        .filter(x => x.owner == player.username);
+      mqttHelperRef.current.publish(`${Topic.StartPrepare}/${player.username}`, correspondingSpectrumCards);
+    });
+
+    mqttHelperRef.current.subscribe(Topic.PlayerIsReady);
   }
 
+  // host
   function onPlayerReady(aUsername: string) {
     setPlayers((oldPlayers) => {
       const updatedPlayers = new Set<Player>(
@@ -140,11 +148,13 @@ function ConnectionManager({
     });
   }
   
-  // guest
-  // ToDo: try to use this method for host as well
+  function broadcast(aMessage: string) {
+    mqttHelperRef.current.publish(Topic.Broadcast, aMessage)
+  }
+  
   function joinRoom(_roomId: string) {
     mqttHelperRef.current.publish(Topic.Join, usernameRef.current);
-    subscribeToEverything();
+    subscribeGuest();
     setPage(Page.Lobby);
   };
   
@@ -160,14 +170,21 @@ function ConnectionManager({
   function playerIsReady() {
     mqttHelperRef.current.publish(Topic.PlayerIsReady, usernameRef.current);
   }
+  
+  function onStart(spectrumCards: SpectrumCard[]) {
+    setSpectrumCards([...spectrumCards])
+    setPage(Page.Game);
+  }
 
-  function subscribeToEverything() {
+
+
+  function subscribeGuest() {
     mqttHelperRef.current.subscribe(Topic.Broadcast);
     mqttHelperRef.current.subscribe(Topic.LobbyData);
-    mqttHelperRef.current.subscribe(Topic.PlayerIsReady);
-    mqttHelperRef.current.subscribe(Topic.StartPrepare);
+    mqttHelperRef.current.subscribe(`${Topic.StartPrepare}/${usernameRef.current}`);
     mqttHelperRef.current.subscribe(Topic.StartPlay);
     mqttHelperRef.current.subscribe(Topic.UpdateGlobalDial);
+    mqttHelperRef.current.subscribe(usernameRef.current);
   }
 
   // Expose methods through ref forwarding

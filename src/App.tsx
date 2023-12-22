@@ -7,6 +7,7 @@ import Game from './components/Game/Game';
 import ConnectionManager from './components/ConnectionManager';
 import { Player } from './types/Player';
 import { GameState } from './types/GameState';
+import { SpectrumCard } from './types/SpectrumCard';
 
 
 function App() {
@@ -17,14 +18,13 @@ function App() {
   const [page, setPage] = useState<Page>(Page.Offline);  
   const [dial, setDial] = useState<number>(50);
   const [gameState, setGameState] = useState<GameState>(GameState.Prepare);
-  
+  const [spectrumCards, setSpectrumCards] = useState<SpectrumCard[]>([]);
+
   const connectionManagerRef = useRef<any>();
   
   useEffect(() => {
     const randomNumber = Math.floor(Math.random() * 100).toString();
     usernameRef.current = randomNumber;
-
-    setPlayers(new Set([new Player(usernameRef.current)]));
   }, []);
 
 
@@ -56,21 +56,25 @@ function App() {
       {page == Page.Game && (
         <Game
           gameState={gameState}
-          playerIsReady={connectionManagerRef.current?.playerIsReady}
+          sendPrepareFinished={connectionManagerRef.current?.playerIsReady}
           dial={dial}
           setDial={setDial}
           updateGlobalDial={connectionManagerRef.current?.updateGlobalDial}
+          spectrumCards={spectrumCards}
+          setSpectrumCards={setSpectrumCards}
         />
       )}
 
       <ConnectionManager
         ref={connectionManagerRef}
         setPage={setPage}
+        players={players}
         setPlayers={setPlayers}
         usernameRef={usernameRef}
         setIsHost={setIsHost}
         setDial={setDial}
         setGameState={setGameState}
+        setSpectrumCards={setSpectrumCards}
       />
     </>
   );
