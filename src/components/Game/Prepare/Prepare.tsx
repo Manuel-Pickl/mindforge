@@ -38,6 +38,8 @@ function Prepare ({
             {!prepareFinished ? (
             <div>
                 <h2>{currentSpectrumCardIndex + 1}. Spektrum Karte</h2>
+
+                {prepareSpectrumCards[currentSpectrumCardIndex].scale[0]}
                 <input readOnly
                     type="range"
                     min={0}
@@ -45,9 +47,10 @@ function Prepare ({
                     step={10}
                     value={prepareSpectrumCards[currentSpectrumCardIndex].dial}
                 />
+                {prepareSpectrumCards[currentSpectrumCardIndex].scale[1]}
+
                 <br/>
-                {prepareSpectrumCards[currentSpectrumCardIndex].scale[0]} {prepareSpectrumCards[currentSpectrumCardIndex].scale[1]}
-                <br/>
+
                 <input
                     type="text"
                     value={clue}
