@@ -5,6 +5,7 @@ import { SpectrumCard } from "../../types/SpectrumCard";
 
 interface GameProps
 {
+    sendPlayRoundFinished: () => void;
     gameState: GameState;
     sendPrepareFinished: () => void;
     dial: number;
@@ -12,10 +13,11 @@ interface GameProps
     updateGlobalDial: (aValue: number) => void;
     prepareSpectrumCards: SpectrumCard[];
     setPrepareSpectrumCards: (aValue: SpectrumCard[]) => void;
-    playSpectrumCards: SpectrumCard[];
+    playSpectrumCard: SpectrumCard | null;
 }
 
 function Game ({
+    sendPlayRoundFinished,
     gameState,
     sendPrepareFinished,
     dial,
@@ -23,7 +25,7 @@ function Game ({
     updateGlobalDial,
     prepareSpectrumCards,
     setPrepareSpectrumCards,
-    playSpectrumCards}: GameProps)
+    playSpectrumCard}: GameProps)
 {
     return (
         <div>
@@ -37,9 +39,10 @@ function Game ({
 
             {gameState == GameState.Play && (
                 <Play
+                    sendPlayRoundFinished={sendPlayRoundFinished}
                     dial={dial}
                     setDial={setDial}
-                    playSpectrumCards={playSpectrumCards}
+                    playSpectrumCard={playSpectrumCard}
                     updateGlobalDial={updateGlobalDial}
                 />
             )}

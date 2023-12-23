@@ -13,9 +13,9 @@ export function getInitialSpectrumCards(players: Set<Player>): SpectrumCard[] {
     players.forEach(player => {
         for (let j: number = 0; j < cardsPerPlayer; j++) {
             const spectrumCard: SpectrumCard = new SpectrumCard(
+                player.username,
                 scales[scaleIndex],
                 getRandomDial(),
-                player.username
             )
             spectrumCards.push(spectrumCard);
             scaleIndex++;

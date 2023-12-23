@@ -19,8 +19,9 @@ function App() {
   const [dial, setDial] = useState<number>(50);
   const [gameState, setGameState] = useState<GameState>(GameState.Prepare);
   const [prepareSpectrumCards, setPrepareSpectrumCards] = useState<SpectrumCard[]>([]);
-  const [playSpectrumCards, setPlaySpectrumCards] = useState<SpectrumCard[]>([]);
-
+  const [spectrumCards, setSpectrumCards] = useState<SpectrumCard[]>([]);
+  const [playSpectrumCard, setPlaySpectrumCard] = useState<SpectrumCard | null>(null);
+  const [currentPlayRound, setCurrentPlayRound] = useState<number>(1);
   const connectionManagerRef = useRef<any>();
   
   useEffect(() => {
@@ -56,6 +57,7 @@ function App() {
 
       {page == Page.Game && (
         <Game
+          sendPlayRoundFinished={connectionManagerRef.current?.sendPlayRoundFinished}
           gameState={gameState}
           sendPrepareFinished={connectionManagerRef.current?.sendPrepareFinished}
           dial={dial}
@@ -63,7 +65,7 @@ function App() {
           updateGlobalDial={connectionManagerRef.current?.updateGlobalDial}
           prepareSpectrumCards={prepareSpectrumCards}
           setPrepareSpectrumCards={setPrepareSpectrumCards}
-          playSpectrumCards={playSpectrumCards}
+          playSpectrumCard={playSpectrumCard}
         />
       )}
 
@@ -78,8 +80,11 @@ function App() {
         setGameState={setGameState}
         prepareSpectrumCards={prepareSpectrumCards}
         setPrepareSpectrumCards={setPrepareSpectrumCards}
-        playSpectrumCards={playSpectrumCards}
-        setPlaySpectrumCards={setPlaySpectrumCards}
+        spectrumCards={spectrumCards}
+        setSpectrumCards={setSpectrumCards}
+        currentPlayRound={currentPlayRound}
+        setCurrentPlayRound={setCurrentPlayRound}
+        setPlaySpectrumCard={setPlaySpectrumCard}
       />
     </>
   );

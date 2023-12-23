@@ -45,7 +45,7 @@ function Prepare ({
                     min={0}
                     max={100}
                     step={10}
-                    value={prepareSpectrumCards[currentSpectrumCardIndex].dial}
+                    value={prepareSpectrumCards[currentSpectrumCardIndex].realDial}
                 />
                 {prepareSpectrumCards[currentSpectrumCardIndex].scale[1]}
 

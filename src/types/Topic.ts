@@ -4,6 +4,7 @@ export enum Topic {
     LobbyData = "LobbyData",
     StartPrepare = "StartPrepare",
     PrepareFinished = "PrepareFinished",
-    StartPlay = "StartPlay",
+    StartPlayRound = "StartPlayRound",
     UpdateGlobalDial = "UpdateGlobalDial",
+    PlayRoundFinished = "PlayRoundFinished",
 }
