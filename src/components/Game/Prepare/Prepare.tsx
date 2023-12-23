@@ -3,7 +3,7 @@ import { SpectrumCard } from "../../../types/SpectrumCard";
 
 interface PrepareProps
 {
-    sendPrepareFinished: () => void;
+    sendPrepareFinished: (prepareSpectrumCards: SpectrumCard[]) => void;
     prepareSpectrumCards: SpectrumCard[];
     setPrepareSpectrumCards: (aValue: SpectrumCard[]) => void;
 }
@@ -20,7 +20,7 @@ function Prepare ({
     function showNextSpectrumCard() {
         prepareSpectrumCards[currentSpectrumCardIndex].clue = clue;
         setPrepareSpectrumCards([...prepareSpectrumCards]);
-        
+
         const finishedAllSpectrumCards: boolean = currentSpectrumCardIndex >= prepareSpectrumCards.length - 1;
         if (!finishedAllSpectrumCards) {
             setCurrentSpectrumCardIndex(currentSpectrumCardIndex + 1);
@@ -28,7 +28,7 @@ function Prepare ({
         }
         else {
             setPrepareFinished(true);
-            sendPrepareFinished();
+            sendPrepareFinished(prepareSpectrumCards);
         }
     }
 

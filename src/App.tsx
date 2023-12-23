@@ -21,7 +21,8 @@ function App() {
   const [prepareSpectrumCards, setPrepareSpectrumCards] = useState<SpectrumCard[]>([]);
   const [spectrumCards, setSpectrumCards] = useState<SpectrumCard[]>([]);
   const [playSpectrumCard, setPlaySpectrumCard] = useState<SpectrumCard | null>(null);
-  const [currentPlayRound, setCurrentPlayRound] = useState<number>(1);
+  const [currentPlayRound, setCurrentPlayRound] = useState<number>(0);
+  const [roundsCount, setRoundsCount] = useState<number>(-1);
   const connectionManagerRef = useRef<any>();
   
   useEffect(() => {
@@ -66,6 +67,8 @@ function App() {
           prepareSpectrumCards={prepareSpectrumCards}
           setPrepareSpectrumCards={setPrepareSpectrumCards}
           playSpectrumCard={playSpectrumCard}
+          currentPlayRound={currentPlayRound}
+          roundsCount={roundsCount}
         />
       )}
 
@@ -84,6 +87,8 @@ function App() {
         setSpectrumCards={setSpectrumCards}
         currentPlayRound={currentPlayRound}
         setCurrentPlayRound={setCurrentPlayRound}
+        roundsCount={roundsCount}
+        setRoundsCount={setRoundsCount}
         setPlaySpectrumCard={setPlaySpectrumCard}
       />
     </>

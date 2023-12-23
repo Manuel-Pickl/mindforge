@@ -1,7 +1,7 @@
 import { Player } from "../types/Player";
 import { SpectrumCard } from "../types/SpectrumCard"
 
-const cardsPerPlayer: number = 2;
+const cardsPerPlayer: number = 1;
 
 export function getInitialSpectrumCards(players: Set<Player>): SpectrumCard[] {
     const spectrumCards: SpectrumCard[] = [];
@@ -25,21 +25,22 @@ export function getInitialSpectrumCards(players: Set<Player>): SpectrumCard[] {
     return spectrumCards;
 }
 
-function getRandomScales(_count: number): [string, string][] {
-    const scales: [string, string][] = [];
-
-    // shuffle scales & substr count
-    scales.push(["Kalt", "Heiß"]);
-    scales.push(["Weich", "Hart"]);
-    scales.push(["Hässlich", "Schön"]);
-    scales.push(["Wertlos", "Wertvoll"]);
-    scales.push(["Laut", "Leise"]);
-    scales.push(["Unnötig", "Nützlich"]);
-
-    return scales;
+function getRandomScales(count: number): [string, string][] {
+    const shuffledScales: [string, string][] =
+        allScales.sort(() => Math.random() - 0.5);
+    return shuffledScales.slice(0, count);
 }
 
 function getRandomDial(): number {
     const numberBetweenZeroAndHundred = Math.floor(Math.random() * 100);
     return numberBetweenZeroAndHundred;
 }
+
+const allScales: [string, string][] = [
+    ["Kalt", "Heiß"],
+    ["Weich", "Hart"],
+    ["Hässlich", "Schön"],
+    ["Wertlos", "Wertvoll"],
+    ["Laut", "Leise"],
+    ["Unnötig", "Nützlich"],
+]

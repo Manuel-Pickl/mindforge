@@ -23,7 +23,9 @@ interface ConnectionManagerProps {
   setPrepareSpectrumCards: Dispatch<SetStateAction<SpectrumCard[]>>;
   currentPlayRound: number;
   setCurrentPlayRound: Dispatch<SetStateAction<number>>;
-  setPlaySpectrumCard: Dispatch<SetStateAction<SpectrumCard>>;
+  roundsCount: number;
+  setRoundsCount: Dispatch<SetStateAction<number>>;
+  setPlaySpectrumCard: Dispatch<SetStateAction<SpectrumCard | null>>;
 }
 
 function ConnectionManager({
@@ -40,6 +42,8 @@ function ConnectionManager({
   setPrepareSpectrumCards,
   currentPlayRound,
   setCurrentPlayRound,
+  roundsCount,
+  setRoundsCount,
   setPlaySpectrumCard}: ConnectionManagerProps,
   ref: React.Ref<any>)
 {
@@ -147,8 +151,8 @@ function ConnectionManager({
     const correspondingUsername = aPrepareSpectrumCards[0].owner;
 
     // we have to nest the update functions, because React is shit
-    setSpectrumCards(oldPlaySpectrumCards => {
-      const newPlaySpectrumCards = [...oldPlaySpectrumCards, ...aPrepareSpectrumCards];
+    setSpectrumCards(spectrumCards => {
+      const newPlaySpectrumCards = [...spectrumCards, ...aPrepareSpectrumCards];
 
       setPlayers((oldPlayers) => {
         const updatedPlayers = new Set<Player>(
@@ -173,45 +177,50 @@ function ConnectionManager({
     });
   }
 
-  function shuffleArray<T>(array: T[]): T[] {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  }
   // host
   function startPlay(aSpectrumCards: SpectrumCard[]) {
     mqttHelperRef.current.subscribe(Topic.PlayRoundFinished);
-    // shuffleArray(aPlaySpectrumCards);
-    startPlayRound(aSpectrumCards);
+    
+    const shuffledSpectrumCards: SpectrumCard[] =
+      aSpectrumCards.sort(() => Math.random() - 0.5);
+    startPlayRound(shuffledSpectrumCards);
+    setSpectrumCards([...shuffledSpectrumCards]);
   }
 
   // host
   function startPlayRound(aSpectrumCards: SpectrumCard[]) {
-    setCurrentPlayRound(oldCurrentPlayRound => {
-      setPlayers(oldPlayers => {
-        oldPlayers.forEach(player => {
+    setCurrentPlayRound(aCurrentPlayRound => {
+      setPlayers(aPlayers => {
+        aPlayers.forEach(player => {
           player.playRoundFinished = false;
         })
-        return oldPlayers;
+        return aPlayers;
       });
   
-      const nextSpectrumCard: SpectrumCard = aSpectrumCards[oldCurrentPlayRound];
-      mqttHelperRef.current.publish(Topic.StartPlayRound, nextSpectrumCard);
+      updateGlobalDial(50);
 
-      return oldCurrentPlayRound + 1;
+      const currentSpectrumCardIndex = aCurrentPlayRound;
+      const playSpectrumCard: SpectrumCard = aSpectrumCards[currentSpectrumCardIndex];
+      const newCurrentPlayRound: number = aCurrentPlayRound + 1;
+      
+      mqttHelperRef.current.publish(Topic.StartPlayRound, {
+        aPlaySpectrumCard: playSpectrumCard,
+        aCurrentRound: newCurrentPlayRound,
+        aRoundsCount: aSpectrumCards.length,
+      });
+      
+      return newCurrentPlayRound;
     });
   }
 
   // host
-  function onPlayRoundFinished(aUsername: string) {
-    setSpectrumCards(oldSpectrumCards => {
-      setPlayers((oldPlayers) => {
+  function onPlayRoundFinished({ aUsername, aPlayRoundFinished }) {
+    setSpectrumCards(aSpectrumCards => {
+      setPlayers((aPlayers) => {
         const updatedPlayers = new Set<Player>(
-          Array.from(oldPlayers).map((player) =>
+          Array.from(aPlayers).map((player) =>
             player.username === aUsername
-              ? new Player(player.username, player.prepareFinished, true)
+              ? new Player(player.username, player.prepareFinished, aPlayRoundFinished)
               : player
           )
         );
@@ -220,14 +229,25 @@ function ConnectionManager({
           (player) => player.playRoundFinished
         );
         if (allPlayersPlayRoundFinished) {
-          startPlayRound(oldSpectrumCards);
+          // const playFinished: boolean = currentPlayRound >= roundsCount;
+          // if (playFinished) {
+          //   showResults();
+          // }
+          // else {
+            startPlayRound(aSpectrumCards);
+          // }
         }
 
         return updatedPlayers;
       });
 
-      return oldSpectrumCards;
+      return aSpectrumCards;
     });
+  }
+  
+  // host
+  function showResults() {
+
   }
   
   function broadcast(aMessage: string) {
@@ -252,13 +272,15 @@ function ConnectionManager({
     setPage(Page.Game);
   }
   
-  function sendPrepareFinished() {
-    mqttHelperRef.current.publish(Topic.PrepareFinished, prepareSpectrumCards);
+  function sendPrepareFinished(aPrepareSpectrumCards: SpectrumCard[]) {
+    mqttHelperRef.current.publish(Topic.PrepareFinished, aPrepareSpectrumCards);
   }
 
   
-  function onStartPlay(aPlaySpectrumCard: SpectrumCard) {
+  function onStartPlay({ aPlaySpectrumCard, aCurrentRound, aRoundsCount }) {
     setPlaySpectrumCard(aPlaySpectrumCard);
+    setCurrentPlayRound(aCurrentRound);
+    setRoundsCount(aRoundsCount);
     setGameState(GameState.Play);
   }
 
@@ -272,8 +294,11 @@ function ConnectionManager({
     setDial(aValue);
   }
 
-  function sendPlayRoundFinished() {
-    mqttHelperRef.current.publish(Topic.PlayRoundFinished, usernameRef.current);
+  function sendPlayRoundFinished(aValue: boolean) {
+    mqttHelperRef.current.publish(Topic.PlayRoundFinished, {
+      aUsername: usernameRef.current,
+      aPlayRoundFinished: aValue
+    });
   }
 
 

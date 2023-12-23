@@ -5,15 +5,17 @@ import { SpectrumCard } from "../../types/SpectrumCard";
 
 interface GameProps
 {
-    sendPlayRoundFinished: () => void;
+    sendPlayRoundFinished: (aValue: boolean) => void;
     gameState: GameState;
-    sendPrepareFinished: () => void;
+    sendPrepareFinished: (prepareSpectrumCards: SpectrumCard[]) => void;
     dial: number;
     setDial: React.Dispatch<React.SetStateAction<number>>;
     updateGlobalDial: (aValue: number) => void;
     prepareSpectrumCards: SpectrumCard[];
     setPrepareSpectrumCards: (aValue: SpectrumCard[]) => void;
     playSpectrumCard: SpectrumCard | null;
+    currentPlayRound: number;
+    roundsCount: number
 }
 
 function Game ({
@@ -25,7 +27,9 @@ function Game ({
     updateGlobalDial,
     prepareSpectrumCards,
     setPrepareSpectrumCards,
-    playSpectrumCard}: GameProps)
+    playSpectrumCard,
+    currentPlayRound,
+    roundsCount}: GameProps)
 {
     return (
         <div>
@@ -44,6 +48,8 @@ function Game ({
                     setDial={setDial}
                     playSpectrumCard={playSpectrumCard}
                     updateGlobalDial={updateGlobalDial}
+                    currentPlayRound={currentPlayRound}
+                    roundsCount={roundsCount}
                 />
             )}
         </div>
