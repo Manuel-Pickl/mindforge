@@ -10,8 +10,9 @@ interface GameProps
     dial: number;
     setDial: React.Dispatch<React.SetStateAction<number>>;
     updateGlobalDial: (aValue: number) => void;
-    spectrumCards: SpectrumCard[];
-    setSpectrumCards: (aValue: SpectrumCard[]) => void;
+    prepareSpectrumCards: SpectrumCard[];
+    setPrepareSpectrumCards: (aValue: SpectrumCard[]) => void;
+    playSpectrumCards: SpectrumCard[];
 }
 
 function Game ({
@@ -20,16 +21,17 @@ function Game ({
     dial,
     setDial,
     updateGlobalDial,
-    spectrumCards,
-    setSpectrumCards }: GameProps)
+    prepareSpectrumCards,
+    setPrepareSpectrumCards,
+    playSpectrumCards}: GameProps)
 {
     return (
         <div>
             {gameState == GameState.Prepare && (
                 <Prepare
                     sendPrepareFinished={sendPrepareFinished}
-                    spectrumCards={spectrumCards}
-                    setSpectrumCards={setSpectrumCards}
+                    prepareSpectrumCards={prepareSpectrumCards}
+                    setPrepareSpectrumCards={setPrepareSpectrumCards}
                 />
             )}
 
@@ -37,6 +39,7 @@ function Game ({
                 <Play
                     dial={dial}
                     setDial={setDial}
+                    playSpectrumCards={playSpectrumCards}
                     updateGlobalDial={updateGlobalDial}
                 />
             )}

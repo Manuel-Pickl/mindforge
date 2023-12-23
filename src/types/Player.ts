@@ -1,9 +1,15 @@
 export class Player {
     username: string;
-    isReady: boolean;
+    prepareFinished: boolean;
+    playRoundFinished: boolean;
 
-    constructor(username: string, isReady: boolean = false) {
+    constructor(
+        username: string,
+        prepareFinished: boolean = false,
+        playRoundFinished: boolean = false)
+    {
         this.username = username;
-        this.isReady = isReady;
+        this.prepareFinished = prepareFinished;
+        this.playRoundFinished = playRoundFinished;
     }
 }

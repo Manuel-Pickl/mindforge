@@ -18,7 +18,8 @@ function App() {
   const [page, setPage] = useState<Page>(Page.Offline);  
   const [dial, setDial] = useState<number>(50);
   const [gameState, setGameState] = useState<GameState>(GameState.Prepare);
-  const [spectrumCards, setSpectrumCards] = useState<SpectrumCard[]>([]);
+  const [prepareSpectrumCards, setPrepareSpectrumCards] = useState<SpectrumCard[]>([]);
+  const [playSpectrumCards, setPlaySpectrumCards] = useState<SpectrumCard[]>([]);
 
   const connectionManagerRef = useRef<any>();
   
@@ -56,12 +57,13 @@ function App() {
       {page == Page.Game && (
         <Game
           gameState={gameState}
-          sendPrepareFinished={connectionManagerRef.current?.playerIsReady}
+          sendPrepareFinished={connectionManagerRef.current?.sendPrepareFinished}
           dial={dial}
           setDial={setDial}
           updateGlobalDial={connectionManagerRef.current?.updateGlobalDial}
-          spectrumCards={spectrumCards}
-          setSpectrumCards={setSpectrumCards}
+          prepareSpectrumCards={prepareSpectrumCards}
+          setPrepareSpectrumCards={setPrepareSpectrumCards}
+          playSpectrumCards={playSpectrumCards}
         />
       )}
 
@@ -74,7 +76,10 @@ function App() {
         setIsHost={setIsHost}
         setDial={setDial}
         setGameState={setGameState}
-        setSpectrumCards={setSpectrumCards}
+        prepareSpectrumCards={prepareSpectrumCards}
+        setPrepareSpectrumCards={setPrepareSpectrumCards}
+        playSpectrumCards={playSpectrumCards}
+        setPlaySpectrumCards={setPlaySpectrumCards}
       />
     </>
   );

@@ -4,27 +4,25 @@ import { SpectrumCard } from "../../../types/SpectrumCard";
 interface PrepareProps
 {
     sendPrepareFinished: () => void;
-    spectrumCards: SpectrumCard[];
-    setSpectrumCards: (aValue: SpectrumCard[]) => void;
+    prepareSpectrumCards: SpectrumCard[];
+    setPrepareSpectrumCards: (aValue: SpectrumCard[]) => void;
 }
 
 function Prepare ({
     sendPrepareFinished,
-    spectrumCards,
-    setSpectrumCards }: PrepareProps)
+    prepareSpectrumCards,
+    setPrepareSpectrumCards }: PrepareProps)
 {
     const [clue, setClue] = useState<string>("");
     const [prepareFinished, setPrepareFinished] = useState<boolean>(false);
-
     const [currentSpectrumCardIndex, setCurrentSpectrumCardIndex] = useState<number>(0);
     
     function showNextSpectrumCard() {
-        const finishedAllSpectrumCards: boolean = currentSpectrumCardIndex >= spectrumCards.length - 1;
+        prepareSpectrumCards[currentSpectrumCardIndex].clue = clue;
+        setPrepareSpectrumCards([...prepareSpectrumCards]);
         
+        const finishedAllSpectrumCards: boolean = currentSpectrumCardIndex >= prepareSpectrumCards.length - 1;
         if (!finishedAllSpectrumCards) {
-            spectrumCards[currentSpectrumCardIndex].clue = clue;
-            setSpectrumCards([...spectrumCards]);
-            
             setCurrentSpectrumCardIndex(currentSpectrumCardIndex + 1);
             setClue("");
         }
@@ -32,12 +30,11 @@ function Prepare ({
             setPrepareFinished(true);
             sendPrepareFinished();
         }
-
     }
 
     return (
         <div>
-            <h1>Spektrum Karten abschätzen</h1>
+            <h1>Hinweise aufschreiben</h1>
             {!prepareFinished ? (
             <div>
                 <h2>{currentSpectrumCardIndex + 1}. Spektrum Karte</h2>
@@ -46,10 +43,10 @@ function Prepare ({
                     min={0}
                     max={100}
                     step={10}
-                    value={spectrumCards[currentSpectrumCardIndex].dial}
-                    />
+                    value={prepareSpectrumCards[currentSpectrumCardIndex].dial}
+                />
                 <br/>
-                {spectrumCards[currentSpectrumCardIndex].scale[0]} {spectrumCards[currentSpectrumCardIndex].scale[1]}
+                {prepareSpectrumCards[currentSpectrumCardIndex].scale[0]} {prepareSpectrumCards[currentSpectrumCardIndex].scale[1]}
                 <br/>
                 <input
                     type="text"
@@ -65,7 +62,7 @@ function Prepare ({
             </div>
             ) : (
             <div>
-                waiting for other players
+                warten auf andere Spieler...
             </div>
             )}
         </div>

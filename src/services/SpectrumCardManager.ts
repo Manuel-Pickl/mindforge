@@ -8,17 +8,17 @@ export function getInitialSpectrumCards(players: Set<Player>): SpectrumCard[] {
 
     const scalesCount: number = players.size * cardsPerPlayer;
     const scales: [string, string][] = getRandomScales(scalesCount);
+    let scaleIndex: number = 0;
 
-    players.forEach((player, i) => {
+    players.forEach(player => {
         for (let j: number = 0; j < cardsPerPlayer; j++) {
-            // @ts-ignore
-            const scaleIndex: number = (i * cardsPerPlayer) + j;
             const spectrumCard: SpectrumCard = new SpectrumCard(
                 scales[scaleIndex],
                 getRandomDial(),
                 player.username
             )
             spectrumCards.push(spectrumCard);
+            scaleIndex++;
         }
     });
 
@@ -33,6 +33,8 @@ function getRandomScales(count: number): [string, string][] {
     scales.push(["Weich", "Hart"]);
     scales.push(["Hässlich", "Schön"]);
     scales.push(["Wertlos", "Wertvoll"]);
+    scales.push(["Laut", "Leise"]);
+    scales.push(["Unnötig", "Nützlich"]);
 
     return scales;
 }

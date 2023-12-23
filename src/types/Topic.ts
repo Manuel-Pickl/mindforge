@@ -3,7 +3,7 @@ export enum Topic {
     Join = "Join",
     LobbyData = "LobbyData",
     StartPrepare = "StartPrepare",
-    PlayerIsReady = "PlayerIsReady",
+    PrepareFinished = "PrepareFinished",
     StartPlay = "StartPlay",
     UpdateGlobalDial = "UpdateGlobalDial",
 }
