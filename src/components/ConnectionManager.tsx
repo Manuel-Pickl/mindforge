@@ -31,7 +31,7 @@ function ConnectionManager({
   setIsHost,
   setDial,
   setGameState,
-  playSpectrumCards,
+  // playSpectrumCards,
   setPlaySpectrumCards,
   prepareSpectrumCards,
   setPrepareSpectrumCards}: ConnectionManagerProps,

@@ -15,7 +15,7 @@ function Play ({
     playSpectrumCards,
     updateGlobalDial }: PlayProps)
 {
-    const [currentSpectrumCardIndex, setCurrentSpectrumCardIndex] = useState<number>(0);
+    const [currentSpectrumCardIndex, _setCurrentSpectrumCardIndex] = useState<number>(0);
 
     function onDialChange(event: React.ChangeEvent<HTMLInputElement>) {
         const newDial = parseFloat(event.target.value);

@@ -25,7 +25,7 @@ export function getInitialSpectrumCards(players: Set<Player>): SpectrumCard[] {
     return spectrumCards;
 }
 
-function getRandomScales(count: number): [string, string][] {
+function getRandomScales(_count: number): [string, string][] {
     const scales: [string, string][] = [];
 
     // shuffle scales & substr count
