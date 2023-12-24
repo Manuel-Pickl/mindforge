@@ -38,13 +38,13 @@ function ConnectionManager({
   setIsHost,
   setDial,
   setGameState,
-  spectrumCards,
+  // spectrumCards,
   setSpectrumCards,
-  prepareSpectrumCards,
+  // prepareSpectrumCards,
   setPrepareSpectrumCards,
-  currentPlayRound,
+  // currentPlayRound,
   setCurrentPlayRound,
-  roundsCount,
+  // roundsCount,
   setRoundsCount,
   setPlaySpectrumCard,
   setRoundSolutionIsShown}: ConnectionManagerProps,
@@ -224,6 +224,7 @@ function ConnectionManager({
   }
 
   // host
+  // @ts-ignore
   function onPlayRoundFinished({ aUsername, aPlayRoundFinished }) {
     setSpectrumCards(aSpectrumCards => {
       setPlayers((aPlayers) => {
@@ -260,9 +261,9 @@ function ConnectionManager({
   }
   
   // host
-  function showResults() {
-    mqttHelperRef.current.publish(Topic.StartResult)
-  }
+  // function showResults() {
+  //   mqttHelperRef.current.publish(Topic.StartResult)
+  // }
   
   function broadcast(aMessage: string) {
     mqttHelperRef.current.publish(Topic.Broadcast, aMessage)
@@ -291,6 +292,7 @@ function ConnectionManager({
   }
 
   
+  // @ts-ignore
   function onPlayStart({ aPlaySpectrumCard, aCurrentRound, aRoundsCount }) {
     setPlaySpectrumCard(aPlaySpectrumCard);
     setCurrentPlayRound(aCurrentRound);
