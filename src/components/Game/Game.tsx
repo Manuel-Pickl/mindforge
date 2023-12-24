@@ -2,6 +2,7 @@ import Play from "./Play/Play";
 import Prepare from "./Prepare/Prepare";
 import { GameState } from "../../types/GameState";
 import { SpectrumCard } from "../../types/SpectrumCard";
+import { Dispatch, SetStateAction } from "react";
 
 interface GameProps
 {
@@ -9,13 +10,15 @@ interface GameProps
     gameState: GameState;
     sendPrepareFinished: (prepareSpectrumCards: SpectrumCard[]) => void;
     dial: number;
-    setDial: React.Dispatch<React.SetStateAction<number>>;
-    updateGlobalDial: (aValue: number) => void;
+    setDial: Dispatch<SetStateAction<number>>;
+    updateGlobalDial: Dispatch<SetStateAction<number>>;
     prepareSpectrumCards: SpectrumCard[];
-    setPrepareSpectrumCards: (aValue: SpectrumCard[]) => void;
+    setPrepareSpectrumCards: Dispatch<SetStateAction<SpectrumCard[]>>;
     playSpectrumCard: SpectrumCard | null;
     currentPlayRound: number;
-    roundsCount: number
+    roundsCount: number;
+    roundSolutionIsShown: boolean;
+    setRoundSolutionIsShown: Dispatch<SetStateAction<boolean>>;
 }
 
 function Game ({
@@ -29,7 +32,9 @@ function Game ({
     setPrepareSpectrumCards,
     playSpectrumCard,
     currentPlayRound,
-    roundsCount}: GameProps)
+    roundsCount,
+    roundSolutionIsShown,
+    setRoundSolutionIsShown}: GameProps)
 {
     return (
         <div>
@@ -50,7 +55,13 @@ function Game ({
                     updateGlobalDial={updateGlobalDial}
                     currentPlayRound={currentPlayRound}
                     roundsCount={roundsCount}
+                    roundSolutionIsShown={roundSolutionIsShown}
+                    setRoundSolutionIsShown={setRoundSolutionIsShown}
                 />
+            )}
+
+            {gameState == GameState.Finish && (
+                <div>Result</div>
             )}
         </div>
     );

@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { SpectrumCard } from "../../../types/SpectrumCard";
 
 interface PrepareProps
 {
     sendPrepareFinished: (prepareSpectrumCards: SpectrumCard[]) => void;
     prepareSpectrumCards: SpectrumCard[];
-    setPrepareSpectrumCards: (aValue: SpectrumCard[]) => void;
+    setPrepareSpectrumCards: Dispatch<SetStateAction<SpectrumCard[]>>;
 }
 
 function Prepare ({

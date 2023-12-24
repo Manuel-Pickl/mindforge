@@ -8,6 +8,7 @@ import { Player } from '../types/Player';
 import { GameState } from '../types/GameState';
 import { SpectrumCard } from '../types/SpectrumCard';
 import { getInitialSpectrumCards } from '../services/SpectrumCardManager';
+import { solutionDuration } from '../services/Settings';
 
 interface ConnectionManagerProps {
   setPage: Dispatch<SetStateAction<Page>>;
@@ -26,6 +27,7 @@ interface ConnectionManagerProps {
   roundsCount: number;
   setRoundsCount: Dispatch<SetStateAction<number>>;
   setPlaySpectrumCard: Dispatch<SetStateAction<SpectrumCard | null>>;
+  setRoundSolutionIsShown: Dispatch<SetStateAction<boolean>>;
 }
 
 function ConnectionManager({
@@ -44,7 +46,8 @@ function ConnectionManager({
   setCurrentPlayRound,
   roundsCount,
   setRoundsCount,
-  setPlaySpectrumCard}: ConnectionManagerProps,
+  setPlaySpectrumCard,
+  setRoundSolutionIsShown}: ConnectionManagerProps,
   ref: React.Ref<any>)
 {
   const [mqttClient, setMqttClient] = useState<MqttClient | null>(null);
@@ -83,20 +86,27 @@ function ConnectionManager({
         onLobbyData(new Set(data))
         break;
       case `${Topic.StartPrepare}/${usernameRef.current}`:
-        onStartPrepare(data);
-        break;
-      case Topic.UpdateGlobalDial:
-        onUpdateGlobalDial(data);
+        onPrepareStart(data);
         break;
       case Topic.PrepareFinished:
         onPrepareFinished(data)
         break;
+      case Topic.UpdateGlobalDial:
+        onUpdateGlobalDial(data);
+        break;
       case Topic.StartPlayRound:
-        onStartPlay(data);
+        onPlayStart(data);
         break;
       case Topic.PlayRoundFinished:
         onPlayRoundFinished(data);
         break;
+      case Topic.ShowPlayRoundSolution:
+        setRoundSolutionIsShown(true);
+        break;
+      case Topic.StartResult:
+        onStartResult();
+        break;
+
       default:
         console.log("error: unknown topic!");
         console.log(topic);
@@ -229,12 +239,16 @@ function ConnectionManager({
           (player) => player.playRoundFinished
         );
         if (allPlayersPlayRoundFinished) {
+          showPlayRoundSolution();
+
+          // console.log("currentPlayRound: ", currentPlayRound);
+          // console.log("max: ", roundsCount);
           // const playFinished: boolean = currentPlayRound >= roundsCount;
           // if (playFinished) {
           //   showResults();
           // }
           // else {
-            startPlayRound(aSpectrumCards);
+            setTimeout(() => {startPlayRound(aSpectrumCards)}, solutionDuration);
           // }
         }
 
@@ -247,7 +261,7 @@ function ConnectionManager({
   
   // host
   function showResults() {
-
+    mqttHelperRef.current.publish(Topic.StartResult)
   }
   
   function broadcast(aMessage: string) {
@@ -267,7 +281,7 @@ function ConnectionManager({
   }
 
 
-  function onStartPrepare(spectrumCards: SpectrumCard[]) {
+  function onPrepareStart(spectrumCards: SpectrumCard[]) {
     setPrepareSpectrumCards([...spectrumCards])
     setPage(Page.Game);
   }
@@ -277,7 +291,7 @@ function ConnectionManager({
   }
 
   
-  function onStartPlay({ aPlaySpectrumCard, aCurrentRound, aRoundsCount }) {
+  function onPlayStart({ aPlaySpectrumCard, aCurrentRound, aRoundsCount }) {
     setPlaySpectrumCard(aPlaySpectrumCard);
     setCurrentPlayRound(aCurrentRound);
     setRoundsCount(aRoundsCount);
@@ -301,6 +315,14 @@ function ConnectionManager({
     });
   }
 
+  function showPlayRoundSolution() {
+    mqttHelperRef.current.publish(Topic.ShowPlayRoundSolution);
+  }
+
+  function onStartResult() {
+    setGameState(GameState.Finish);
+  }
+
 
 
   function subscribeGuest() {
@@ -309,6 +331,8 @@ function ConnectionManager({
     mqttHelperRef.current.subscribe(`${Topic.StartPrepare}/${usernameRef.current}`);
     mqttHelperRef.current.subscribe(Topic.StartPlayRound);
     mqttHelperRef.current.subscribe(Topic.UpdateGlobalDial);
+    mqttHelperRef.current.subscribe(Topic.ShowPlayRoundSolution);
+    mqttHelperRef.current.subscribe(Topic.StartResult);
   }
 
   // Expose methods through ref forwarding

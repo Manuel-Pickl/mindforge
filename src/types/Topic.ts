@@ -1,10 +1,17 @@
 export enum Topic {
+    // host <-> guest
     Broadcast = "Broadcast",
-    Join = "Join",
+    
+    // host -> guest
     LobbyData = "LobbyData",
     StartPrepare = "StartPrepare",
-    PrepareFinished = "PrepareFinished",
     StartPlayRound = "StartPlayRound",
-    UpdateGlobalDial = "UpdateGlobalDial",
     PlayRoundFinished = "PlayRoundFinished",
+    ShowPlayRoundSolution = "ShowPlayRoundSolution",
+    StartResult = "StartResult",
+    
+    // guest -> host
+    Join = "Join",
+    PrepareFinished = "PrepareFinished",
+    UpdateGlobalDial = "UpdateGlobalDial",
 }

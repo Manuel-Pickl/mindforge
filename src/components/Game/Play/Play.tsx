@@ -1,15 +1,18 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { SpectrumCard } from "../../../types/SpectrumCard";
+import { solutionDuration, splashscreenDuration } from "../../../services/Settings";
 
 interface PlayProps
 {
     sendPlayRoundFinished: (aValue: boolean) => void;
     dial: number;
-    setDial: React.Dispatch<React.SetStateAction<number>>;
+    setDial: Dispatch<SetStateAction<number>>;
     playSpectrumCard: SpectrumCard | null;
     updateGlobalDial: (aValue: number) => void;
     currentPlayRound: number;
     roundsCount: number;
+    roundSolutionIsShown: boolean;
+    setRoundSolutionIsShown: Dispatch<SetStateAction<boolean>>;
 }
 
 function Play ({
@@ -19,19 +22,22 @@ function Play ({
     playSpectrumCard,
     updateGlobalDial,
     currentPlayRound,
-    roundsCount}: PlayProps)
+    roundsCount,
+    roundSolutionIsShown,
+    setRoundSolutionIsShown}: PlayProps)
 {
-    const [solutionIsShown, setSolutionIsShown] = useState<boolean>(false);
     const [readyButtonDisabled, setReadyButtonDisabled] = useState<boolean>(false);
     const [splashscreenVisible, setSplashscreenVisible] = useState<boolean>(true)
 
     useEffect(() => {
-        setReadyButtonDisabled(false);
-        setSplashscreenVisible(true);
+        setTimeout(() => {setRoundSolutionIsShown(false)}, solutionDuration);
+    }, [roundSolutionIsShown]);
 
-        setTimeout(() => {
-            setSplashscreenVisible(false);
-        }, 3000);
+    useEffect(() => {
+        setReadyButtonDisabled(false);
+        
+        setSplashscreenVisible(true);
+        setTimeout(() => { setSplashscreenVisible(false) }, splashscreenDuration);
     }, [playSpectrumCard]);
 
     useEffect(() => {
@@ -40,6 +46,10 @@ function Play ({
     }, [dial]);
 
     function onDialChange(event: React.ChangeEvent<HTMLInputElement>) {
+        if (roundSolutionIsShown) {
+            return;
+        }
+
         const newDial = parseFloat(event.target.value);
 
         setDial(newDial);
@@ -47,13 +57,12 @@ function Play ({
     }
 
     function onFinishedClick() {
-        sendPlayRoundFinished(true);
         setReadyButtonDisabled(true);
+        sendPlayRoundFinished(true);
     }
 
-    function showSolution() {
-        
-    }
+    // function showSolution() {
+    // }
 
     // Expose methods through ref forwarding
     // useImperativeHandle(ref, () => ({
@@ -72,7 +81,7 @@ function Play ({
                 <h2>Spektrum Karte von {playSpectrumCard?.owner}</h2>
                 <h2>Hinweis: {playSpectrumCard?.clue}</h2>
                 
-                {solutionIsShown ??
+                {roundSolutionIsShown &&
                 <div>
                     <span style={{ color: 'white' }}>
                         {playSpectrumCard?.scale[0]}

@@ -23,8 +23,9 @@ function App() {
   const [playSpectrumCard, setPlaySpectrumCard] = useState<SpectrumCard | null>(null);
   const [currentPlayRound, setCurrentPlayRound] = useState<number>(0);
   const [roundsCount, setRoundsCount] = useState<number>(-1);
-  const connectionManagerRef = useRef<any>();
+  const [roundSolutionIsShown, setRoundSolutionIsShown] = useState<boolean>(false);
   
+  const connectionManagerRef = useRef<any>();
   useEffect(() => {
     const randomNumber = Math.floor(Math.random() * 100).toString();
     usernameRef.current = randomNumber;
@@ -69,6 +70,8 @@ function App() {
           playSpectrumCard={playSpectrumCard}
           currentPlayRound={currentPlayRound}
           roundsCount={roundsCount}
+          roundSolutionIsShown={roundSolutionIsShown}
+          setRoundSolutionIsShown={setRoundSolutionIsShown}
         />
       )}
 
@@ -90,6 +93,7 @@ function App() {
         roundsCount={roundsCount}
         setRoundsCount={setRoundsCount}
         setPlaySpectrumCard={setPlaySpectrumCard}
+        setRoundSolutionIsShown={setRoundSolutionIsShown}
       />
     </>
   );
