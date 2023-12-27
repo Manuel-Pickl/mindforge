@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
+import App, { AppProvider } from './App.tsx'
 import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { GameProvider } from './components/Game/Game.tsx'
@@ -9,6 +9,7 @@ import { ResultProvider } from './components/Game/Result/Result.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
+        <AppProvider>
         <GameProvider>
         <PrepareProvider>
         <PlayProvider>
@@ -18,5 +19,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </PlayProvider>
         </PrepareProvider>
         </GameProvider>
+        </AppProvider>
     </BrowserRouter>
 )

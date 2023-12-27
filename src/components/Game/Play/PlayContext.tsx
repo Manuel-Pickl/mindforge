@@ -6,8 +6,8 @@ export const PlayContext = createContext<{
     setCurrentPlayRound: Dispatch<SetStateAction<number>>;
     roundsCount : number;
     setRoundsCount: Dispatch<SetStateAction<number>>;
-    playSpectrumCard: SpectrumCard;
-    setPlaySpectrumCard: Dispatch<SetStateAction<SpectrumCard>>;
+    playSpectrumCard: SpectrumCard | null;
+    setPlaySpectrumCard: Dispatch<SetStateAction<SpectrumCard | null>>;
     dial: number;
     setDial: Dispatch<SetStateAction<number>>;
     solutionVisible: boolean;

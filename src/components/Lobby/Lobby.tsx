@@ -1,21 +1,17 @@
-import { MutableRefObject, forwardRef, useImperativeHandle, useState } from "react";
-import { Player } from "../../types/Player";
+import { MutableRefObject  } from "react";
+import { useAppContext } from "../../AppContext";
 
 interface LobbyProps
 {
-    players: Set<Player>;
     connectionManagerRef: MutableRefObject<any>;
 }
 
-function Lobby ({
-    players,
-    connectionManagerRef }: LobbyProps, ref: React.Ref<any>)
+function Lobby ({connectionManagerRef }: LobbyProps)
 {
-    const [isHost, setIsHost] = useState<boolean>(true);
-
-    useImperativeHandle(ref, () => ({
-        setIsHost,
-    }));
+    const {
+        players,
+        isHost,
+    } = useAppContext();
     
     return (
         <div>
@@ -33,4 +29,4 @@ function Lobby ({
     );
 }
 
-export default forwardRef(Lobby);
+export default Lobby;

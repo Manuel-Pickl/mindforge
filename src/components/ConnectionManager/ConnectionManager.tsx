@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Topic } from '../../types/Topic';
 import mqtt, { MqttClient } from 'mqtt';
 import { Page } from '../../types/Page';
@@ -14,29 +14,29 @@ import { useGameContext } from '../Game/GameContext';
 import { usePlayContext } from '../Game/Play/PlayContext';
 import { usePrepareContext } from '../Game/Prepare/PrepareContext';
 import { useResultContext } from '../Game/Result/ResultContext';
+import { useAppContext } from '../../AppContext';
 
 interface ConnectionManagerProps {
-  setPage: Dispatch<SetStateAction<Page>>;
-  setPlayers: Dispatch<SetStateAction<Set<Player>>>;
-  setUsername: Dispatch<SetStateAction<string>>;
-  spectrumCards: SpectrumCard[];
-  setSpectrumCards: Dispatch<SetStateAction<SpectrumCard[]>>;
 }
 
-function ConnectionManager({
-  setPage,
-  setPlayers,
-  setUsername,
-  // spectrumCards,
-  setSpectrumCards }: ConnectionManagerProps, ref: React.Ref<any>)
+function ConnectionManager({}: ConnectionManagerProps, ref: React.Ref<any>)
 {
   const [mqttClient, setMqttClient] = useState<MqttClient | null>(null);
   const mqttHelperRef = useRef<any>();
   let connectionLostTime: number | null = null;
 
   const {
+    setPage,
+    setUsername,
+    setPlayers,
+    setIsHost,
+    /*spectrumCards, */setSpectrumCards,
+  } = useAppContext();
+
+  const {
     setGameState
   } = useGameContext();
+
   const {
     /*currentPlayRound, */setCurrentPlayRound,
     /*playSpectrumCard, */setPlaySpectrumCard,
@@ -44,9 +44,11 @@ function ConnectionManager({
     dial, setDial,
     showSolution,
   } = usePlayContext();
+  
   const {
     setPrepareSpectrumCards,
   } = usePrepareContext();
+  
   const {
     setResult,
   } = useResultContext();
@@ -130,7 +132,7 @@ function ConnectionManager({
   function createRoom() {
     mqttHelperRef.current.subscribe(Topic.Join);
     
-    // lobbyRef.current.setIsHost(true);
+    setIsHost(true);
     joinRoom("");
   }
   
@@ -228,6 +230,7 @@ function ConnectionManager({
   }
 
   // host
+  // ToDo: create type for sub/pub params
   // @ts-ignore
   function onPlayRoundFinished({ aUsername, aPlayRoundFinished }) {
     setSpectrumCards(aSpectrumCards => {

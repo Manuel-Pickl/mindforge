@@ -1,16 +1,20 @@
-import { Dispatch, MutableRefObject, SetStateAction, useState } from "react";
+import { MutableRefObject, useState } from "react";
+import { useAppContext } from "../../AppContext";
 
 interface HomeProps
 {
-    username: string;
-    setUsername: Dispatch<SetStateAction<string>>;
     connectionManagerRef: MutableRefObject<any>;
 }
 
-function Home ({ username, setUsername, connectionManagerRef }: HomeProps)
+function Home ({ connectionManagerRef }: HomeProps)
 {
     const [roomId, setRoomId] = useState<string>("");
     
+    const {
+        username,
+        setUsername,
+    } = useAppContext();
+
     return (
         <>
             <input
