@@ -8,7 +8,7 @@ import { GameState } from '../../types/GameState';
 import { SpectrumCard } from '../../types/SpectrumCard';
 import { getInitialSpectrumCards } from '../../services/SpectrumCardManager';
 import { solutionDuration } from '../../services/Settings';
-import { getResult } from '../../services/ResultManager';
+import { getMaxPoints, getPoints } from '../../services/ResultManager';
 import { useGameContext } from '../Game/GameContext';
 import { usePlayContext } from '../Game/Play/PlayContext';
 import { usePrepareContext } from '../Game/Prepare/PrepareContext';
@@ -135,7 +135,7 @@ function ConnectionManager()
     /*currentPlayRound, */setCurrentPlayRound,
     /*playSpectrumCard, */setPlaySpectrumCard,
     /*roundsCount, */setRoundsCount,
-    dial, setDial,
+    /*dial, */setDial,
     showSolution,
   } = usePlayContext();
   
@@ -144,7 +144,8 @@ function ConnectionManager()
   } = usePrepareContext();
   
   const {
-    setResult,
+    setPoints,
+    setMaxPoints,
   } = useResultContext();
 
   useEffect(() => {
@@ -310,6 +311,7 @@ function ConnectionManager()
     setCurrentPlayRound(aCurrentPlayRound => {
     setRoundsCount(aRoundsCount => {
     setPlaySpectrumCard(aPlaySpectrumCard => {
+    setDial(aDial => {
 
     setPlayers(aPlayers => {
       const updatedPlayers = new Set<Player>(
@@ -330,7 +332,7 @@ function ConnectionManager()
         if (!currentSpectrumCard) {
           return aPlayers;
         }
-        currentSpectrumCard.estimatedDial = dial;
+        currentSpectrumCard.estimatedDial = aDial;
 
         showPlayRoundSolution();
 
@@ -349,15 +351,18 @@ function ConnectionManager()
       return updatedPlayers;
     });
 
-    return aPlaySpectrumCard}); return aRoundsCount}); return aCurrentPlayRound}); return aSpectrumCards});
+    return aDial}); return aPlaySpectrumCard}); return aRoundsCount}); return aCurrentPlayRound}); return [...aSpectrumCards]});
   }
   
   // host
   function showResult() {
     setSpectrumCards(spectrumCards => {
 
-    const result: number = getResult(spectrumCards);
-    mqttHelperRef.current.publish(Topic.StartResult, result)
+    const points: number = getPoints(spectrumCards);
+    mqttHelperRef.current.publish(Topic.StartResult, {
+      aPoints: points,
+      aMaxPoints: getMaxPoints(spectrumCards),
+    });
 
     return spectrumCards});
   }
@@ -400,8 +405,10 @@ function ConnectionManager()
     mqttHelperRef.current.publish(Topic.ShowPlayRoundSolution);
   }
 
-  function onStartResult(aResult: number) {
-    setResult(aResult);
+  // @ts-ignore
+  function onStartResult({ aPoints, aMaxPoints }) {
+    setPoints(aPoints);
+    setMaxPoints(aMaxPoints);
     setGameState(GameState.Finish);
   }
   

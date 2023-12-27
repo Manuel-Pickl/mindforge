@@ -1,8 +1,10 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
 
 export const ResultContext = createContext<{
-    result: number;
-    setResult: Dispatch<SetStateAction<number>>;
+    points: number;
+    setPoints: Dispatch<SetStateAction<number>>;
+    maxPoints: number;
+    setMaxPoints: Dispatch<SetStateAction<number>>;
 } | undefined>(undefined);
 
 export const useResultContext = () => {

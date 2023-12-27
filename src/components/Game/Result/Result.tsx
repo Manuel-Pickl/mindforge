@@ -4,15 +4,17 @@ import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionM
 import { useAppContext } from "../../../AppContext";
 
 export const ResultProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [result, setResult] = useState<number>(0);
+    const [points, setPoints] = useState<number>(0);
+    const [maxPoints, setMaxPoints] = useState<number>(0);
   
-    return (<ResultContext.Provider value={{ result, setResult }}>{children}</ResultContext.Provider>);
+    return (<ResultContext.Provider value={{ points, setPoints, maxPoints, setMaxPoints }}>{children}</ResultContext.Provider>);
 };
 
 function Result ()
 {
     const {
-        result,
+        points,
+        maxPoints,
     } = useResultContext();
 
     const {
@@ -25,7 +27,7 @@ function Result ()
 
     return (
         <div>
-            points: {result}
+            points: {points} / {maxPoints}
             
             <br/>
             
