@@ -1,6 +1,7 @@
 import { ReactNode, useState } from "react";
 import { SpectrumCard } from "../../../types/SpectrumCard";
 import { PrepareContext, usePrepareContext } from "./PrepareContext";
+import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 
 export const PrepareProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [prepareSpectrumCards, setPrepareSpectrumCards] = useState<SpectrumCard[]>([]);
@@ -8,19 +9,19 @@ export const PrepareProvider: React.FC<{ children: ReactNode }> = ({ children })
     return (<PrepareContext.Provider value={{ prepareSpectrumCards, setPrepareSpectrumCards }}>{children}</PrepareContext.Provider>);
 };
 
-interface PrepareProps
-{
-    sendPrepareFinished: (prepareSpectrumCards: SpectrumCard[]) => void;
-}
-
-function Prepare ({
-    sendPrepareFinished }: PrepareProps)
+function Prepare ()
 {
     const [clue, setClue] = useState<string>("");
     const [prepareFinished, setPrepareFinished] = useState<boolean>(false);
     const [currentSpectrumCardIndex, setCurrentSpectrumCardIndex] = useState<number>(0);
     
-    const { prepareSpectrumCards, setPrepareSpectrumCards } = usePrepareContext();
+    const {
+        prepareSpectrumCards, setPrepareSpectrumCards
+    } = usePrepareContext();
+
+    const {
+        sendPrepareFinished
+    } = useConnectionManagerContext();
 
     function showNextSpectrumCard() {
         prepareSpectrumCards[currentSpectrumCardIndex].clue = clue;
@@ -40,7 +41,7 @@ function Prepare ({
     if (prepareSpectrumCards.length == 0) {
         return;
     }
-    
+
     return (
         <div>
             <h1>Hinweise aufschreiben</h1>

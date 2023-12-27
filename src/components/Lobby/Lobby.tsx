@@ -1,18 +1,17 @@
-import { MutableRefObject  } from "react";
 import { useAppContext } from "../../AppContext";
+import { useConnectionManagerContext } from "../ConnectionManager/ConnectionManagerContext";
 
-interface LobbyProps
-{
-    connectionManagerRef: MutableRefObject<any>;
-}
-
-function Lobby ({connectionManagerRef }: LobbyProps)
+function Lobby ()
 {
     const {
         players,
         isHost,
     } = useAppContext();
     
+    const {
+        startPrepare,
+    } = useConnectionManagerContext();
+
     return (
         <div>
             {players.size} players: {Array.from(players).map((player) => player.username).join(", ")}
@@ -21,7 +20,7 @@ function Lobby ({connectionManagerRef }: LobbyProps)
 
             {isHost && players.size >= 2 ? (
                 <button
-                onClick={connectionManagerRef.current.startPrepare}>
+                onClick={startPrepare}>
                 Start Game
                 </button>
             ) : null}

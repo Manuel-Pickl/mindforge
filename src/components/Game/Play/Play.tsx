@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { SpectrumCard } from "../../../types/SpectrumCard";
 import { solutionDuration, splashscreenDuration } from "../../../services/Settings";
 import { PlayContext, usePlayContext } from "./PlayContext";
+import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 
 export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currentPlayRound, setCurrentPlayRound] = useState<number>(0);
@@ -18,15 +19,7 @@ export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return (<PlayContext.Provider value={{ currentPlayRound, setCurrentPlayRound, roundsCount, setRoundsCount, playSpectrumCard, setPlaySpectrumCard, dial, setDial, solutionVisible, setSolutionVisible, showSolution }}>{children}</PlayContext.Provider>);
 };
 
-interface PlayProps
-{
-    sendPlayRoundFinished: (aValue: boolean) => void;
-    updateGlobalDial: (aValue: number) => void;
-}
-
-function Play ({
-    sendPlayRoundFinished,
-    updateGlobalDial }: PlayProps)
+function Play()
 {
     const [readyButtonDisabled, setReadyButtonDisabled] = useState<boolean>(false);
     const [splashscreenVisible, setSplashscreenVisible] = useState<boolean>(true)
@@ -38,6 +31,11 @@ function Play ({
         dial, setDial,
     } = usePlayContext();
     
+    const {
+        sendPlayRoundFinished,
+        updateGlobalDial,
+    } = useConnectionManagerContext();
+
     useEffect(() => {
         setReadyButtonDisabled(false);
         

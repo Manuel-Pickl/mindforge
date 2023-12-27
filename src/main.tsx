@@ -6,10 +6,12 @@ import { GameProvider } from './components/Game/Game.tsx'
 import { PlayProvider } from './components/Game/Play/Play.tsx'
 import { PrepareProvider } from './components/Game/Prepare/Prepare.tsx'
 import { ResultProvider } from './components/Game/Result/Result.tsx'
+import { ConnectionManagerProvider } from './components/ConnectionManager/ConnectionManager.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
         <AppProvider>
+        <ConnectionManagerProvider>
         <GameProvider>
         <PrepareProvider>
         <PlayProvider>
@@ -19,6 +21,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </PlayProvider>
         </PrepareProvider>
         </GameProvider>
+        </ConnectionManagerProvider>
         </AppProvider>
     </BrowserRouter>
 )

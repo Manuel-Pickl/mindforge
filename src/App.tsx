@@ -1,5 +1,5 @@
 // App.tsx
-import { ReactNode, useRef, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import Home from './components/Home/Home';
 import { Page } from './types/Page';
 import Lobby from './components/Lobby/Lobby';
@@ -9,6 +9,7 @@ import { Player } from './types/Player';
 import { SpectrumCard } from './types/SpectrumCard';
 import { useLocation } from 'react-router-dom';
 import { AppContext, useAppContext } from './AppContext';
+import Offline from './components/Offline/Offline';
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {  
   const { search } = useLocation();
@@ -24,8 +25,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 };
 
 function App() {
-  const connectionManagerRef = useRef<any>();
-
   const {
     page,
   } = useAppContext();
@@ -33,34 +32,22 @@ function App() {
   return (
     <>
       {page == Page.Offline && (
-        <>
-          Offline
-        </>
+        <Offline />
       )}
 
       {page == Page.Home && (
-        <Home 
-          connectionManagerRef={connectionManagerRef}
-        />
+        <Home />
       )}
     
       {page == Page.Lobby && (
-        <Lobby 
-          connectionManagerRef={connectionManagerRef}
-        />
+        <Lobby />
       )}
 
       {page == Page.Game && (
-        <Game
-          sendPlayRoundFinished={connectionManagerRef.current?.sendPlayRoundFinished}
-          sendPrepareFinished={connectionManagerRef.current?.sendPrepareFinished}
-          updateGlobalDial={connectionManagerRef.current?.updateGlobalDial}
-        />
+        <Game />
       )}
 
-      <ConnectionManager
-        ref={connectionManagerRef}
-      />
+      <ConnectionManager />
     </>
   );
 };

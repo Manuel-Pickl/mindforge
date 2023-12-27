@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Topic } from '../../types/Topic';
 import mqtt, { MqttClient } from 'mqtt';
 import { Page } from '../../types/Page';
@@ -15,15 +15,10 @@ import { usePlayContext } from '../Game/Play/PlayContext';
 import { usePrepareContext } from '../Game/Prepare/PrepareContext';
 import { useResultContext } from '../Game/Result/ResultContext';
 import { useAppContext } from '../../AppContext';
+import { ConnectionManagerContext, useConnectionManagerContext } from './ConnectionManagerContext';
 
-interface ConnectionManagerProps {
-}
-
-function ConnectionManager({}: ConnectionManagerProps, ref: React.Ref<any>)
-{
-  const [mqttClient, setMqttClient] = useState<MqttClient | null>(null);
+export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const mqttHelperRef = useRef<any>();
-  let connectionLostTime: number | null = null;
 
   const {
     setPage,
@@ -32,6 +27,96 @@ function ConnectionManager({}: ConnectionManagerProps, ref: React.Ref<any>)
     setIsHost,
     /*spectrumCards, */setSpectrumCards,
   } = useAppContext();
+
+  // host
+  function createRoom() {
+    mqttHelperRef.current.subscribe(Topic.Join);
+    
+    setIsHost(true);
+    joinRoom("");
+  }
+
+  // host
+  function startPrepare() {
+    setPlayers(players => {
+
+    const initialSpectrumCards: SpectrumCard[] = getInitialSpectrumCards(players);
+    players.forEach(player => {
+      const spectrumCardsForPlayer: SpectrumCard[] = initialSpectrumCards
+        .filter(x => x.owner == player.username);
+      mqttHelperRef.current.publish(`${Topic.StartPrepare}/${player.username}`, spectrumCardsForPlayer);
+    });
+
+    mqttHelperRef.current.subscribe(Topic.PrepareFinished);
+
+    return players});
+  }
+
+  function joinRoom(_roomId: string) {
+    setUsername(username => {
+      
+    mqttHelperRef.current.publish(Topic.Join, username);
+    subscribeGuest();
+    setPage(Page.Lobby);
+
+    return username});
+  }
+
+  function updateGlobalDial(aValue: number) {
+    setUsername(username => {
+      
+    mqttHelperRef.current.publish(Topic.UpdateGlobalDial, {
+      aValue: aValue,
+      aUsername: username
+    });
+
+    return username});
+  }
+
+  function sendPrepareFinished(aPrepareSpectrumCards: SpectrumCard[]) {
+    mqttHelperRef.current.publish(Topic.PrepareFinished, aPrepareSpectrumCards);
+  }
+
+  function sendPlayRoundFinished(aValue: boolean) {
+    setUsername(username => {
+
+    mqttHelperRef.current.publish(Topic.PlayRoundFinished, {
+      aUsername: username,
+      aPlayRoundFinished: aValue
+    });
+
+    return username});
+  }
+
+  function subscribeGuest() {
+    setUsername(username => {
+
+    mqttHelperRef.current.subscribe(Topic.LobbyData);
+    mqttHelperRef.current.subscribe(`${Topic.StartPrepare}/${username}`);
+    mqttHelperRef.current.subscribe(Topic.StartPlayRound);
+    mqttHelperRef.current.subscribe(Topic.UpdateGlobalDial);
+    mqttHelperRef.current.subscribe(Topic.ShowPlayRoundSolution);
+    mqttHelperRef.current.subscribe(Topic.StartResult);
+
+    return username});
+  }
+
+  return (<ConnectionManagerContext.Provider value={{ mqttHelperRef, setPage, setUsername, setPlayers, setIsHost, setSpectrumCards, createRoom, startPrepare, joinRoom, updateGlobalDial, sendPrepareFinished, sendPlayRoundFinished }}>{children}</ConnectionManagerContext.Provider>);
+};
+
+function ConnectionManager()
+{
+  const [mqttClient, setMqttClient] = useState<MqttClient | null>(null);
+  let connectionLostTime: number | null = null;
+
+  const {
+    mqttHelperRef,
+    setPage,
+    setUsername,
+    setPlayers,
+    setSpectrumCards,
+    updateGlobalDial,
+  } = useConnectionManagerContext();
 
   const {
     setGameState
@@ -128,13 +213,7 @@ function ConnectionManager({}: ConnectionManagerProps, ref: React.Ref<any>)
     setPage(Page.Home);
   }
 
-  // host
-  function createRoom() {
-    mqttHelperRef.current.subscribe(Topic.Join);
-    
-    setIsHost(true);
-    joinRoom("");
-  }
+  
   
   // host
   function onJoin(aUsername: string) {
@@ -146,21 +225,7 @@ function ConnectionManager({}: ConnectionManagerProps, ref: React.Ref<any>)
     return players });
   }
 
-  // host
-  function startPrepare() {
-    setPlayers(players => {
-
-    const initialSpectrumCards: SpectrumCard[] = getInitialSpectrumCards(players);
-    players.forEach(player => {
-      const spectrumCardsForPlayer: SpectrumCard[] = initialSpectrumCards
-        .filter(x => x.owner == player.username);
-      mqttHelperRef.current.publish(`${Topic.StartPrepare}/${player.username}`, spectrumCardsForPlayer);
-    });
-
-    mqttHelperRef.current.subscribe(Topic.PrepareFinished);
-
-    return players});
-  }
+  
 
   // host
   function onPrepareFinished(aPrepareSpectrumCards: SpectrumCard[]) {
@@ -291,15 +356,7 @@ function ConnectionManager({}: ConnectionManagerProps, ref: React.Ref<any>)
   
 
 
-  function joinRoom(_roomId: string) {
-    setUsername(username => {
-      
-    mqttHelperRef.current.publish(Topic.Join, username);
-    subscribeGuest();
-    setPage(Page.Lobby);
-
-    return username});
-  };
+  
   
   function onLobbyData(aPlayers: Set<Player>) {
     const updatedPlayers = new Set(aPlayers);
@@ -312,9 +369,7 @@ function ConnectionManager({}: ConnectionManagerProps, ref: React.Ref<any>)
     setPage(Page.Game);
   }
   
-  function sendPrepareFinished(aPrepareSpectrumCards: SpectrumCard[]) {
-    mqttHelperRef.current.publish(Topic.PrepareFinished, aPrepareSpectrumCards);
-  }
+  
 
   // @ts-ignore
   function onPlayStart({ aPlaySpectrumCard, aCurrentRound, aRoundsCount }) {
@@ -324,16 +379,7 @@ function ConnectionManager({}: ConnectionManagerProps, ref: React.Ref<any>)
     setGameState(GameState.Play);
   }
 
-  function updateGlobalDial(aValue: number) {
-    setUsername(username => {
-      
-    mqttHelperRef.current.publish(Topic.UpdateGlobalDial, {
-      aValue: aValue,
-      aUsername: username
-    });
-
-    return username});
-  }
+  
   
   // @ts-ignore
   function onUpdateGlobalDial({ aValue, aUsername }) {
@@ -349,16 +395,7 @@ function ConnectionManager({}: ConnectionManagerProps, ref: React.Ref<any>)
     return username});
   }
 
-  function sendPlayRoundFinished(aValue: boolean) {
-    setUsername(username => {
-
-    mqttHelperRef.current.publish(Topic.PlayRoundFinished, {
-      aUsername: username,
-      aPlayRoundFinished: aValue
-    });
-
-    return username});
-  }
+  
 
   function showPlayRoundSolution() {
     mqttHelperRef.current.publish(Topic.ShowPlayRoundSolution);
@@ -371,27 +408,7 @@ function ConnectionManager({}: ConnectionManagerProps, ref: React.Ref<any>)
 
 
 
-  function subscribeGuest() {
-    setUsername(username => {
-
-    mqttHelperRef.current.subscribe(Topic.LobbyData);
-    mqttHelperRef.current.subscribe(`${Topic.StartPrepare}/${username}`);
-    mqttHelperRef.current.subscribe(Topic.StartPlayRound);
-    mqttHelperRef.current.subscribe(Topic.UpdateGlobalDial);
-    mqttHelperRef.current.subscribe(Topic.ShowPlayRoundSolution);
-    mqttHelperRef.current.subscribe(Topic.StartResult);
-
-    return username});
-  }
-
-  useImperativeHandle(ref, () => ({
-    createRoom,
-    joinRoom,
-    startPrepare,
-    updateGlobalDial,
-    sendPrepareFinished,
-    sendPlayRoundFinished,
-  }));
+  
   
   return (
     <div>
@@ -403,4 +420,4 @@ function ConnectionManager({}: ConnectionManagerProps, ref: React.Ref<any>)
   );
 }
 
-export default forwardRef(ConnectionManager);
+export default ConnectionManager;

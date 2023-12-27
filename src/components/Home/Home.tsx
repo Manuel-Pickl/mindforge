@@ -1,12 +1,8 @@
-import { MutableRefObject, useState } from "react";
+import { useState } from "react";
 import { useAppContext } from "../../AppContext";
+import { useConnectionManagerContext } from "../ConnectionManager/ConnectionManagerContext";
 
-interface HomeProps
-{
-    connectionManagerRef: MutableRefObject<any>;
-}
-
-function Home ({ connectionManagerRef }: HomeProps)
+function Home ()
 {
     const [roomId, setRoomId] = useState<string>("");
     
@@ -14,6 +10,11 @@ function Home ({ connectionManagerRef }: HomeProps)
         username,
         setUsername,
     } = useAppContext();
+
+    const {
+        createRoom,
+        joinRoom,
+    } = useConnectionManagerContext();
 
     return (
         <>
@@ -29,8 +30,8 @@ function Home ({ connectionManagerRef }: HomeProps)
                 value={roomId}
                 onChange={(e) => setRoomId(e.target.value)}
                 />
-            <button onClick={connectionManagerRef.current.createRoom}>Create Room</button>
-            <button onClick={() => connectionManagerRef.current?.joinRoom(roomId)}>Join Room</button>
+            <button onClick={createRoom}>Create Room</button>
+            <button onClick={() => joinRoom(roomId)}>Join Room</button>
         </>
     );
 }
