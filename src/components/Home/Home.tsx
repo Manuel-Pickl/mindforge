@@ -1,45 +1,32 @@
-import { useAppContext } from "../../AppContext";
-import { roomIdLength, usernameMaxLength } from "../../services/Settings";
-import { useConnectionManagerContext } from "../ConnectionManager/ConnectionManagerContext";
+import { useState } from "react";
+import { HomeTab } from "../../services/HomeTab";
+import Create from "./Create/Create";
+import Join from "./Join/Join";
 
 function Home ()
 {
-    const {
-        username, setUsername,
-        room, setRoom,
-    } = useAppContext();
-
-    const {
-        createRoom,
-        joinRoom,
-    } = useConnectionManagerContext();
-
-    function onRoomInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const inputRoom = e.target.value;
-        const uppercaseRoom = inputRoom.toUpperCase();
-        const checkedRoom = uppercaseRoom.replace(/[^a-zA-Z]/g, '');
-    
-        setRoom(checkedRoom);
-    }
+    const [homeTab, setHomeTab] = useState<HomeTab>(HomeTab.Create);
 
     return (
         <>
-            <input
-                type="text"
-                placeholder="user name"
-                maxLength={usernameMaxLength}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                />
-            <input
-                type="text"
-                placeholder="Room ID (only for joining)"
-                maxLength={roomIdLength}
-                value={room}
-                onChange={onRoomInputChange}
-                />
-            <button onClick={createRoom}>Create Room</button>
-            <button onClick={() => joinRoom(room)}>Join Room</button>
+            <button
+                onClick={() => setHomeTab(HomeTab.Create)}
+            >
+                Erstellen
+            </button>
+            <button
+                onClick={() => setHomeTab(HomeTab.Join)}
+            >
+                Beitreten
+            </button>
+
+            {homeTab == HomeTab.Create &&
+                <Create />
+            }
+
+            {homeTab == HomeTab.Join &&
+                <Join />
+            }
         </>
     );
 }
