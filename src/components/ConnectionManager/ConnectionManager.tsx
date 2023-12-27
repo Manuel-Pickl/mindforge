@@ -3,7 +3,6 @@ import { Topic } from '../../types/Topic';
 import mqtt, { MqttClient } from 'mqtt';
 import { Page } from '../../types/Page';
 import { debugLog } from '../../services/Logger';
-import MqttHelper from '../MqttHelper';
 import { Player } from '../../types/Player';
 import { GameState } from '../../types/GameState';
 import { SpectrumCard } from '../../types/SpectrumCard';
@@ -16,6 +15,7 @@ import { usePrepareContext } from '../Game/Prepare/PrepareContext';
 import { useResultContext } from '../Game/Result/ResultContext';
 import { useAppContext } from '../../AppContext';
 import { ConnectionManagerContext, useConnectionManagerContext } from './ConnectionManagerContext';
+import MqttHelper from './MqttHelper/MqttHelper';
 
 export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const mqttHelperRef = useRef<any>();
@@ -52,6 +52,8 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     return players});
   }
 
+
+  
   function joinRoom(_roomId: string) {
     setUsername(username => {
       
@@ -213,8 +215,8 @@ function ConnectionManager()
     setPage(Page.Home);
   }
 
-  
-  
+
+
   // host
   function onJoin(aUsername: string) {
     setPlayers(players => {
@@ -224,8 +226,6 @@ function ConnectionManager()
     
     return players });
   }
-
-  
 
   // host
   function onPrepareFinished(aPrepareSpectrumCards: SpectrumCard[]) {
@@ -279,6 +279,7 @@ function ConnectionManager()
       });
   
       updateGlobalDial(50);
+      setDial(50);
 
       const currentSpectrumCardIndex = aCurrentPlayRound;
       const playSpectrumCard: SpectrumCard = aSpectrumCards[currentSpectrumCardIndex];
@@ -356,21 +357,16 @@ function ConnectionManager()
   
 
 
-  
-  
   function onLobbyData(aPlayers: Set<Player>) {
     const updatedPlayers = new Set(aPlayers);
     setPlayers(updatedPlayers);
   }
-
 
   function onPrepareStart(spectrumCards: SpectrumCard[]) {
     setPrepareSpectrumCards([...spectrumCards])
     setPage(Page.Game);
   }
   
-  
-
   // @ts-ignore
   function onPlayStart({ aPlaySpectrumCard, aCurrentRound, aRoundsCount }) {
     setPlaySpectrumCard(aPlaySpectrumCard);
@@ -379,8 +375,6 @@ function ConnectionManager()
     setGameState(GameState.Play);
   }
 
-  
-  
   // @ts-ignore
   function onUpdateGlobalDial({ aValue, aUsername }) {
     setUsername(username => {
@@ -395,8 +389,6 @@ function ConnectionManager()
     return username});
   }
 
-  
-
   function showPlayRoundSolution() {
     mqttHelperRef.current.publish(Topic.ShowPlayRoundSolution);
   }
@@ -405,10 +397,6 @@ function ConnectionManager()
     setResult(aResult);
     setGameState(GameState.Finish);
   }
-
-
-
-  
   
   return (
     <div>
