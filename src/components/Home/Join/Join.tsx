@@ -30,6 +30,7 @@ function Join()
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 />
+            <br/>
             <input
                 type="text"
                 placeholder="Raum"
@@ -37,6 +38,7 @@ function Join()
                 value={room}
                 onChange={onRoomInputChange}
                 />
+            <br/>
             <button onClick={() => joinRoom(room)}>Raum beitreten</button>
         </>
     );

@@ -19,6 +19,7 @@ function Home ()
             >
                 Beitreten
             </button>
+            <br/>
 
             {homeTab == HomeTab.Create &&
                 <Create />
