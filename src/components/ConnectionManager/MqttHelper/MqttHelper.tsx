@@ -1,6 +1,7 @@
 import { MqttClient } from "mqtt";
-import { Topic } from "../types/Topic";
 import { forwardRef, useImperativeHandle } from "react";
+import { useAppContext } from "../../../AppContext";
+import { Topic } from "../../../types/Topic";
 
 interface MqttHelperProps {
     mqttClient: MqttClient | null;
@@ -13,15 +14,27 @@ function MqttHelper({
     // gets added to socket topic to avoid collision on the public broker
     const applicationId: string = "fU72HrJ8fjr7fJ87fjwEjmfE5HN7Fo91Kz5DT";
  
+    const {
+        setRoom,
+    } = useAppContext();
+
     function publish(aTopic: Topic, aData: any = "") {
+        setRoom(aRoom => {
+
         mqttClient?.publish(
-            padTopic(aTopic),
+            padTopic(aTopic, aRoom),
             JSON.stringify(aData)
         );
+
+        return aRoom})
     }
     
     function subscribe(aTopic: Topic) {
-        mqttClient?.subscribe(padTopic(aTopic));
+        setRoom(aRoom => {
+        
+        mqttClient?.subscribe(padTopic(aTopic, aRoom));
+        
+        return aRoom})
     }
     
     function parseMessage(aPaddedTopic: string, aJsonData: string) {
@@ -31,8 +44,9 @@ function MqttHelper({
         return { topic, data };
     }
 
-    function padTopic(aTopic: Topic): string {
-        const fullTopic = `${applicationId}__${aTopic}`
+    function padTopic(aTopic: Topic, aRoom: string): string
+    {
+        const fullTopic = `${applicationId}_${aRoom}__${aTopic}`
         return fullTopic;
     }
     

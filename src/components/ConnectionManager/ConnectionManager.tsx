@@ -16,6 +16,7 @@ import { useResultContext } from '../Game/Result/ResultContext';
 import { useAppContext } from '../../AppContext';
 import { ConnectionManagerContext, useConnectionManagerContext } from './ConnectionManagerContext';
 import MqttHelper from './MqttHelper/MqttHelper';
+import { getRoomId } from '../../services/RoomManager';
 
 export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const mqttHelperRef = useRef<any>();
@@ -24,16 +25,19 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     setPage,
     setUsername,
     setPlayers,
+    setRoom,
     setIsHost,
-    /*spectrumCards, */setSpectrumCards,
   } = useAppContext();
 
   // host
   function createRoom() {
-    mqttHelperRef.current.subscribe(Topic.Join);
-    
     setIsHost(true);
-    joinRoom("");
+    
+    const roomId = getRoomId();
+    setRoom(roomId);
+
+    mqttHelperRef.current.subscribe(Topic.Join);
+    joinRoom(roomId);
   }
 
   // host
@@ -54,10 +58,10 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
 
 
   
-  function joinRoom(_roomId: string) {
+  function joinRoom(roomId: string) {
     setUsername(username => {
       
-    mqttHelperRef.current.publish(Topic.Join, username);
+    mqttHelperRef.current.publish(Topic.Join, username, roomId);
     subscribeGuest();
     setPage(Page.Lobby);
 
@@ -103,7 +107,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     return username});
   }
 
-  return (<ConnectionManagerContext.Provider value={{ mqttHelperRef, setPage, setUsername, setPlayers, setIsHost, setSpectrumCards, createRoom, startPrepare, joinRoom, updateGlobalDial, sendPrepareFinished, sendPlayRoundFinished }}>{children}</ConnectionManagerContext.Provider>);
+  return (<ConnectionManagerContext.Provider value={{ mqttHelperRef, createRoom, startPrepare, joinRoom, updateGlobalDial, sendPrepareFinished, sendPlayRoundFinished }}>{children}</ConnectionManagerContext.Provider>);
 };
 
 function ConnectionManager()
@@ -113,12 +117,15 @@ function ConnectionManager()
 
   const {
     mqttHelperRef,
+    updateGlobalDial,
+  } = useConnectionManagerContext();
+
+  const {
     setPage,
     setUsername,
     setPlayers,
     setSpectrumCards,
-    updateGlobalDial,
-  } = useConnectionManagerContext();
+  } = useAppContext();
 
   const {
     setGameState

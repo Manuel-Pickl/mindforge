@@ -10,6 +10,8 @@ export const AppContext = createContext<{
     setUsername: Dispatch<SetStateAction<string>>;
     players: Set<Player>;
     setPlayers: Dispatch<SetStateAction<Set<Player>>>;
+    room: string;
+    setRoom: Dispatch<SetStateAction<string>>;
     isHost: boolean;
     setIsHost: Dispatch<SetStateAction<boolean>>;
     spectrumCards: SpectrumCard[];

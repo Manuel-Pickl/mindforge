@@ -1,15 +1,8 @@
-import { Dispatch, MutableRefObject, SetStateAction, createContext, useContext } from 'react';
-import { Page } from '../../types/Page';
-import { Player } from '../../types/Player';
+import { MutableRefObject, createContext, useContext } from 'react';
 import { SpectrumCard } from '../../types/SpectrumCard';
 
 export const ConnectionManagerContext = createContext<{
     mqttHelperRef: MutableRefObject<any>;
-    setPage: Dispatch<SetStateAction<Page>>;
-    setUsername: Dispatch<SetStateAction<string>>;
-    setPlayers: Dispatch<SetStateAction<Set<Player>>>;
-    setIsHost: Dispatch<SetStateAction<boolean>>;
-    setSpectrumCards: Dispatch<SetStateAction<SpectrumCard[]>>;
     createRoom: () => void;
     startPrepare: () => void;
     joinRoom: (_roomId: string) => void;

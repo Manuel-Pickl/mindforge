@@ -6,6 +6,7 @@ function Lobby ()
     const {
         players,
         isHost,
+        room,
     } = useAppContext();
     
     const {
@@ -14,6 +15,10 @@ function Lobby ()
 
     return (
         <div>
+            {room}
+
+            <br />
+            
             {players.size} players: {Array.from(players).map((player) => player.username).join(", ")}
 
             <br />
