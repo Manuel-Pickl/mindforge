@@ -1,7 +1,7 @@
 import { Player } from "../types/Player";
 import { SpectrumCard } from "../types/SpectrumCard"
 
-const cardsPerPlayer: number = 2;
+const cardsPerPlayer: number = 1;
 
 export function getInitialSpectrumCards(players: Set<Player>): SpectrumCard[] {
     const spectrumCards: SpectrumCard[] = [];

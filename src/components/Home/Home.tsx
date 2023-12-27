@@ -1,29 +1,32 @@
+import { Dispatch, MutableRefObject, SetStateAction, useState } from "react";
+
 interface HomeProps
 {
-    usernameRef: React.MutableRefObject<string>;
-    roomIdRef: React.MutableRefObject<string>;
-    createRoom: () => void;
-    joinRoom: (roomId: string) => void;
+    username: string;
+    setUsername: Dispatch<SetStateAction<string>>;
+    connectionManagerRef: MutableRefObject<any>;
 }
 
-function Home ({ usernameRef, roomIdRef, createRoom, joinRoom }: HomeProps)
+function Home ({ username, setUsername, connectionManagerRef }: HomeProps)
 {
+    const [roomId, setRoomId] = useState<string>("");
+    
     return (
         <>
             <input
                 type="text"
                 placeholder="user name"
-                value={usernameRef.current}
-                onChange={(e) => usernameRef.current = e.target.value}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 />
             <input
                 type="text"
                 placeholder="Room ID (only for joining)"
-                value={roomIdRef.current}
-                onChange={(e) => roomIdRef.current = e.target.value}
+                value={roomId}
+                onChange={(e) => setRoomId(e.target.value)}
                 />
-            <button onClick={createRoom}>Create Room</button>
-            <button onClick={() => joinRoom(roomIdRef.current)}>Join Room</button>
+            <button onClick={connectionManagerRef.current.createRoom}>Create Room</button>
+            <button onClick={() => connectionManagerRef.current?.joinRoom(roomId)}>Join Room</button>
         </>
     );
 }

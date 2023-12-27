@@ -1,28 +1,31 @@
+import { MutableRefObject, forwardRef, useImperativeHandle, useState } from "react";
 import { Player } from "../../types/Player";
 
 interface LobbyProps
 {
-    usernameRef: React.MutableRefObject<string>;
     players: Set<Player>;
-    isHost: boolean;
-    broadcast: (aMessage: string) => void;
-    startPrepare: () => void;
+    connectionManagerRef: MutableRefObject<any>;
 }
 
-function Lobby ({ usernameRef, players, isHost, broadcast, startPrepare }: LobbyProps)
+function Lobby ({
+    players,
+    connectionManagerRef }: LobbyProps, ref: React.Ref<any>)
 {
+    const [isHost, setIsHost] = useState<boolean>(true);
+
+    useImperativeHandle(ref, () => ({
+        setIsHost,
+    }));
+    
     return (
         <div>
             {players.size} players: {Array.from(players).map((player) => player.username).join(", ")}
+
             <br />
-            <button 
-                onClick={() => broadcast(usernameRef.current)}
-            >
-                Send Data
-            </button>
+
             {isHost && players.size >= 2 ? (
                 <button
-                onClick={startPrepare}>
+                onClick={connectionManagerRef.current.startPrepare}>
                 Start Game
                 </button>
             ) : null}
@@ -30,4 +33,4 @@ function Lobby ({ usernameRef, players, isHost, broadcast, startPrepare }: Lobby
     );
 }
 
-export default Lobby;
+export default forwardRef(Lobby);

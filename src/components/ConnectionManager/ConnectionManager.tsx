@@ -1,58 +1,55 @@
-import { Dispatch, MutableRefObject, SetStateAction, forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Topic } from '../types/Topic';
+import { Dispatch, SetStateAction, forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { Topic } from '../../types/Topic';
 import mqtt, { MqttClient } from 'mqtt';
-import { Page } from '../types/Page';
-import { debugLog } from '../services/Logger';
-import MqttHelper from './MqttHelper';
-import { Player } from '../types/Player';
-import { GameState } from '../types/GameState';
-import { SpectrumCard } from '../types/SpectrumCard';
-import { getInitialSpectrumCards } from '../services/SpectrumCardManager';
-import { solutionDuration } from '../services/Settings';
+import { Page } from '../../types/Page';
+import { debugLog } from '../../services/Logger';
+import MqttHelper from '../MqttHelper';
+import { Player } from '../../types/Player';
+import { GameState } from '../../types/GameState';
+import { SpectrumCard } from '../../types/SpectrumCard';
+import { getInitialSpectrumCards } from '../../services/SpectrumCardManager';
+import { solutionDuration } from '../../services/Settings';
+import { getResult } from '../../services/ResultManager';
+import { useGameContext } from '../Game/GameContext';
+import { usePlayContext } from '../Game/Play/PlayContext';
+import { usePrepareContext } from '../Game/Prepare/PrepareContext';
+import { useResultContext } from '../Game/Result/ResultContext';
 
 interface ConnectionManagerProps {
   setPage: Dispatch<SetStateAction<Page>>;
-  players: Set<Player>;
   setPlayers: Dispatch<SetStateAction<Set<Player>>>;
-  usernameRef: MutableRefObject<string>;
-  setIsHost: Dispatch<SetStateAction<boolean>>;
-  setDial: Dispatch<SetStateAction<number>>;
-  setGameState: Dispatch<SetStateAction<GameState>>;
+  setUsername: Dispatch<SetStateAction<string>>;
   spectrumCards: SpectrumCard[];
   setSpectrumCards: Dispatch<SetStateAction<SpectrumCard[]>>;
-  prepareSpectrumCards: SpectrumCard[];
-  setPrepareSpectrumCards: Dispatch<SetStateAction<SpectrumCard[]>>;
-  currentPlayRound: number;
-  setCurrentPlayRound: Dispatch<SetStateAction<number>>;
-  roundsCount: number;
-  setRoundsCount: Dispatch<SetStateAction<number>>;
-  setPlaySpectrumCard: Dispatch<SetStateAction<SpectrumCard | null>>;
-  setRoundSolutionIsShown: Dispatch<SetStateAction<boolean>>;
 }
 
 function ConnectionManager({
   setPage,
-  players,
   setPlayers,
-  usernameRef,
-  setIsHost,
-  setDial,
-  setGameState,
+  setUsername,
   // spectrumCards,
-  setSpectrumCards,
-  // prepareSpectrumCards,
-  setPrepareSpectrumCards,
-  // currentPlayRound,
-  setCurrentPlayRound,
-  // roundsCount,
-  setRoundsCount,
-  setPlaySpectrumCard,
-  setRoundSolutionIsShown}: ConnectionManagerProps,
-  ref: React.Ref<any>)
+  setSpectrumCards }: ConnectionManagerProps, ref: React.Ref<any>)
 {
   const [mqttClient, setMqttClient] = useState<MqttClient | null>(null);
   const mqttHelperRef = useRef<any>();
   let connectionLostTime: number | null = null;
+
+  const {
+    setGameState
+  } = useGameContext();
+  const {
+    /*currentPlayRound, */setCurrentPlayRound,
+    /*playSpectrumCard, */setPlaySpectrumCard,
+    /*roundsCount, */setRoundsCount,
+    dial, setDial,
+    showSolution,
+  } = usePlayContext();
+  const {
+    setPrepareSpectrumCards,
+  } = usePrepareContext();
+  const {
+    setResult,
+  } = useResultContext();
 
   useEffect(() => {
     const protocoll: string = "wss";
@@ -72,45 +69,49 @@ function ConnectionManager({
   
   // host & client
   function onMessage(aPaddedTopic: string, aData: any) {
+    setUsername(username => {
+
     const {topic, data} = mqttHelperRef.current.parseMessage(aPaddedTopic, aData);
     debugLog(`${topic}: ${data}`);
 
     switch(topic) {
-      case Topic.Broadcast:
-        alert(data);
-        break;
+      // host
       case Topic.Join:
         onJoin(data);
-        break;
-      case Topic.LobbyData:
-        onLobbyData(new Set(data))
-        break;
-      case `${Topic.StartPrepare}/${usernameRef.current}`:
-        onPrepareStart(data);
         break;
       case Topic.PrepareFinished:
         onPrepareFinished(data)
         break;
-      case Topic.UpdateGlobalDial:
-        onUpdateGlobalDial(data);
+      case Topic.PlayRoundFinished:
+        onPlayRoundFinished(data);
+        break;
+
+        // guest
+      case Topic.LobbyData:
+        onLobbyData(new Set(data))
+        break;
+      case `${Topic.StartPrepare}/${username}`:
+        onPrepareStart(data);
         break;
       case Topic.StartPlayRound:
         onPlayStart(data);
         break;
-      case Topic.PlayRoundFinished:
-        onPlayRoundFinished(data);
+      case Topic.UpdateGlobalDial:
+        onUpdateGlobalDial(data);
         break;
       case Topic.ShowPlayRoundSolution:
-        setRoundSolutionIsShown(true);
+        showSolution();
         break;
       case Topic.StartResult:
-        onStartResult();
+        onStartResult(data);
         break;
 
       default:
         console.log("error: unknown topic!");
         console.log(topic);
     }
+
+    return username});
   }
 
   function onConnect() {
@@ -128,24 +129,25 @@ function ConnectionManager({
   // host
   function createRoom() {
     mqttHelperRef.current.subscribe(Topic.Join);
-    setIsHost(true);
+    
+    // lobbyRef.current.setIsHost(true);
     joinRoom("");
   }
   
   // host
   function onJoin(aUsername: string) {
-    setPlayers((oldPlayers) => {
-      const updatedPlayers = new Set(oldPlayers);
-      updatedPlayers.add(new Player(aUsername));
+    setPlayers(players => {
 
-      mqttHelperRef.current.publish(Topic.LobbyData, [...updatedPlayers]);
-      
-      return updatedPlayers;
-    });
+    const updatedPlayers = [...players, new Player(aUsername)];
+    mqttHelperRef.current.publish(Topic.LobbyData, updatedPlayers);
+    
+    return players });
   }
 
   // host
   function startPrepare() {
+    setPlayers(players => {
+
     const initialSpectrumCards: SpectrumCard[] = getInitialSpectrumCards(players);
     players.forEach(player => {
       const spectrumCardsForPlayer: SpectrumCard[] = initialSpectrumCards
@@ -154,6 +156,8 @@ function ConnectionManager({
     });
 
     mqttHelperRef.current.subscribe(Topic.PrepareFinished);
+
+    return players});
   }
 
   // host
@@ -227,53 +231,71 @@ function ConnectionManager({
   // @ts-ignore
   function onPlayRoundFinished({ aUsername, aPlayRoundFinished }) {
     setSpectrumCards(aSpectrumCards => {
-      setPlayers((aPlayers) => {
-        const updatedPlayers = new Set<Player>(
-          Array.from(aPlayers).map((player) =>
-            player.username === aUsername
-              ? new Player(player.username, player.prepareFinished, aPlayRoundFinished)
-              : player
-          )
-        );
+    setCurrentPlayRound(aCurrentPlayRound => {
+    setRoundsCount(aRoundsCount => {
+    setPlaySpectrumCard(aPlaySpectrumCard => {
 
-        const allPlayersPlayRoundFinished = Array.from(updatedPlayers).every(
-          (player) => player.playRoundFinished
-        );
-        if (allPlayersPlayRoundFinished) {
-          showPlayRoundSolution();
+    setPlayers(aPlayers => {
+      const updatedPlayers = new Set<Player>(
+        Array.from(aPlayers).map((player) =>
+          player.username === aUsername
+            ? new Player(player.username, player.prepareFinished, aPlayRoundFinished)
+            : player
+        )
+      );
 
-          // console.log("currentPlayRound: ", currentPlayRound);
-          // console.log("max: ", roundsCount);
-          // const playFinished: boolean = currentPlayRound >= roundsCount;
-          // if (playFinished) {
-          //   showResults();
-          // }
-          // else {
-            setTimeout(() => {startPlayRound(aSpectrumCards)}, solutionDuration);
-          // }
+      const allPlayersPlayRoundFinished = Array.from(updatedPlayers).every(
+        (player) => player.playRoundFinished
+      );
+      if (allPlayersPlayRoundFinished) {
+        // update spectrum cards with estimated dial
+        const currentSpectrumCard: SpectrumCard | undefined = aSpectrumCards
+          .find(card => card.scale[0] == aPlaySpectrumCard?.scale[0]);
+        if (!currentSpectrumCard) {
+          return aPlayers;
         }
+        currentSpectrumCard.estimatedDial = dial;
 
-        return updatedPlayers;
-      });
+        showPlayRoundSolution();
 
-      return aSpectrumCards;
+        const playFinished: boolean = aCurrentPlayRound >= aRoundsCount;
+        if (playFinished) {
+          setTimeout(() => {
+            showResult();
+          }, solutionDuration);
+        } else {
+          setTimeout(() => {
+            startPlayRound(aSpectrumCards);
+          }, solutionDuration);
+        }
+      }
+
+      return updatedPlayers;
     });
+
+    return aPlaySpectrumCard}); return aRoundsCount}); return aCurrentPlayRound}); return aSpectrumCards});
   }
   
   // host
-  // function showResults() {
-  //   mqttHelperRef.current.publish(Topic.StartResult)
-  // }
-  
-  function broadcast(aMessage: string) {
-    mqttHelperRef.current.publish(Topic.Broadcast, aMessage)
+  function showResult() {
+    setSpectrumCards(spectrumCards => {
+
+    const result: number = getResult(spectrumCards);
+    mqttHelperRef.current.publish(Topic.StartResult, result)
+
+    return spectrumCards});
   }
   
 
+
   function joinRoom(_roomId: string) {
-    mqttHelperRef.current.publish(Topic.Join, usernameRef.current);
+    setUsername(username => {
+      
+    mqttHelperRef.current.publish(Topic.Join, username);
     subscribeGuest();
     setPage(Page.Lobby);
+
+    return username});
   };
   
   function onLobbyData(aPlayers: Set<Player>) {
@@ -291,7 +313,6 @@ function ConnectionManager({
     mqttHelperRef.current.publish(Topic.PrepareFinished, aPrepareSpectrumCards);
   }
 
-  
   // @ts-ignore
   function onPlayStart({ aPlaySpectrumCard, aCurrentRound, aRoundsCount }) {
     setPlaySpectrumCard(aPlaySpectrumCard);
@@ -301,45 +322,66 @@ function ConnectionManager({
   }
 
   function updateGlobalDial(aValue: number) {
-    mqttHelperRef.current.publish(Topic.UpdateGlobalDial, aValue);
+    setUsername(username => {
+      
+    mqttHelperRef.current.publish(Topic.UpdateGlobalDial, {
+      aValue: aValue,
+      aUsername: username
+    });
+
+    return username});
   }
   
-  function onUpdateGlobalDial(aValue: number) {
-    // ToDo: don't update, if the update comes from the user itself
-    
+  // @ts-ignore
+  function onUpdateGlobalDial({ aValue, aUsername }) {
+    setUsername(username => {
+
+    const updateComesFromUserItself: boolean = username == aUsername;
+    if (updateComesFromUserItself) {
+      return username;
+    }
+
     setDial(aValue);
+
+    return username});
   }
 
   function sendPlayRoundFinished(aValue: boolean) {
+    setUsername(username => {
+
     mqttHelperRef.current.publish(Topic.PlayRoundFinished, {
-      aUsername: usernameRef.current,
+      aUsername: username,
       aPlayRoundFinished: aValue
     });
+
+    return username});
   }
 
   function showPlayRoundSolution() {
     mqttHelperRef.current.publish(Topic.ShowPlayRoundSolution);
   }
 
-  function onStartResult() {
+  function onStartResult(aResult: number) {
+    setResult(aResult);
     setGameState(GameState.Finish);
   }
 
 
 
   function subscribeGuest() {
-    mqttHelperRef.current.subscribe(Topic.Broadcast);
+    setUsername(username => {
+
     mqttHelperRef.current.subscribe(Topic.LobbyData);
-    mqttHelperRef.current.subscribe(`${Topic.StartPrepare}/${usernameRef.current}`);
+    mqttHelperRef.current.subscribe(`${Topic.StartPrepare}/${username}`);
     mqttHelperRef.current.subscribe(Topic.StartPlayRound);
     mqttHelperRef.current.subscribe(Topic.UpdateGlobalDial);
     mqttHelperRef.current.subscribe(Topic.ShowPlayRoundSolution);
     mqttHelperRef.current.subscribe(Topic.StartResult);
+
+    return username});
   }
 
-  // Expose methods through ref forwarding
   useImperativeHandle(ref, () => ({
-    broadcast,
     createRoom,
     joinRoom,
     startPrepare,

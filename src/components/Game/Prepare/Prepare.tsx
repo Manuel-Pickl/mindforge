@@ -1,22 +1,27 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { ReactNode, useState } from "react";
 import { SpectrumCard } from "../../../types/SpectrumCard";
+import { PrepareContext, usePrepareContext } from "./PrepareContext";
+
+export const PrepareProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [prepareSpectrumCards, setPrepareSpectrumCards] = useState<SpectrumCard[]>([]);
+
+    return (<PrepareContext.Provider value={{ prepareSpectrumCards, setPrepareSpectrumCards }}>{children}</PrepareContext.Provider>);
+};
 
 interface PrepareProps
 {
     sendPrepareFinished: (prepareSpectrumCards: SpectrumCard[]) => void;
-    prepareSpectrumCards: SpectrumCard[];
-    setPrepareSpectrumCards: Dispatch<SetStateAction<SpectrumCard[]>>;
 }
 
 function Prepare ({
-    sendPrepareFinished,
-    prepareSpectrumCards,
-    setPrepareSpectrumCards }: PrepareProps)
+    sendPrepareFinished }: PrepareProps)
 {
     const [clue, setClue] = useState<string>("");
     const [prepareFinished, setPrepareFinished] = useState<boolean>(false);
     const [currentSpectrumCardIndex, setCurrentSpectrumCardIndex] = useState<number>(0);
     
+    const { prepareSpectrumCards, setPrepareSpectrumCards } = usePrepareContext();
+
     function showNextSpectrumCard() {
         prepareSpectrumCards[currentSpectrumCardIndex].clue = clue;
         setPrepareSpectrumCards([...prepareSpectrumCards]);
@@ -32,6 +37,10 @@ function Prepare ({
         }
     }
 
+    if (prepareSpectrumCards.length == 0) {
+        return;
+    }
+    
     return (
         <div>
             <h1>Hinweise aufschreiben</h1>
@@ -44,7 +53,7 @@ function Prepare ({
                     type="range"
                     min={0}
                     max={100}
-                    step={10}
+                    step={1}
                     value={prepareSpectrumCards[currentSpectrumCardIndex].realDial}
                 />
                 {prepareSpectrumCards[currentSpectrumCardIndex].scale[1]}
