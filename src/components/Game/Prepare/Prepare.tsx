@@ -2,7 +2,7 @@ import { ReactNode, useState } from "react";
 import { SpectrumCard } from "../../../types/SpectrumCard";
 import { PrepareContext, usePrepareContext } from "./PrepareContext";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
-import { clueMaxLength } from "../../../services/Settings";
+import { clueMaxLength, maxDialhandValue } from "../../../services/Settings";
 
 export const PrepareProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [prepareSpectrumCards, setPrepareSpectrumCards] = useState<SpectrumCard[]>([]);
@@ -54,7 +54,7 @@ function Prepare ()
                 <input readOnly
                     type="range"
                     min={0}
-                    max={100}
+                    max={maxDialhandValue}
                     step={1}
                     value={prepareSpectrumCards[currentSpectrumCardIndex].realDial}
                 />

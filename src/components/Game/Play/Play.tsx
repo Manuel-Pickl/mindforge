@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import { SpectrumCard } from "../../../types/SpectrumCard";
-import { solutionDuration, splashscreenDuration } from "../../../services/Settings";
+import { maxDialhandValue, solutionDuration, splashscreenDuration } from "../../../services/Settings";
 import { PlayContext, usePlayContext } from "./PlayContext";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 
@@ -84,7 +84,7 @@ function Play()
                     <input readOnly
                         type="range"
                         min={0}
-                        max={100}
+                        max={maxDialhandValue}
                         step={1}
                         value={playSpectrumCard?.realDial}
                     />            
@@ -97,7 +97,7 @@ function Play()
                 <input
                     type="range"
                     min={0}
-                    max={100}
+                    max={180}
                     step={1}
                     value={dial}
                     onChange={onDialChange}

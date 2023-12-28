@@ -213,7 +213,8 @@ function ConnectionManager()
 
   function onConnect() {
     if (connectionLostTime) {
-      const connectionLostSpan = (Date.now() - connectionLostTime) / 1000;
+      const millisecondsPerSecond: number = 1000;
+      const connectionLostSpan = (Date.now() - connectionLostTime) / millisecondsPerSecond;
       debugLog(`reconnected to broker in ${connectionLostSpan}s`);
     }
     else {

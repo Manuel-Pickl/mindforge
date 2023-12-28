@@ -1,5 +1,6 @@
 import { Player } from "../types/Player";
 import { SpectrumCard } from "../types/SpectrumCard"
+import { maxDialhandValue } from "./Settings";
 
 const cardsPerPlayer: number = 1;
 
@@ -32,8 +33,9 @@ function getRandomScales(count: number): [string, string][] {
 }
 
 function getRandomDial(): number {
-    const numberBetweenZeroAndHundred = Math.floor(Math.random() * 100);
-    return numberBetweenZeroAndHundred;
+    // number between 0 and max dialhand value
+    const randomNumber = Math.floor(Math.random() * maxDialhandValue);
+    return randomNumber;
 }
 
 const allScales: [string, string][] = [
