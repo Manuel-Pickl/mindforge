@@ -39,7 +39,12 @@ function Join()
                 onChange={onRoomInputChange}
                 />
             <br/>
-            <button onClick={() => joinRoom(room)}>Raum beitreten</button>
+            <button
+                disabled={room.trim().length == 0}
+                onClick={() => joinRoom(room)}
+            >
+                Raum beitreten
+            </button>
         </>
     );
 }

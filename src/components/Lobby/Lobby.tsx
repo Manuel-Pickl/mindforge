@@ -1,5 +1,6 @@
 import { useAppContext } from "../../AppContext";
 import { useConnectionManagerContext } from "../ConnectionManager/ConnectionManagerContext";
+import GuestCard from "./GuestCard/GuestCard";
 
 function Lobby ()
 {
@@ -7,6 +8,7 @@ function Lobby ()
         players,
         isHost,
         room,
+        username,
     } = useAppContext();
     
     const {
@@ -15,11 +17,23 @@ function Lobby ()
 
     return (
         <div>
-            {room}
-
-            <br />
+            <div>Dein Raum ist {room}</div>
+            <div>{`localhost:5173/?room=${room}`}</div>
+            <div>{`mindforge.netlify.app/?room=${room}`}</div>
             
-            {players.size} players: {Array.from(players).map((player) => player.username).join(", ")}
+            <div>{username}</div>
+
+            <div className="guestCards">
+                {Array.from(players)
+                    .filter(player => player.username !== username)
+                    .map(player => (
+                        <GuestCard
+                            key={player.username}
+                            username={player.username}
+                            avatar={player.avatar}
+                        />
+                ))}
+            </div>
 
             <br />
 

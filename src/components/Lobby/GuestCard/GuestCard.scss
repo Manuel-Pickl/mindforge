@@ -1,0 +1,31 @@
+.GuestCardComponent {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.8rem;
+
+    .avatar {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 100%;
+        background-color: mediumaquamarine;
+        padding: 5px;
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    
+    .disabled {
+        padding: 8px;
+        background-color: Teal;
+    }
+    
+    .username {
+        color: black;
+    }
+}
