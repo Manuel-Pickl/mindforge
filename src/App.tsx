@@ -1,5 +1,5 @@
 // App.tsx
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import Home from './components/Home/Home';
 import { Page } from './types/Page';
 import Lobby from './components/Lobby/Lobby';
@@ -11,13 +11,11 @@ import { useLocation } from 'react-router-dom';
 import { AppContext, useAppContext } from './AppContext';
 import Offline from './components/Offline/Offline';
 
-export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {  
-  const { search } = useLocation();
-  const queryParams = new URLSearchParams(search);
-  
+export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
+{
   const [page, setPage] = useState<Page>(Page.Offline);
-  const [username, setUsername] = useState<string>(queryParams.get('username') || "");
-  const [room, setRoom] = useState<string>(queryParams.get('room') || "");
+  const [username, setUsername] = useState<string>(sessionStorage.getItem("username") ?? "");
+  const [room, setRoom] = useState<string>("");
   const [players, setPlayers] = useState<Set<Player>>(new Set());
   const [isHost, setIsHost] = useState<boolean>(false);
   const [spectrumCards, setSpectrumCards] = useState<SpectrumCard[]>([]);
@@ -26,10 +24,26 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 };
 
 function App() {
+  const { search } = useLocation();
+  const queryParams = new URLSearchParams(search);
+
   const {
     page,
+    username,
+    setRoom,
   } = useAppContext();
-  
+
+  useEffect(() => {   
+    const parameterRoom: string | null = queryParams.get('room');
+    if (parameterRoom) {
+      setRoom(parameterRoom);
+    }
+  }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem("username", username);
+  }, [username]);
+
   return (
     <>
       {page == Page.Offline && (

@@ -5,28 +5,28 @@ import Join from "./Join/Join";
 
 function Home ()
 {
-    const [homeTab, setHomeTab] = useState<HomeTab>(HomeTab.Create);
+    const [homeTab, setHomeTab] = useState<HomeTab>(HomeTab.Join);
 
     return (
         <>
-            <button
-                onClick={() => setHomeTab(HomeTab.Create)}
-            >
-                Erstellen
-            </button>
             <button
                 onClick={() => setHomeTab(HomeTab.Join)}
             >
                 Beitreten
             </button>
+            <button
+                onClick={() => setHomeTab(HomeTab.Create)}
+            >
+                Erstellen
+            </button>
             <br/>
+            
+            {homeTab == HomeTab.Join &&
+                <Join />
+            }
 
             {homeTab == HomeTab.Create &&
                 <Create />
-            }
-
-            {homeTab == HomeTab.Join &&
-                <Join />
             }
         </>
     );
