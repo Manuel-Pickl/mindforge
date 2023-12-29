@@ -12,13 +12,13 @@ function GuestCard({
     avatar,
     isShareButton }: GuestCardProps)
 {
-    // function share() {
-    //     if (!isShareButton) {
-    //         return;
-    //     }
-
-    //     // share invite
-    // }
+    function onGuestCardClick() {
+        if (avatar) {
+            console.log("user");
+        } else if (isShareButton) {
+            console.log("share");
+        }
+    }
 
     function getStatusClass(): string {
         const statusClass: string = username == ""
@@ -27,19 +27,20 @@ function GuestCard({
         return statusClass;
     }
 
-    function getAvatarImage(): JSX.Element | null {
+    function getAvatarImage(): JSX.Element | undefined {
         if (avatar) {
             return <img src={`avatars/${avatar}.svg`}/>;
         } else if (isShareButton) {
             return <img src="avatars/add.svg"/>;
-        } else {
-            return null;
         }
     }
 
     return (
        <div className={"GuestCardComponent"}>
-            <div className={`avatar ${getStatusClass()}`}>
+            <div
+                className={`avatar ${getStatusClass}`}
+                onClick={onGuestCardClick}
+            >
                 {getAvatarImage()}
             </div>
             <div className="username">{username}</div>

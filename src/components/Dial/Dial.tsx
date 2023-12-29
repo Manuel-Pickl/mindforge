@@ -22,7 +22,7 @@ function Dial()
         isDraggingRef.current = true;
     };
     
-    function handleMouseUp(e: MouseEvent) {
+    function handleMouseUp() {
         if (!isDraggingRef.current) {
             return;
         }
