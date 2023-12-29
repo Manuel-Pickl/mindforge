@@ -2,6 +2,15 @@
   font-family: system-ui, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+
+  background-color: hsl(0, 0%, 10%);
+  color: hsl(0, 0%, 90%);
+}
+
+button {
+  color: white;
+  background-color: transparent;
+  border: none;
 }
 
 * {

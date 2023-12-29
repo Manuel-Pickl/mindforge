@@ -21,29 +21,50 @@ function Join()
         setRoom(checkedRoom);
     }
 
+    function joinDisabled() {
+        const roomIsEmpty: boolean = room.trim().length == 0;
+        if (roomIsEmpty) {
+            return true;
+        }
+
+        const nameIsEmpty: boolean = username.trim().length == 0;
+        if (nameIsEmpty) {
+            return true;
+        }
+
+        return false;
+    }
+
     return (
         <>
-            <input
-                type="text"
-                placeholder="Benutzer"
-                maxLength={usernameMaxLength}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+            <div>
+                Dein Name
+                <input
+                    type="text"
+                    placeholder="Benutzer"
+                    maxLength={usernameMaxLength}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                 />
-            <br/>
-            <input
-                type="text"
-                placeholder="Raum"
-                maxLength={roomIdLength}
-                value={room}
-                onChange={onRoomInputChange}
+            </div>
+            
+            <div>
+                Raum
+                <input
+                    type="text"
+                    placeholder="Raum"
+                    maxLength={roomIdLength}
+                    value={room}
+                    onChange={onRoomInputChange}
                 />
-            <br/>
+            </div>
+            
             <button
-                disabled={room.trim().length == 0}
+                className="action"
+                disabled={joinDisabled()}
                 onClick={() => joinRoom(room)}
             >
-                Raum beitreten
+                Raum Beitreten
             </button>
         </>
     );

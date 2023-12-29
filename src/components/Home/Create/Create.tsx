@@ -12,17 +12,35 @@ function Create()
         createRoom,
     } = useConnectionManagerContext();
 
+    function createDisabled() {
+        const nameIsEmpty: boolean = username.trim().length == 0;
+        if (nameIsEmpty) {
+            return true;
+        }
+
+        return false;
+    }
+    
     return (
         <>
-            <input
-                type="text"
-                placeholder="Benutzer"
-                maxLength={usernameMaxLength}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-            />
-            <br/>
-            <button onClick={createRoom}>Raum erstellen</button>
+            <div>
+                Dein Name
+                <input
+                    type="text"
+                    placeholder="Benutzer"
+                    maxLength={usernameMaxLength}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+            </div>
+            
+            <button
+                className="action"
+                disabled={createDisabled()}
+                onClick={createRoom}
+            >
+                Raum Erstellen
+            </button>
         </>
     );
 }

@@ -1,0 +1,17 @@
+.navigationComponent {
+    display: flex;
+    gap: 16px;
+    
+    button {
+        border: none;
+        background-color: transparent;
+        color: hsl(0, 0%, 70%);
+        font-size: 1rem;
+        padding: 4px;
+    }
+
+    .active {
+        border-bottom: solid 4px rgb(101, 101, 247);
+        color: hsl(0, 0%, 90%);
+    }
+}

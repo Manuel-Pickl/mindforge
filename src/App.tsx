@@ -10,6 +10,7 @@ import { SpectrumCard } from './types/SpectrumCard';
 import { useLocation } from 'react-router-dom';
 import { AppContext, useAppContext } from './AppContext';
 import Offline from './components/Offline/Offline';
+import "./App.scss";
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 {
@@ -45,7 +46,7 @@ function App() {
   }, [username]);
 
   return (
-    <>
+    <div className="appComponent">
       {page == Page.Offline && (
         <Offline />
       )}
@@ -63,7 +64,7 @@ function App() {
       )}
 
       <ConnectionManager />
-    </>
+    </div>
   );
 };
 

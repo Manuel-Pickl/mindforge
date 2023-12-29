@@ -3,33 +3,33 @@ import { HomeTab } from "../../services/HomeTab";
 import Create from "./Create/Create";
 import Join from "./Join/Join";
 import "./Home.scss";
+import Navigation from "./Navigation/Navigation";
 
 function Home ()
 {
     const [homeTab, setHomeTab] = useState<HomeTab>(HomeTab.Join);
 
+    function tabIsActive(tab: HomeTab): boolean {
+        return homeTab == tab;
+    }
+
     return (
-        <>
-            <button
-                onClick={() => setHomeTab(HomeTab.Join)}
-            >
-                Beitreten
-            </button>
-            <button
-                onClick={() => setHomeTab(HomeTab.Create)}
-            >
-                Erstellen
-            </button>
-            <br/>
+        <div className="homeComponent">
+            <button className="back">{"<"} ZURÜCK</button>
+
+            <Navigation 
+                tabIsActive={tabIsActive}
+                setHomeTab={setHomeTab}    
+            />
             
-            {homeTab == HomeTab.Join &&
+            {tabIsActive(HomeTab.Join) &&
                 <Join />
             }
 
-            {homeTab == HomeTab.Create &&
+            {tabIsActive(HomeTab.Create) &&
                 <Create />
             }
-        </>
+        </div>
     );
 }
 
