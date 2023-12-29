@@ -35,7 +35,7 @@ function Create()
             </div>
             
             <button
-                className="action"
+                className="actionButton"
                 disabled={createDisabled()}
                 onClick={createRoom}
             >

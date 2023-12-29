@@ -1,22 +1,22 @@
 import { Avatar } from "../../../types/Avatar";
-import "./GuestCard.scss";
+import "./MateCard.scss";
 
-interface GuestCardProps {
+interface MateCardProps {
     username: string;
     avatar: Avatar;
     isShareButton: boolean;
   }
   
-function GuestCard({
+function MateCard({
     username,
     avatar,
-    isShareButton }: GuestCardProps)
+    isShareButton }: MateCardProps)
 {
-    function onGuestCardClick() {
+    function onMateCardClick() {
         if (avatar) {
             console.log("user");
         } else if (isShareButton) {
-            console.log("share");
+            alert("share");
         }
     }
 
@@ -36,10 +36,10 @@ function GuestCard({
     }
 
     return (
-       <div className={"GuestCardComponent"}>
+       <div className={"mateCardComponent"}>
             <div
                 className={`avatar ${getStatusClass}`}
-                onClick={onGuestCardClick}
+                onClick={onMateCardClick}
             >
                 {getAvatarImage()}
             </div>
@@ -48,4 +48,4 @@ function GuestCard({
     )
 }
 
-export default GuestCard;
+export default MateCard;

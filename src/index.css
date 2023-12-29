@@ -13,6 +13,18 @@ button {
   border: none;
 }
 
+.actionButton {
+  width: 100%;
+  background-color: rgb(101, 101, 247);
+  border-radius: 32px;
+  padding: 12px;
+  text-transform: uppercase;
+
+  &:disabled {
+      opacity: 0.5;
+  }
+}
+
 * {
   box-sizing: border-box;
 }

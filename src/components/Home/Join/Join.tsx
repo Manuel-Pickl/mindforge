@@ -60,7 +60,7 @@ function Join()
             </div>
             
             <button
-                className="action"
+                className="actionButton"
                 disabled={joinDisabled()}
                 onClick={() => joinRoom(room)}
             >

@@ -22,16 +22,4 @@
             outline: solid 2px rgb(101, 101, 247);
         }
     }
-
-    .action {
-        width: 100%;
-        background-color: rgb(101, 101, 247);
-        border-radius: 32px;
-        padding: 12px;
-        text-transform: uppercase;
-
-        &:disabled {
-            opacity: 0.5;
-        }
-    }
 }
