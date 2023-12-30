@@ -1,18 +1,22 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import "./Dial.scss";
 import { debugLog } from "../../services/Logger";
 
 interface DialProps {
     hideHand: boolean;
     showSolution: boolean;
+    solution: number;
+    onDialChange?: (value: number) => void;
+    dial?: number;
 }
   
 function Dial({
     hideHand,
-    showSolution }: DialProps)
-    // onDialChange: (aValue: number) => void)
+    showSolution,
+    solution,
+    onDialChange,
+    dial }: DialProps)
 {
-    const [value, setValue] = useState<number>(90);
     const isDraggingRef = useRef<boolean>(false);
     const dialComponentRef = useRef<HTMLDivElement | null>(null);
     const handRef = useRef<HTMLDivElement | null>(null);
@@ -78,7 +82,7 @@ function Dial({
             angleCorrected = 180;
         }
         
-        setValue(angleCorrected)
+        onDialChange?.(angleCorrected);
     }
 
     return (
@@ -97,14 +101,17 @@ function Dial({
                     className="hand"
                     onMouseDown={handleMouseDown}
                     onTouchStart={handleMouseDown}
-                    style={{ transform: `rotate(${value - 90}deg)` }}
+                    style={{ transform: `rotate(${(dial ?? 0) - 90}deg)` }}
                 />
                 <div className="handRoot" />
             </> 
             }
             
             {showSolution &&
-                <div className="solution">
+                <div 
+                    className="solution"
+                    style={{ '--angle': `${solution}deg` } as React.CSSProperties}
+                >
                     <div className="sector sector1 sector1-left">
                         <span>1</span>
                     </div>

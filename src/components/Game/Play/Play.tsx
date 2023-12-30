@@ -1,8 +1,9 @@
 import { ReactNode, useEffect, useState } from "react";
 import { SpectrumCard } from "../../../types/SpectrumCard";
-import { maxDialhandValue, solutionDuration, splashscreenDuration } from "../../../services/Settings";
+import { solutionDuration, splashscreenDuration } from "../../../services/Settings";
 import { PlayContext, usePlayContext } from "./PlayContext";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
+import Dial from "../../Dial/Dial";
 
 export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currentPlayRound, setCurrentPlayRound] = useState<number>(0);
@@ -48,15 +49,13 @@ function Play()
         sendPlayRoundFinished(false);
     }, [dial]);
 
-    function onDialChange(event: React.ChangeEvent<HTMLInputElement>) {
+    function onDialChange(aValue: number) {
         if (solutionVisible) {
             return;
         }
 
-        const newDial = parseFloat(event.target.value);
-
-        setDial(newDial);
-        updateGlobalDial(newDial);
+        setDial(aValue);
+        updateGlobalDial(aValue);
     }
 
     function onFinishedClick() {
@@ -76,34 +75,21 @@ function Play()
                 <h2>Spektrum Karte von {playSpectrumCard?.owner}</h2>
                 <h2>Hinweis: {playSpectrumCard?.clue}</h2>
                 
-                {solutionVisible &&
-                <div>
-                    <span style={{ color: 'white' }}>
-                        {playSpectrumCard?.scale[0]}
-                    </span>
-                    <input readOnly
-                        type="range"
-                        min={0}
-                        max={maxDialhandValue}
-                        step={1}
-                        value={playSpectrumCard?.realDial}
-                    />            
-                </div>
-                }
-    
-                <br/>
-    
-                {playSpectrumCard?.scale[0]}
-                <input
-                    type="range"
-                    min={0}
-                    max={180}
-                    step={1}
-                    value={dial}
-                    onChange={onDialChange}
+                <Dial
+                    hideHand={false}
+                    showSolution={solutionVisible}
+                    solution={playSpectrumCard?.realDial ?? 0}
+                    onDialChange={onDialChange}
+                    dial={dial}
                 />
+
+                <br />
+
+                {playSpectrumCard?.scale[0]}
                 {playSpectrumCard?.scale[1]}
             
+                <br />
+
                 <button
                     disabled={readyButtonDisabled}
                     onClick={onFinishedClick}

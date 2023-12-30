@@ -51,29 +51,26 @@ function Prepare ()
             <div>
                 <h2>{currentSpectrumCardIndex + 1}. Spektrum Karte</h2>
 
-                {prepareSpectrumCards[currentSpectrumCardIndex].scale[0]}
-                <input readOnly
-                    type="range"
-                    min={0}
-                    max={maxDialhandValue}
-                    step={1}
-                    value={prepareSpectrumCards[currentSpectrumCardIndex].realDial}
-                />
-                {prepareSpectrumCards[currentSpectrumCardIndex].scale[1]}
-
-                <br/>
-
                 <Dial
                     hideHand={true}
                     showSolution={true}
+                    solution={prepareSpectrumCards[currentSpectrumCardIndex].realDial}
                 />
+
+                {prepareSpectrumCards[currentSpectrumCardIndex].scale[0]}
+                {prepareSpectrumCards[currentSpectrumCardIndex].scale[1]}
+
+                <br />
+
                 <input
                     type="text"
                     maxLength={clueMaxLength}
                     value={clue}
                     onChange={(event) => setClue(event.target.value)}
                 />
+
                 <br/>
+                
                 <button disabled={clue.trim().length == 0}
                     onClick={showNextSpectrumCard}
                 >

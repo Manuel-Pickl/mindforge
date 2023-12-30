@@ -1,8 +1,8 @@
 .dialComponent {
     --hand-width: 6%;
     --hand-root-width: 25%;
-    --hand-background-color: salmon;
-    --dial-background-color: mediumaquamarine;
+    --hand-background-color: red;
+    --dial-background-color: var(--accent-color);
 
     position: relative;
     width: 100%;
@@ -20,6 +20,7 @@
     }
 
     .hand {
+        z-index: 10;
         position: absolute;
         width: var(--hand-width);
         height: 85%;
@@ -33,6 +34,8 @@
     }
 
     .handRoot {
+        z-index: 10;
+
         position: absolute;
         width: var(--hand-root-width);
         aspect-ratio: 1;
@@ -44,10 +47,10 @@
     }
 
     .solution {
-        --angle: 90deg; // -> value
+        // --angle -> comes from parent
         --widthInDegrees: 6deg;
-        --sector3-color: var(--accent-color);
-        --sector2-color: salmon;
+        --sector3-color: mediumaquamarine;
+        --sector2-color: orange;
         --sector1-color: yellow;
 
         .sector {
