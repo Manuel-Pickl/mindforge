@@ -2,7 +2,7 @@ import { ReactNode, useState } from "react";
 import { SpectrumCard } from "../../../types/SpectrumCard";
 import { PrepareContext, usePrepareContext } from "./PrepareContext";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
-import { clueMaxLength, maxDialhandValue } from "../../../services/Settings";
+import { clueMaxLength } from "../../../services/Settings";
 import Dial from "../../Dial/Dial";
 
 export const PrepareProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -55,12 +55,10 @@ function Prepare ()
                     hideHand={true}
                     showSolution={true}
                     solution={prepareSpectrumCards[currentSpectrumCardIndex].realDial}
+                    scale={prepareSpectrumCards[currentSpectrumCardIndex].scale}
                 />
 
-                {prepareSpectrumCards[currentSpectrumCardIndex].scale[0]}
-                {prepareSpectrumCards[currentSpectrumCardIndex].scale[1]}
-
-                <br />
+                <br/><br/><br/><br/>
 
                 <input
                     type="text"
@@ -70,7 +68,7 @@ function Prepare ()
                 />
 
                 <br/>
-                
+
                 <button disabled={clue.trim().length == 0}
                     onClick={showNextSpectrumCard}
                 >

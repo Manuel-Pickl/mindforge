@@ -8,6 +8,7 @@ interface DialProps {
     solution: number;
     onDialChange?: (value: number) => void;
     dial?: number;
+    scale: [string, string];
 }
   
 function Dial({
@@ -15,7 +16,8 @@ function Dial({
     showSolution,
     solution,
     onDialChange,
-    dial }: DialProps)
+    dial,
+    scale }: DialProps)
 {
     const isDraggingRef = useRef<boolean>(false);
     const dialComponentRef = useRef<HTMLDivElement | null>(null);
@@ -92,21 +94,7 @@ function Dial({
             onMouseMove={handleMouseMove}
             onTouchMove={handleTouchMove}
         >
-            <div className="dial" />
-            
-            {!hideHand &&
-            <>
-                <div
-                    ref={handRef}
-                    className="hand"
-                    onMouseDown={handleMouseDown}
-                    onTouchStart={handleMouseDown}
-                    style={{ transform: `rotate(${(dial ?? 0) - 90}deg)` }}
-                />
-                <div className="handRoot" />
-            </> 
-            }
-            
+            <div className="dial">
             {showSolution &&
                 <div 
                     className="solution"
@@ -129,6 +117,31 @@ function Dial({
                     </div>
                 </div>
             }
+            </div>
+            
+            {!hideHand &&
+            <>
+                <div
+                    ref={handRef}
+                    className="hand"
+                    onMouseDown={handleMouseDown}
+                    onTouchStart={handleMouseDown}
+                    style={{ transform: `rotate(${(dial ?? 0) - 90}deg)` }}
+                />
+                <div className="handRoot" />
+            </> 
+            }
+
+            <div className="scales">
+                <div className="scale">
+                    <span>{"<---"}</span>
+                    <span>{scale[0]}</span>
+                </div>
+                <div className="scale">
+                    <span>{"--->"}</span>
+                    <span>{scale[1]}</span>
+                </div>
+            </div>
         </div>
     );
 }

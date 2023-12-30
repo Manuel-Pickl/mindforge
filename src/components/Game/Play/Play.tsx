@@ -81,14 +81,10 @@ function Play()
                     solution={playSpectrumCard?.realDial ?? 0}
                     onDialChange={onDialChange}
                     dial={dial}
+                    scale={playSpectrumCard?.scale ?? ["",""]}
                 />
-
-                <br />
-
-                {playSpectrumCard?.scale[0]}
-                {playSpectrumCard?.scale[1]}
             
-                <br />
+                <br/><br/><br/><br/>
 
                 <button
                     disabled={readyButtonDisabled}

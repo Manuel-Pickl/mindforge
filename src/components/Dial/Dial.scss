@@ -1,5 +1,5 @@
 .dialComponent {
-    --hand-width: 6%;
+    --hand-width: 4%;
     --hand-root-width: 25%;
     --hand-background-color: red;
     --dial-background-color: var(--accent-color);
@@ -7,20 +7,82 @@
     position: relative;
     width: 100%;
     aspect-ratio: 2;
-    max-width: 220px;
-    overflow: hidden;
     user-select: none;
 
     .dial {
         position: absolute;
-        width: 100%;
-        aspect-ratio: 1;
-        background-color: var(--dial-background-color);
-        border-radius: 100%;
+        inset: 0;
+        overflow: hidden;
+        
+        &::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            aspect-ratio: 1;
+            background-color: var(--dial-background-color);
+            border-radius: 100%;
+            clip-path: polygon(
+                100% 50%,
+                0 50%,
+                0 0,
+                100% 0,
+            );
+        }
+
+        .solution {
+            // --angle -> comes from parent
+            --widthInDegrees: 6deg;
+            --sector3-color: mediumaquamarine;
+            --sector2-color: orange;
+            --sector1-color: yellow;
+    
+            .sector {
+                z-index: 1;
+                position: absolute;
+                width: 100%;
+                aspect-ratio: 1;
+                border-radius: 100%;
+                transform: rotate(var(--angle));
+                clip-path: polygon(
+                    50% 50%,
+                    0 calc(50% + calc(50% * sin(var(--widthInDegrees)))),
+                    0 calc(50% - calc(50% * sin(var(--widthInDegrees)))),
+                ); 
+    
+                span {
+                    position: absolute;
+                    left: 2%;
+                    bottom: 50%;
+                    translate: 0 50%;
+                    transform: rotate(-90deg);
+                    color: black;
+                }
+            }
+    
+            .sector3 {
+                background-color: var(--sector3-color);
+            }
+            .sector2-left {
+                background-color: var(--sector2-color);
+                transform: rotate(calc(var(--angle) - var(--widthInDegrees)*2));
+            }
+            .sector2-right {
+                background-color: var(--sector2-color);
+                transform: rotate(calc(var(--angle) + var(--widthInDegrees)*2));
+            }
+            .sector1-left {
+                background-color: var(--sector1-color);
+                transform: rotate(calc(var(--angle) - var(--widthInDegrees)*4));
+            }
+            .sector1-right {
+                background-color: var(--sector1-color);
+                transform: rotate(calc(var(--angle) + var(--widthInDegrees)*4));
+            }
+        }
     }
 
     .hand {
-        z-index: 10;
+        z-index: 2;
         position: absolute;
         width: var(--hand-width);
         height: 85%;
@@ -46,53 +108,21 @@
         border-radius: 100%;
     }
 
-    .solution {
-        // --angle -> comes from parent
-        --widthInDegrees: 6deg;
-        --sector3-color: mediumaquamarine;
-        --sector2-color: orange;
-        --sector1-color: yellow;
+    .scales {
+        --padding: 10%;
 
-        .sector {
+        .scale {
             position: absolute;
-            width: 100%;
-            aspect-ratio: 1;
-            border-radius: 100%;
-            transform: rotate(var(--angle));
-            clip-path: polygon(
-                50% 50%,
-                0 calc(50% + calc(50% * sin(var(--widthInDegrees)))),
-                0 calc(50% - calc(50% * sin(var(--widthInDegrees)))),
-            ); 
-
-            span {
-                position: absolute;
-                left: 3%;
-                bottom: 50%;
-                translate: 0 50%;
-                transform: rotate(-90deg);
-                color: black;
-            }
+            top: 105%;
+            display: flex;
+            flex-direction: column;
         }
-
-        .sector3 {
-            background-color: var(--sector3-color);
+        
+        .scale:nth-child(1) {
+            left: var(--padding);
         }
-        .sector2-left {
-            background-color: var(--sector2-color);
-            transform: rotate(calc(var(--angle) - var(--widthInDegrees)*2));
-        }
-        .sector2-right {
-            background-color: var(--sector2-color);
-            transform: rotate(calc(var(--angle) + var(--widthInDegrees)*2));
-        }
-        .sector1-left {
-            background-color: var(--sector1-color);
-            transform: rotate(calc(var(--angle) - var(--widthInDegrees)*4));
-        }
-        .sector1-right {
-            background-color: var(--sector1-color);
-            transform: rotate(calc(var(--angle) + var(--widthInDegrees)*4));
+        .scale:nth-child(2) {
+            right: var(--padding);
         }
     }
 }
