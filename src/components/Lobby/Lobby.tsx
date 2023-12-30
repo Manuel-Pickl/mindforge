@@ -9,28 +9,19 @@ import PlayerCard from "./PlayerCard/PlayerCard";
 
 function Lobby ()
 {
-    const [activePacks, _setActivePacks] = useState<string>("Standard - Furios");
+    const [activePacks, _setActivePacks] = useState<string[]>(["Standard", "Furios"]);
 
     const {
         players,
-        isHost,
         room,
         username,
+        getPlayer,
+        getMates,
     } = useAppContext();
     
     const {
         startPrepare,
     } = useConnectionManagerContext();
-
-    function getPlayer(): Player | undefined {
-        return players.find(player =>
-            player.username == username);
-    }
-
-    function getMates(): Player[] {
-        return players.filter(player =>
-            player.username != username);
-    }
 
     function getMateCards(): JSX.Element[]
     {
@@ -40,11 +31,12 @@ function Lobby ()
 
         for (let i: number = 0; i < 7; i++) {
             const currentUser: Player = mates[i];
-            
+
             mateCards.push(
                 <MateCard key={i}
                     username={currentUser ? currentUser.username : ""}
                     avatar={currentUser ? currentUser.avatar : Avatar.None}
+                    isHost={currentUser? currentUser.isHost : false}
                     isShareButton={!addElementSet}
                 />
             );
@@ -59,13 +51,14 @@ function Lobby ()
     
     return (
         <div className="lobbyComponent">
-            <div>{activePacks}</div>
+            <div>{activePacks.join("· ")}</div>
 
             <div>Dein Raum ist {room}</div>            
 
             <PlayerCard
                 username={username}
                 avatar={getPlayer()?.avatar}
+                isHost={getPlayer()?.isHost ?? false}
             />
 
             <div className="guestCards">
@@ -74,7 +67,7 @@ function Lobby ()
 
             <br />
 
-            {isHost ? (
+            {getPlayer()?.isHost ? (
                 <button
                     disabled={players.length < 2}
                     className="actionButton"

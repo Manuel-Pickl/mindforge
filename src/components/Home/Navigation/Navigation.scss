@@ -11,7 +11,7 @@
     }
 
     .active {
-        border-bottom: solid 4px rgb(101, 101, 247);
+        border-bottom: solid 4px var(--accent-color);
         color: hsl(0, 0%, 90%);
     }
 }

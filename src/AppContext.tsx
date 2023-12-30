@@ -12,10 +12,10 @@ export const AppContext = createContext<{
     setPlayers: Dispatch<SetStateAction<Player[]>>;
     room: string;
     setRoom: Dispatch<SetStateAction<string>>;
-    isHost: boolean;
-    setIsHost: Dispatch<SetStateAction<boolean>>;
     spectrumCards: SpectrumCard[];
     setSpectrumCards: Dispatch<SetStateAction<SpectrumCard[]>>;
+    getPlayer: () => Player | undefined;
+    getMates: () => Player[];
 } | undefined>(undefined);
 
 export const useAppContext = () => {

@@ -4,18 +4,19 @@ import "./MateCard.scss";
 interface MateCardProps {
     username: string;
     avatar: Avatar;
+    isHost: boolean;
     isShareButton: boolean;
   }
   
 function MateCard({
     username,
     avatar,
+    isHost,
     isShareButton }: MateCardProps)
 {
     function onMateCardClick() {
-        if (avatar) {
-            console.log("user");
-        } else if (isShareButton) {
+        // if (avatar) { } else 
+        if (isShareButton) {
             alert("share");
         }
     }
@@ -37,12 +38,17 @@ function MateCard({
 
     return (
        <div className={"mateCardComponent"}>
+            {isHost &&
+                <div className="host" >Host</div>
+            }
+
             <div
                 className={`avatar ${getStatusClass}`}
                 onClick={onMateCardClick}
             >
                 {getAvatarImage()}
             </div>
+            
             <div className="username">{username}</div>
         </div>
     )

@@ -7,11 +7,13 @@ import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionM
 interface PlayerCardProps {
     username: string;
     avatar: Avatar | undefined;
+    isHost: boolean;
   }
   
 function PlayerCard({
     username,
-    avatar }: PlayerCardProps)
+    avatar,
+    isHost }: PlayerCardProps)
 {
     const {
         sendChangeAvatar,
@@ -19,6 +21,10 @@ function PlayerCard({
 
     return (
        <div className={"playerCardComponent"}>
+            {isHost &&
+                <div className="host" >Host</div>
+            }
+
             <div className={"avatar"}>
                 <img src={`avatars/${avatar}.svg`} alt={avatar}/>
                 <img src={arrowLeft} alt={arrowLeft}
@@ -30,6 +36,7 @@ function PlayerCard({
                     onClick={() => sendChangeAvatar(1)}
                 />
             </div>
+            
             <div className="username">{username}</div>
         </div>
     )

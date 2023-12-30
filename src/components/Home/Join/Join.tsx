@@ -63,7 +63,7 @@ function Join()
             <button
                 className="actionButton"
                 disabled={joinDisabled()}
-                onClick={() => joinRoom(room)}
+                onClick={() => joinRoom(false)}
             >
                 Raum Beitreten
             </button>

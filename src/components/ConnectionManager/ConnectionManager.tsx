@@ -27,20 +27,17 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     setUsername,
     setPlayers,
     setRoom,
-    setIsHost,
   } = useAppContext();
 
   // host
   function createRoom() {
-    setIsHost(true);
-    
     const roomId = getRoomId();
     setRoom(roomId);
 
     mqttHelperRef.current.subscribe(Topic.Join);
     mqttHelperRef.current.subscribe(Topic.ChangeAvatar);
 
-    joinRoom(roomId);
+    joinRoom(true);
   }
 
   // host
@@ -61,10 +58,14 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
 
 
   
-  function joinRoom(roomId: string) {
+  function joinRoom(aIsHost: boolean) {
     setUsername(username => {
-      
-    mqttHelperRef.current.publish(Topic.Join, username, roomId);
+
+    mqttHelperRef.current.publish(Topic.Join, {
+      aUsername: username, 
+      aIsHost: aIsHost,
+    });
+
     subscribeGuest();
     setPage(Page.Lobby);
 
@@ -244,10 +245,11 @@ function ConnectionManager()
 
 
   // host
-  function onJoin(aUsername: string) {
+  // @ts-ignore
+  function onJoin({ aUsername, aIsHost }) {
     setPlayers(players => {
 
-    const updatedPlayers = [...players, new Player(aUsername)];
+    const updatedPlayers = [...players, new Player(aUsername, aIsHost)];
     mqttHelperRef.current.publish(Topic.LobbyData, updatedPlayers);
     
     return players });
@@ -276,7 +278,7 @@ function ConnectionManager()
         const updatedPlayers = 
           Array.from(oldPlayers).map((player) =>
             player.username === correspondingUsername
-              ? new Player(player.username, true)
+              ? new Player(player.username, player.isHost, true)
               : player
         );
   
@@ -345,7 +347,7 @@ function ConnectionManager()
       const updatedPlayers = 
         Array.from(aPlayers).map((player) =>
           player.username === aUsername
-            ? new Player(player.username, player.prepareFinished, aPlayRoundFinished)
+            ? new Player(player.username, player.isHost, player.prepareFinished, aPlayRoundFinished)
             : player
       );
 

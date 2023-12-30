@@ -1,20 +1,24 @@
+import { getRandomAvatar } from "../services/AvatarManager";
 import { Avatar } from "./Avatar";
 
 export class Player {
     username: string;
+    isHost: boolean;
     prepareFinished: boolean;
     playRoundFinished: boolean;
     avatar: Avatar;
 
     constructor(
-        username: string,
-        prepareFinished: boolean = false,
-        playRoundFinished: boolean = false,
-        avatar: Avatar = Avatar.Giraffe)
+        aUsername: string,
+        aIsHost: boolean,
+        aPrepareFinished: boolean = false,
+        aPlayRoundFinished: boolean = false,
+        aAvatar: Avatar = getRandomAvatar())
     {
-        this.username = username;
-        this.prepareFinished = prepareFinished;
-        this.playRoundFinished = playRoundFinished;
-        this.avatar = avatar;
+        this.username = aUsername;
+        this.isHost = aIsHost;
+        this.prepareFinished = aPrepareFinished;
+        this.playRoundFinished = aPlayRoundFinished;
+        this.avatar = aAvatar;
     }
 }

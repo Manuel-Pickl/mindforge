@@ -11,6 +11,13 @@ const avatars = [
     Avatar.Tiger,
 ];
 
+export function getRandomAvatar(): Avatar {
+    const randomAvatarIndex: number = Math.floor(Math.random() * avatars.length);
+    const randomAvatar: Avatar = avatars[randomAvatarIndex];
+
+    return randomAvatar;
+}
+
 export function changeAvatar(
     aIndexDelta: number,
     aUsername: string,

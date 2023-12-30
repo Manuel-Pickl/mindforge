@@ -24,7 +24,7 @@
             font-size: 0.9rem;
     
             &:focus {
-                outline: solid 2px rgb(101, 101, 247);
+                outline: solid 2px var(--accent-color);
             }
         }
     }

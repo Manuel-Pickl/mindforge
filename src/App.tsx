@@ -18,10 +18,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [username, setUsername] = useState<string>(sessionStorage.getItem("username") ?? "");
   const [room, setRoom] = useState<string>("");
   const [players, setPlayers] = useState<Player[]>([]);
-  const [isHost, setIsHost] = useState<boolean>(false);
   const [spectrumCards, setSpectrumCards] = useState<SpectrumCard[]>([]);
 
-  return (<AppContext.Provider value={{ page, setPage, username, setUsername, room, setRoom, players, setPlayers, isHost, setIsHost,spectrumCards, setSpectrumCards }}>{children}</AppContext.Provider>);
+  function getPlayer(): Player | undefined {
+    return players.find(player =>
+        player.username == username);
+  }
+
+  function getMates(): Player[] {
+    return players.filter(player =>
+        player.username != username);
+  }
+
+  return (<AppContext.Provider value={{ page, setPage, username, setUsername, room, setRoom, players, setPlayers, spectrumCards, setSpectrumCards, getPlayer, getMates }}>{children}</AppContext.Provider>);
 };
 
 function App() {
