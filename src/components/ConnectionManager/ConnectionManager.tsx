@@ -17,6 +17,7 @@ import { useAppContext } from '../../AppContext';
 import { ConnectionManagerContext, useConnectionManagerContext } from './ConnectionManagerContext';
 import MqttHelper from './MqttHelper/MqttHelper';
 import { getRoomId } from '../../services/RoomManager';
+import { changeAvatar } from '../../services/AvatarManager';
 
 export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const mqttHelperRef = useRef<any>();
@@ -37,6 +38,8 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     setRoom(roomId);
 
     mqttHelperRef.current.subscribe(Topic.Join);
+    mqttHelperRef.current.subscribe(Topic.ChangeAvatar);
+
     joinRoom(roomId);
   }
 
@@ -64,6 +67,17 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     mqttHelperRef.current.publish(Topic.Join, username, roomId);
     subscribeGuest();
     setPage(Page.Lobby);
+
+    return username});
+  }
+
+  function sendChangeAvatar(aIndexDelta: number) {
+    setUsername(username => {
+
+    mqttHelperRef.current.publish(Topic.ChangeAvatar, {
+      aIndexDelta: aIndexDelta,
+      aUsername: username,
+    });
 
     return username});
   }
@@ -107,7 +121,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     return username});
   }
 
-  return (<ConnectionManagerContext.Provider value={{ mqttHelperRef, createRoom, startPrepare, joinRoom, updateGlobalDial, sendPrepareFinished, sendPlayRoundFinished }}>{children}</ConnectionManagerContext.Provider>);
+  return (<ConnectionManagerContext.Provider value={{ mqttHelperRef, createRoom, startPrepare, joinRoom, updateGlobalDial, sendPrepareFinished, sendPlayRoundFinished, sendChangeAvatar }}>{children}</ConnectionManagerContext.Provider>);
 };
 
 function ConnectionManager()
@@ -176,6 +190,9 @@ function ConnectionManager()
       case Topic.Join:
         onJoin(data);
         break;
+      case Topic.ChangeAvatar:
+        onChangeAvatar(data);
+        break;
       case Topic.PrepareFinished:
         onPrepareFinished(data)
         break;
@@ -183,9 +200,9 @@ function ConnectionManager()
         onPlayRoundFinished(data);
         break;
 
-        // guest
+      // guest
       case Topic.LobbyData:
-        onLobbyData(new Set(data))
+        onLobbyData(data);
         break;
       case `${Topic.StartPrepare}/${username}`:
         onPrepareStart(data);
@@ -237,6 +254,17 @@ function ConnectionManager()
   }
 
   // host
+  // @ts-ignore
+  function onChangeAvatar({ aIndexDelta, aUsername }) {
+    setPlayers(players => {
+
+    const updatedPlayers = changeAvatar(aIndexDelta, aUsername, players);
+    mqttHelperRef.current.publish(Topic.LobbyData, updatedPlayers);
+    
+    return players });
+  }
+
+  // host
   function onPrepareFinished(aPrepareSpectrumCards: SpectrumCard[]) {
     const correspondingUsername = aPrepareSpectrumCards[0].owner;
 
@@ -245,12 +273,11 @@ function ConnectionManager()
       const newPlaySpectrumCards = [...spectrumCards, ...aPrepareSpectrumCards];
 
       setPlayers((oldPlayers) => {
-        const updatedPlayers = new Set<Player>(
+        const updatedPlayers = 
           Array.from(oldPlayers).map((player) =>
             player.username === correspondingUsername
               ? new Player(player.username, true)
               : player
-          )
         );
   
         const allPlayersPrepareFinished = Array.from(updatedPlayers).every(
@@ -315,12 +342,11 @@ function ConnectionManager()
     setDial(aDial => {
 
     setPlayers(aPlayers => {
-      const updatedPlayers = new Set<Player>(
+      const updatedPlayers = 
         Array.from(aPlayers).map((player) =>
           player.username === aUsername
             ? new Player(player.username, player.prepareFinished, aPlayRoundFinished)
             : player
-        )
       );
 
       const allPlayersPlayRoundFinished = Array.from(updatedPlayers).every(
@@ -370,9 +396,8 @@ function ConnectionManager()
   
 
 
-  function onLobbyData(aPlayers: Set<Player>) {
-    const updatedPlayers = new Set(aPlayers);
-    setPlayers(updatedPlayers);
+  function onLobbyData(aPlayers: Player[]) {
+    setPlayers([...aPlayers]);
   }
 
   function onPrepareStart(spectrumCards: SpectrumCard[]) {

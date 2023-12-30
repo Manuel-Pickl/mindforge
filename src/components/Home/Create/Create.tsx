@@ -1,6 +1,7 @@
 import { useAppContext } from "../../../AppContext";
 import { usernameMaxLength } from "../../../services/Settings";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
+import "./Create.scss";
 
 function Create()
 {
@@ -22,8 +23,8 @@ function Create()
     }
     
     return (
-        <>
-            <div>
+        <div className="createComponent">
+            <div className="input">
                 Dein Name
                 <input
                     type="text"
@@ -41,7 +42,7 @@ function Create()
             >
                 Raum Erstellen
             </button>
-        </>
+        </div>
     );
 }
 

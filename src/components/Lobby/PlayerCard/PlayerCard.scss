@@ -7,7 +7,8 @@
     font-size: 0.8rem;
 
     .avatar {
-        width: 56%;
+        position: relative;
+        width: 50%;
         aspect-ratio: 1;
         border-radius: 100%;
         background-color: mediumaquamarine;
@@ -17,14 +18,29 @@
             width: 100%;
             height: 100%;
         }
+
+        .arrow {
+            --inset: -25%;
+            --size: 15%;
+
+            position: absolute;
+            width: var(--size);
+            height: var(--size);
+            top: 50%;
+            translate: 0 -50%;           
+        }
+
+        .left {
+            left: var(--inset);
+        }
+        .right {
+            right: var(--inset);
+        }
     }
 
     
     .disabled {
         padding: 8px;
         background-color: Teal;
-    }
-    
-    .username {
     }
 }

@@ -4,10 +4,10 @@ import { maxDialhandValue } from "./Settings";
 
 const cardsPerPlayer: number = 1;
 
-export function getInitialSpectrumCards(players: Set<Player>): SpectrumCard[] {
+export function getInitialSpectrumCards(players: Player[]): SpectrumCard[] {
     const spectrumCards: SpectrumCard[] = [];
 
-    const scalesCount: number = players.size * cardsPerPlayer;
+    const scalesCount: number = players.length * cardsPerPlayer;
     const scales: [string, string][] = getRandomScales(scalesCount);
     let scaleIndex: number = 0;
 

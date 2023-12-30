@@ -9,6 +9,7 @@ export const ConnectionManagerContext = createContext<{
     updateGlobalDial: (aValue: number) => void;
     sendPrepareFinished: (aPrepareSpectrumCards: SpectrumCard[]) => void;
     sendPlayRoundFinished: (aValue: boolean) => void;
+    sendChangeAvatar: (aIndexDelta: number) => void;
 } | undefined>(undefined);
 
 export const useConnectionManagerContext = () => {

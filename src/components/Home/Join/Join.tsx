@@ -1,6 +1,7 @@
 import { useAppContext } from "../../../AppContext";
 import { roomIdLength, usernameMaxLength } from "../../../services/Settings";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
+import "./Join.scss";
 
 function Join()
 {
@@ -36,8 +37,8 @@ function Join()
     }
 
     return (
-        <>
-            <div>
+        <div className="joinComponent">
+            <div className="input">
                 Dein Name
                 <input
                     type="text"
@@ -48,7 +49,7 @@ function Join()
                 />
             </div>
             
-            <div>
+            <div className="input">
                 Raum
                 <input
                     type="text"
@@ -66,7 +67,7 @@ function Join()
             >
                 Raum Beitreten
             </button>
-        </>
+        </div>
     );
 }
 

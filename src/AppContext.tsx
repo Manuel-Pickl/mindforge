@@ -8,8 +8,8 @@ export const AppContext = createContext<{
     setPage: Dispatch<SetStateAction<Page>>;
     username: string;
     setUsername: Dispatch<SetStateAction<string>>;
-    players: Set<Player>;
-    setPlayers: Dispatch<SetStateAction<Set<Player>>>;
+    players: Player[];
+    setPlayers: Dispatch<SetStateAction<Player[]>>;
     room: string;
     setRoom: Dispatch<SetStateAction<string>>;
     isHost: boolean;

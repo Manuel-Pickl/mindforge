@@ -22,9 +22,14 @@ function Lobby ()
         startPrepare,
     } = useConnectionManagerContext();
 
+    function getPlayer(): Player | undefined {
+        return players.find(player =>
+            player.username == username);
+    }
+
     function getMates(): Player[] {
-        return Array.from(players)
-            .filter(player => player.username != username);
+        return players.filter(player =>
+            player.username != username);
     }
 
     function getMateCards(): JSX.Element[]
@@ -60,7 +65,7 @@ function Lobby ()
 
             <PlayerCard
                 username={username}
-                avatar={Avatar.Seal}
+                avatar={getPlayer()?.avatar}
             />
 
             <div className="guestCards">
@@ -69,14 +74,22 @@ function Lobby ()
 
             <br />
 
-            {isHost && players.size >= 2 ? (
-            <button
-                className="actionButton"
-                onClick={startPrepare}
-            >
-                Start Game
-            </button>
-            ) : null}
+            {isHost ? (
+                <button
+                    disabled={players.length >= 2}
+                    className="actionButton"
+                    onClick={startPrepare}
+                >
+                    Starte Spiel
+                </button>
+            ) : (
+                <button
+                    disabled={true}
+                    className="actionButton"
+                >
+                    Warten auf Host
+                </button>
+            )}
         </div>
     );
 }

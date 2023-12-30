@@ -17,11 +17,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [page, setPage] = useState<Page>(Page.Offline);
   const [username, setUsername] = useState<string>(sessionStorage.getItem("username") ?? "");
   const [room, setRoom] = useState<string>("");
-  const [players, setPlayers] = useState<Set<Player>>(new Set());
+  const [players, setPlayers] = useState<Player[]>([]);
   const [isHost, setIsHost] = useState<boolean>(false);
   const [spectrumCards, setSpectrumCards] = useState<SpectrumCard[]>([]);
 
-  return (<AppContext.Provider value={{ page, setPage, username, setUsername, room, setRoom, players, setPlayers, isHost, setIsHost,spectrumCards, setSpectrumCards  }}>{children}</AppContext.Provider>);
+  return (<AppContext.Provider value={{ page, setPage, username, setUsername, room, setRoom, players, setPlayers, isHost, setIsHost,spectrumCards, setSpectrumCards }}>{children}</AppContext.Provider>);
 };
 
 function App() {

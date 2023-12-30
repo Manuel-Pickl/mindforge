@@ -12,5 +12,6 @@ export enum Topic {
     StartResult = "StartResult",
 
     // guest -> guest
+    ChangeAvatar = "ChangeAvatar",
     UpdateGlobalDial = "UpdateGlobalDial",
 }
