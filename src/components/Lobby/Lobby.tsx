@@ -76,7 +76,7 @@ function Lobby ()
 
             {isHost ? (
                 <button
-                    disabled={players.length >= 2}
+                    disabled={players.length < 2}
                     className="actionButton"
                     onClick={startPrepare}
                 >
