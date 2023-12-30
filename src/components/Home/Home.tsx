@@ -4,6 +4,7 @@ import Create from "./Create/Create";
 import Join from "./Join/Join";
 import "./Home.scss";
 import Navigation from "./Navigation/Navigation";
+import Dial from "../Dial/Dial";
 
 function Home ()
 {
@@ -29,6 +30,11 @@ function Home ()
             {tabIsActive(HomeTab.Create) &&
                 <Create />
             }
+
+            <Dial
+                hideHand={true}
+                showSolution={true}
+            />
         </div>
     );
 }

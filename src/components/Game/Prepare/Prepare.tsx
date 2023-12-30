@@ -3,6 +3,7 @@ import { SpectrumCard } from "../../../types/SpectrumCard";
 import { PrepareContext, usePrepareContext } from "./PrepareContext";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 import { clueMaxLength, maxDialhandValue } from "../../../services/Settings";
+import Dial from "../../Dial/Dial";
 
 export const PrepareProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [prepareSpectrumCards, setPrepareSpectrumCards] = useState<SpectrumCard[]>([]);
@@ -62,6 +63,10 @@ function Prepare ()
 
                 <br/>
 
+                <Dial
+                    hideHand={true}
+                    showSolution={true}
+                />
                 <input
                     type="text"
                     maxLength={clueMaxLength}

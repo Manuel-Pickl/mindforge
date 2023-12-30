@@ -1,7 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import "./Dial.scss";
+import { debugLog } from "../../services/Logger";
 
-function Dial()
+interface DialProps {
+    hideHand: boolean;
+    showSolution: boolean;
+}
+  
+function Dial({
+    hideHand,
+    showSolution }: DialProps)
     // onDialChange: (aValue: number) => void)
 {
     const [value, setValue] = useState<number>(90);
@@ -11,14 +19,16 @@ function Dial()
 
     useEffect(() => {
         window.addEventListener("mouseup", handleMouseUp);
+        window.addEventListener("touchend", handleMouseUp);
 
         return () => {
             window.removeEventListener("mouseup", handleMouseUp);
+            window.removeEventListener("touchend", handleMouseUp);
         };
     }, []);
     
     function handleMouseDown() {
-        console.log("start")
+        debugLog("dial move start")
         isDraggingRef.current = true;
     };
     
@@ -27,12 +37,16 @@ function Dial()
             return;
         }
 
-        console.log("end")
+        debugLog("dial move end")
         isDraggingRef.current = false;
     };
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         moveDial(e.clientX, e.clientY)
+    };
+
+    const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+        moveDial(e.touches[0].clientX, e.touches[0].clientY);
     };
 
     function moveDial(mouseX: number, mouseY: number) {
@@ -72,15 +86,42 @@ function Dial()
             ref={dialComponentRef}
             className="dialComponent"
             onMouseMove={handleMouseMove}
+            onTouchMove={handleTouchMove}
         >
             <div className="dial" />
-            <div
-                ref={handRef}
-                className="hand"
-                onMouseDown={handleMouseDown}
-                style={{ transform: `rotate(${value - 90}deg)` }}
-            />
-            <div className="handRoot" />
+            
+            {!hideHand &&
+            <>
+                <div
+                    ref={handRef}
+                    className="hand"
+                    onMouseDown={handleMouseDown}
+                    onTouchStart={handleMouseDown}
+                    style={{ transform: `rotate(${value - 90}deg)` }}
+                />
+                <div className="handRoot" />
+            </> 
+            }
+            
+            {showSolution &&
+                <div className="solution">
+                    <div className="sector sector1 sector1-left">
+                        <span>1</span>
+                    </div>
+                    <div className="sector sector2 sector2-left">
+                        <span>2</span>
+                    </div>
+                    <div className="sector sector3">
+                        <span>3</span>
+                    </div>
+                    <div className="sector sector2 sector2-right">
+                        <span>2</span>
+                    </div>
+                    <div className="sector sector1 sector1-right">
+                        <span>1</span>
+                    </div>
+                </div>
+            }
         </div>
     );
 }
