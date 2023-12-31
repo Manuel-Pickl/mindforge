@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
 import { SpectrumCard } from '../../../types/SpectrumCard';
+import { PrepareState } from '../../../types/PrepareState';
 
 export const PrepareContext = createContext<{
     prepareSpectrumCards: SpectrumCard[];
@@ -7,6 +8,8 @@ export const PrepareContext = createContext<{
     spectrumCardMaxCount: number;
     setSpectrumCardMaxCount: Dispatch<SetStateAction<number>>;
     startPrepare: (aPrepareSpectrumCards: SpectrumCard[], aPrepareSpectrumCount: number) => void;
+    prepareState: PrepareState;
+    setPrepareState: Dispatch<SetStateAction<PrepareState>>;
 
 } | undefined>(undefined);
 

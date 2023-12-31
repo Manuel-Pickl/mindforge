@@ -12,7 +12,6 @@ export function getInitialSpectrumCards(players: Player[]): SpectrumCard[] {
     const cardsToSkipCount: number = players.length * cardsPerPlayer * skipsPerCard;
     const scalesCount: number = cardsToPlayCount + cardsToSkipCount;
     const scales: [string, string][] = getRandomScales(scalesCount);
-    console.log(scales)
     let scaleIndex: number = 0;
 
     players.forEach(player => {

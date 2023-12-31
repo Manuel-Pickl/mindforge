@@ -1,0 +1,22 @@
+.splashscreenComponent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    vertical-align: middle;
+    gap: 24px;
+    margin-top: 20%;
+    
+    .info {
+        font-size: 2rem;
+    }
+
+    .counterWrapper {
+        width: 88px;
+        aspect-ratio: 1;
+        font-size: 3rem;
+    }
+
+    .soon {
+        font-size: 1rem;
+    }
+}

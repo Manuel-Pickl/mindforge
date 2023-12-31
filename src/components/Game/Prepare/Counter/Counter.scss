@@ -1,0 +1,12 @@
+.counterComponent {
+    font-size: inherit;
+    border: solid 3px var(--accent-color);
+    border-radius: 100%;
+    padding: 4px;
+    width: 100%;
+    aspect-ratio: 1;
+    color: var(--accent-color);
+    
+    display: grid;
+    place-items: center;
+}

@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import { SpectrumCard } from "../../../types/SpectrumCard";
-import { defaultValue, solutionDuration, splashscreenDuration } from "../../../services/Settings";
+import { defaultValue, gameSolutionDuration, gameSplashscreenDuration } from "../../../services/Settings";
 import { PlayContext, usePlayContext } from "./PlayContext";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 import Dial from "../../Dial/Dial";
@@ -14,7 +14,7 @@ export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     function showSolution() {
         setSolutionVisible(true);
-        setTimeout(() => {setSolutionVisible(false)}, solutionDuration);
+        setTimeout(() => {setSolutionVisible(false)}, gameSolutionDuration);
     }
 
     return (<PlayContext.Provider value={{ currentPlayRound, setCurrentPlayRound, roundsCount, setRoundsCount, playSpectrumCard, setPlaySpectrumCard, dial, setDial, solutionVisible, setSolutionVisible, showSolution }}>{children}</PlayContext.Provider>);
@@ -41,7 +41,7 @@ function Play()
         setReadyButtonDisabled(false);
         
         setSplashscreenVisible(true);
-        setTimeout(() => { setSplashscreenVisible(false) }, splashscreenDuration);
+        setTimeout(() => { setSplashscreenVisible(false) }, gameSplashscreenDuration);
     }, [playSpectrumCard]);
 
     useEffect(() => {

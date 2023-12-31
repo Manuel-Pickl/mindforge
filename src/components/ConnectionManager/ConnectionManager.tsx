@@ -7,7 +7,7 @@ import { Player } from '../../types/Player';
 import { GameState } from '../../types/GameState';
 import { SpectrumCard } from '../../types/SpectrumCard';
 import { getInitialSpectrumCards } from '../../services/SpectrumCardManager';
-import { defaultValue, solutionDuration } from '../../services/Settings';
+import { defaultValue, gameSolutionDuration } from '../../services/Settings';
 import { getMaxPoints, getPoints } from '../../services/ResultManager';
 import { useGameContext } from '../Game/GameContext';
 import { usePlayContext } from '../Game/Play/PlayContext';
@@ -375,11 +375,11 @@ function ConnectionManager()
         if (playFinished) {
           setTimeout(() => {
             showResult();
-          }, solutionDuration);
+          }, gameSolutionDuration);
         } else {
           setTimeout(() => {
             startPlayRound(aSpectrumCards);
-          }, solutionDuration);
+          }, gameSolutionDuration);
         }
       }
 

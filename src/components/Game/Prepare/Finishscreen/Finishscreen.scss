@@ -1,0 +1,18 @@
+.finishscreenComponent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    vertical-align: middle;
+    gap: 24px;
+    margin-top: 20%;
+
+    .counterWrapper {
+        width: 88px;
+        aspect-ratio: 1;
+        font-size: 2rem;
+    }
+
+    .info {
+        font-size: 1rem;
+    }
+}

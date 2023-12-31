@@ -1,0 +1,21 @@
+.clueComponent {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
+    margin-top: 32px;
+    
+    .counterWrapper {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        width: 56px;
+        aspect-ratio: 1;
+        font-size: 1.2rem;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 24px;
+    }
+}
