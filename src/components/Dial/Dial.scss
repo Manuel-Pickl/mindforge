@@ -8,6 +8,7 @@
     width: 100%;
     aspect-ratio: 2;
     user-select: none;
+    margin-bottom: 30%;
 
     .dial {
         position: absolute;
@@ -109,20 +110,22 @@
     }
 
     .scales {
-        --padding: 10%;
+        --side-padding: 5%;
 
         .scale {
             position: absolute;
+            width: 35%;
             top: 105%;
             display: flex;
             flex-direction: column;
         }
         
         .scale:nth-child(1) {
-            left: var(--padding);
+            left: var(--side-padding);
         }
         .scale:nth-child(2) {
-            right: var(--padding);
+            right: var(--side-padding);
+            text-align: right;
         }
     }
 }

@@ -5,3 +5,4 @@ export const usernameMaxLength: number = 10;
 export const roomIdLength: number = 4;
 export const clueMaxLength: number = 30;
 export const maxDialhandValue: number = 180;
+export const defaultValue: number = 90;

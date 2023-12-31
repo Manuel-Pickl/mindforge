@@ -7,7 +7,7 @@ import { Player } from '../../types/Player';
 import { GameState } from '../../types/GameState';
 import { SpectrumCard } from '../../types/SpectrumCard';
 import { getInitialSpectrumCards } from '../../services/SpectrumCardManager';
-import { solutionDuration } from '../../services/Settings';
+import { defaultValue, solutionDuration } from '../../services/Settings';
 import { getMaxPoints, getPoints } from '../../services/ResultManager';
 import { useGameContext } from '../Game/GameContext';
 import { usePlayContext } from '../Game/Play/PlayContext';
@@ -41,14 +41,19 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   }
 
   // host
-  function startPrepare() {
+  function startPrepare_host() {
     setPlayers(players => {
 
-    const initialSpectrumCards: SpectrumCard[] = getInitialSpectrumCards(players);
+    const prepareSpectrumCards: SpectrumCard[] = getInitialSpectrumCards(players);
+
     players.forEach(player => {
-      const spectrumCardsForPlayer: SpectrumCard[] = initialSpectrumCards
-        .filter(x => x.owner == player.username);
-      mqttHelperRef.current.publish(`${Topic.StartPrepare}/${player.username}`, spectrumCardsForPlayer);
+      const prepareSpectrumCardsForPlayer: SpectrumCard[] = prepareSpectrumCards.filter(x => x.owner == player.username);
+      const prepareSpectrumCount: number = prepareSpectrumCardsForPlayer.length / 2;
+
+      mqttHelperRef.current.publish(`${Topic.StartPrepare}/${player.username}`, {
+        aPrepareSpectrumCards: prepareSpectrumCardsForPlayer,
+        aPrepareSpectrumCount: prepareSpectrumCount,
+      });
     });
 
     mqttHelperRef.current.subscribe(Topic.PrepareFinished);
@@ -122,7 +127,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     return username});
   }
 
-  return (<ConnectionManagerContext.Provider value={{ mqttHelperRef, createRoom, startPrepare, joinRoom, updateGlobalDial, sendPrepareFinished, sendPlayRoundFinished, sendChangeAvatar }}>{children}</ConnectionManagerContext.Provider>);
+  return (<ConnectionManagerContext.Provider value={{ mqttHelperRef, createRoom, startPrepare: startPrepare_host, joinRoom, updateGlobalDial, sendPrepareFinished, sendPlayRoundFinished, sendChangeAvatar }}>{children}</ConnectionManagerContext.Provider>);
 };
 
 function ConnectionManager()
@@ -155,7 +160,7 @@ function ConnectionManager()
   } = usePlayContext();
   
   const {
-    setPrepareSpectrumCards,
+    startPrepare,
   } = usePrepareContext();
   
   const {
@@ -272,7 +277,8 @@ function ConnectionManager()
 
     // we have to nest the update functions, because React is shit
     setSpectrumCards(spectrumCards => {
-      const newPlaySpectrumCards = [...spectrumCards, ...aPrepareSpectrumCards];
+      const filteredPrepareSpectrumCards = aPrepareSpectrumCards.filter(card => !card.skipped);
+      const newPlaySpectrumCards = [...spectrumCards, ...filteredPrepareSpectrumCards];
 
       setPlayers((oldPlayers) => {
         const updatedPlayers = 
@@ -316,8 +322,8 @@ function ConnectionManager()
         return aPlayers;
       });
   
-      updateGlobalDial(50);
-      setDial(50);
+      updateGlobalDial(defaultValue);
+      setDial(defaultValue);
 
       const currentSpectrumCardIndex = aCurrentPlayRound;
       const playSpectrumCard: SpectrumCard = aSpectrumCards[currentSpectrumCardIndex];
@@ -402,8 +408,9 @@ function ConnectionManager()
     setPlayers([...aPlayers]);
   }
 
-  function onPrepareStart(spectrumCards: SpectrumCard[]) {
-    setPrepareSpectrumCards([...spectrumCards])
+  // @ts-ignore
+  function onPrepareStart({ aPrepareSpectrumCards, aPrepareSpectrumCount }) {
+    startPrepare(aPrepareSpectrumCards, aPrepareSpectrumCount)
     setPage(Page.Game);
   }
   

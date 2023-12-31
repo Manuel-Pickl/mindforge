@@ -4,11 +4,18 @@ import { PrepareContext, usePrepareContext } from "./PrepareContext";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 import { clueMaxLength } from "../../../services/Settings";
 import Dial from "../../Dial/Dial";
+import "./Prepare.scss";
 
 export const PrepareProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [prepareSpectrumCards, setPrepareSpectrumCards] = useState<SpectrumCard[]>([]);
+    const [spectrumCardMaxCount, setSpectrumCardMaxCount] = useState<number>(0);
 
-    return (<PrepareContext.Provider value={{ prepareSpectrumCards, setPrepareSpectrumCards }}>{children}</PrepareContext.Provider>);
+    function startPrepare(aPrepareSpectrumCards: SpectrumCard[], aPrepareSpectrumCount: number) {
+        setPrepareSpectrumCards(aPrepareSpectrumCards);
+        setSpectrumCardMaxCount(aPrepareSpectrumCount);
+    }
+
+    return (<PrepareContext.Provider value={{ prepareSpectrumCards, setPrepareSpectrumCards, spectrumCardMaxCount, setSpectrumCardMaxCount, startPrepare }}>{children}</PrepareContext.Provider>);
 };
 
 function Prepare ()
@@ -16,23 +23,35 @@ function Prepare ()
     const [clue, setClue] = useState<string>("");
     const [prepareFinished, setPrepareFinished] = useState<boolean>(false);
     const [currentSpectrumCardIndex, setCurrentSpectrumCardIndex] = useState<number>(0);
-    
+    const [spectrumCardCount, setSpectrumCardCount] = useState<number>(1);
+    const [skipDisabled, setSkipDisabled] = useState<boolean>(false);
+
     const {
-        prepareSpectrumCards, setPrepareSpectrumCards
+        prepareSpectrumCards, setPrepareSpectrumCards,
+        spectrumCardMaxCount,
     } = usePrepareContext();
 
     const {
         sendPrepareFinished
     } = useConnectionManagerContext();
 
+    function skipSpectrumCard() {
+        setSkipDisabled(true);
+        setClue("");
+        setCurrentSpectrumCardIndex(currentSpectrumCardIndex + 1);
+    }
+
     function showNextSpectrumCard() {
         prepareSpectrumCards[currentSpectrumCardIndex].clue = clue;
+        prepareSpectrumCards[currentSpectrumCardIndex].skipped = false;
         setPrepareSpectrumCards([...prepareSpectrumCards]);
 
-        const finishedAllSpectrumCards: boolean = currentSpectrumCardIndex >= prepareSpectrumCards.length - 1;
-        if (!finishedAllSpectrumCards) {
+        const finishedAllSpectrumCards: boolean = spectrumCardCount >= spectrumCardMaxCount;
+        if (!finishedAllSpectrumCards) {            
             setCurrentSpectrumCardIndex(currentSpectrumCardIndex + 1);
+            setSpectrumCardCount(spectrumCardCount + 1);
             setClue("");
+            setSkipDisabled(false);
         }
         else {
             setPrepareFinished(true);
@@ -45,20 +64,25 @@ function Prepare ()
     }
 
     return (
-        <div>
-            <h1>Hinweise aufschreiben</h1>
-            {!prepareFinished ? (
-            <div>
-                <h2>{currentSpectrumCardIndex + 1}. Spektrum Karte</h2>
+        <div className="prepareComponent">
+            <div className="remainingTime">
+                3min
+            </div>
 
+            <div className="counter">
+                {spectrumCardCount} von {spectrumCardMaxCount}
+            </div>
+            
+            <h2>Schreiben einen Hinweis</h2>
+
+            {!prepareFinished ? (
+            <>
                 <Dial
                     hideHand={true}
                     showSolution={true}
                     solution={prepareSpectrumCards[currentSpectrumCardIndex].realDial}
                     scale={prepareSpectrumCards[currentSpectrumCardIndex].scale}
                 />
-
-                <br/><br/><br/><br/>
 
                 <input
                     type="text"
@@ -67,14 +91,21 @@ function Prepare ()
                     onChange={(event) => setClue(event.target.value)}
                 />
 
-                <br/>
-
-                <button disabled={clue.trim().length == 0}
-                    onClick={showNextSpectrumCard}
-                >
-                    Next
-                </button>
-            </div>
+                <div className="buttons">
+                    <button className="actionButton"
+                        disabled={skipDisabled}
+                        onClick={skipSpectrumCard}
+                    >
+                        Neues Spektrum
+                    </button>
+                    <button className="actionButton"
+                        disabled={clue.trim().length == 0}
+                        onClick={showNextSpectrumCard}
+                    >
+                        Einreichen
+                    </button>
+                </div>
+            </>
             ) : (
             <div>
                 warten auf andere Spieler...

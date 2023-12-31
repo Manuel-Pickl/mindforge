@@ -4,6 +4,10 @@ import { SpectrumCard } from '../../../types/SpectrumCard';
 export const PrepareContext = createContext<{
     prepareSpectrumCards: SpectrumCard[];
     setPrepareSpectrumCards: Dispatch<SetStateAction<SpectrumCard[]>>;
+    spectrumCardMaxCount: number;
+    setSpectrumCardMaxCount: Dispatch<SetStateAction<number>>;
+    startPrepare: (aPrepareSpectrumCards: SpectrumCard[], aPrepareSpectrumCount: number) => void;
+
 } | undefined>(undefined);
 
 export const usePrepareContext = () => {

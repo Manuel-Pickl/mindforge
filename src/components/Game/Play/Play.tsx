@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import { SpectrumCard } from "../../../types/SpectrumCard";
-import { solutionDuration, splashscreenDuration } from "../../../services/Settings";
+import { defaultValue, solutionDuration, splashscreenDuration } from "../../../services/Settings";
 import { PlayContext, usePlayContext } from "./PlayContext";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 import Dial from "../../Dial/Dial";
@@ -9,7 +9,7 @@ export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [currentPlayRound, setCurrentPlayRound] = useState<number>(0);
     const [roundsCount, setRoundsCount] = useState<number>(-1);
     const [playSpectrumCard, setPlaySpectrumCard] = useState<SpectrumCard | null>(null);
-    const [dial, setDial] = useState<number>(50);
+    const [dial, setDial] = useState<number>(defaultValue);
     const [solutionVisible, setSolutionVisible] = useState<boolean>(false);
     
     function showSolution() {

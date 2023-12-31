@@ -13,19 +13,5 @@
         display: flex;
         flex-direction: column;
         gap: 4px;
-        
-        input {
-            width: 100%;
-            background-color: hsl(0, 0%, 20%);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            padding: 8px;
-            font-size: 0.9rem;
-    
-            &:focus {
-                outline: solid 2px var(--accent-color);
-            }
-        }
     }
 }

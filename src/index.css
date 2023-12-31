@@ -9,6 +9,20 @@
   --accent-color: rgb(101, 101, 247);
 }
 
+input {
+  width: 100%;
+  background-color: hsl(0, 0%, 20%);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 8px;
+  font-size: 0.9rem;
+
+  &:focus {
+      outline: solid 2px var(--accent-color);
+  }
+}
+
 button {
   color: white;
   background-color: transparent;
@@ -19,7 +33,7 @@ button {
   width: 100%;
   background-color: var(--accent-color);
   border-radius: 32px;
-  padding: 20px;
+  padding: 16px;
   text-transform: uppercase;
 
   &:disabled {

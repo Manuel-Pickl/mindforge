@@ -135,11 +135,11 @@ function Dial({
             <div className="scales">
                 <div className="scale">
                     <span>{"<---"}</span>
-                    <span>{scale[0]}</span>
+                    <span>{scale ? scale[0] : ""}</span>
                 </div>
                 <div className="scale">
                     <span>{"--->"}</span>
-                    <span>{scale[1]}</span>
+                    <span>{scale ? scale[1] : ""}</span>
                 </div>
             </div>
         </div>
