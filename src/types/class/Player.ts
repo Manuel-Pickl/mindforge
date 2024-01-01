@@ -1,5 +1,5 @@
-import { getRandomAvatar } from "../services/AvatarManager";
-import { Avatar } from "./Avatar";
+import { getRandomAvatar } from "../../services/AvatarManager";
+import { Avatar } from "../enums/Avatar";
 
 export class Player {
     username: string;

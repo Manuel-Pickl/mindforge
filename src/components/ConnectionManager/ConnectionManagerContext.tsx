@@ -1,5 +1,5 @@
 import { MutableRefObject, createContext, useContext } from 'react';
-import { SpectrumCard } from '../../types/SpectrumCard';
+import { SpectrumCard } from '../../types/class/SpectrumCard';
 
 export const ConnectionManagerContext = createContext<{
     mqttHelperRef: MutableRefObject<any>;

@@ -1,4 +1,4 @@
-import { roomIdLength } from "./Settings";
+import { roomIdLength } from "../Settings";
 
 export function getRoomId(): string {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

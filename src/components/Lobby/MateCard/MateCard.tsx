@@ -1,4 +1,4 @@
-import { Avatar } from "../../../types/Avatar";
+import { Avatar } from "../../../types/enums/Avatar";
 import "./MateCard.scss";
 
 interface MateCardProps {

@@ -1,5 +1,5 @@
-import { Avatar } from "../types/Avatar";
-import { Player } from "../types/Player";
+import { Avatar } from "../types/enums/Avatar";
+import { Player } from "../types/class/Player";
 
 const avatars = [
     Avatar.Giraffe,

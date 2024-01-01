@@ -1,10 +1,10 @@
 import {  useEffect, useState } from "react";
 import { usePrepareContext } from "../PrepareContext";
 import { useConnectionManagerContext } from "../../../ConnectionManager/ConnectionManagerContext";
-import { clueMaxLength, prepareSplashscreenDuration } from "../../../../services/Settings";
+import { clueMaxLength, prepareSplashscreenDuration } from "../../../../Settings";
 import Dial from "../../../Dial/Dial";
 import "./Clue.scss";
-import { PrepareState } from "../../../../types/PrepareState";
+import { PrepareState } from "../../../../types/enums/PrepareState";
 import Counter from "../Counter/Counter";
 
 function Clue ()

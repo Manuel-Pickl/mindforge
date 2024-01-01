@@ -1,5 +1,5 @@
-import { useAppContext } from "../../../AppContext";
-import { usernameMaxLength } from "../../../services/Settings";
+import { useAppContext } from "../../AppContext";
+import { usernameMaxLength } from "../../../Settings";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 import "./Create.scss";
 

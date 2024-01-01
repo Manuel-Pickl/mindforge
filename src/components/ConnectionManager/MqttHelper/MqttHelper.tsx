@@ -1,7 +1,7 @@
 import { MqttClient } from "mqtt";
 import { forwardRef, useImperativeHandle } from "react";
-import { useAppContext } from "../../../AppContext";
-import { Topic } from "../../../types/Topic";
+import { useAppContext } from "../../AppContext";
+import { Topic } from "../../../types/enums/Topic";
 
 interface MqttHelperProps {
     mqttClient: MqttClient | null;

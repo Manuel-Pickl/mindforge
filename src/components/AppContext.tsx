@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
-import { SpectrumCard } from './types/SpectrumCard';
-import { Player } from './types/Player';
-import { Page } from './types/Page';
+import { SpectrumCard } from '../types/class/SpectrumCard';
+import { Player } from '../types/class/Player';
+import { Page } from '../types/enums/Page';
 
 export const AppContext = createContext<{
     page: Page;

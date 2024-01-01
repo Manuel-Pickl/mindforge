@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
-import { GameState } from '../../types/GameState';
+import { GameState } from '../../types/enums/GameState';
 
 export const GameContext = createContext<{
     gameState: GameState;

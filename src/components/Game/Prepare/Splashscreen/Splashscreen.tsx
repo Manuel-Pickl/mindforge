@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { prepareSplashscreenDuration } from "../../../../services/Settings";
+import { prepareSplashscreenDuration } from "../../../../Settings";
 import "./Splashscreen.scss";
 import Counter from "../Counter/Counter";
 

@@ -1,5 +1,5 @@
-import { useAppContext } from "../../../AppContext";
-import { roomIdLength, usernameMaxLength } from "../../../services/Settings";
+import { useAppContext } from "../../AppContext";
+import { roomIdLength, usernameMaxLength } from "../../../Settings";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 import "./Join.scss";
 

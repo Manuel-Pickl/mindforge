@@ -1,4 +1,4 @@
-import { SpectrumCard } from "../types/SpectrumCard";
+import { SpectrumCard } from "../types/class/SpectrumCard";
 
 export function getPoints(aSpectrumCards: SpectrumCard[]): number {
     let points: number = 0;

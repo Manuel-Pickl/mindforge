@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
-import { SpectrumCard } from '../../../types/SpectrumCard';
-import { PrepareState } from '../../../types/PrepareState';
+import { SpectrumCard } from '../../../types/class/SpectrumCard';
+import { PrepareState } from '../../../types/enums/PrepareState';
 
 export const PrepareContext = createContext<{
     prepareSpectrumCards: SpectrumCard[];

@@ -1,23 +1,24 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
-import { Topic } from '../../types/Topic';
+import { Topic } from '../../types/enums/Topic';
 import mqtt, { MqttClient } from 'mqtt';
-import { Page } from '../../types/Page';
+import { Page } from '../../types/enums/Page';
 import { debugLog } from '../../services/Logger';
-import { Player } from '../../types/Player';
-import { GameState } from '../../types/GameState';
-import { SpectrumCard } from '../../types/SpectrumCard';
+import { Player } from '../../types/class/Player';
+import { GameState } from '../../types/enums/GameState';
+import { SpectrumCard } from '../../types/class/SpectrumCard';
 import { getInitialSpectrumCards } from '../../services/SpectrumCardManager';
-import { defaultValue, gameSolutionDuration } from '../../services/Settings';
+import { gameSolutionDuration } from '../../Settings';
 import { getMaxPoints, getPoints } from '../../services/ResultManager';
 import { useGameContext } from '../Game/GameContext';
 import { usePlayContext } from '../Game/Play/PlayContext';
 import { usePrepareContext } from '../Game/Prepare/PrepareContext';
 import { useResultContext } from '../Game/Result/ResultContext';
-import { useAppContext } from '../../AppContext';
+import { useAppContext } from '../AppContext';
 import { ConnectionManagerContext, useConnectionManagerContext } from './ConnectionManagerContext';
 import MqttHelper from './MqttHelper/MqttHelper';
 import { getRoomId } from '../../services/RoomManager';
 import { changeAvatar } from '../../services/AvatarManager';
+import { defaultValue } from '../../services/Constants';
 
 export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const mqttHelperRef = useRef<any>();

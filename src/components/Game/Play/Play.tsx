@@ -1,9 +1,10 @@
 import { ReactNode, useEffect, useState } from "react";
-import { SpectrumCard } from "../../../types/SpectrumCard";
-import { defaultValue, gameSolutionDuration, gameSplashscreenDuration } from "../../../services/Settings";
+import { SpectrumCard } from "../../../types/class/SpectrumCard";
+import { gameSolutionDuration, gameSplashscreenDuration } from "../../../Settings";
 import { PlayContext, usePlayContext } from "./PlayContext";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 import Dial from "../../Dial/Dial";
+import { defaultValue } from "../../../services/Constants";
 
 export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currentPlayRound, setCurrentPlayRound] = useState<number>(0);

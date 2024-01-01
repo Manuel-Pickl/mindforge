@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
-import { SpectrumCard } from '../../../types/SpectrumCard';
+import { SpectrumCard } from '../../../types/class/SpectrumCard';
 
 export const PlayContext = createContext<{
     currentPlayRound : number;

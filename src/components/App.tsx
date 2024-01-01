@@ -1,15 +1,15 @@
 // App.tsx
 import { ReactNode, useEffect, useState } from 'react';
-import Home from './components/Home/Home';
-import { Page } from './types/Page';
-import Lobby from './components/Lobby/Lobby';
-import Game from './components/Game/Game';
-import ConnectionManager from './components/ConnectionManager/ConnectionManager';
-import { Player } from './types/Player';
-import { SpectrumCard } from './types/SpectrumCard';
+import Home from './Home/Home';
+import { Page } from '../types/enums/Page';
+import Lobby from './Lobby/Lobby';
+import Game from './Game/Game';
+import ConnectionManager from './ConnectionManager/ConnectionManager';
+import { Player } from '../types/class/Player';
+import { SpectrumCard } from '../types/class/SpectrumCard';
 import { useLocation } from 'react-router-dom';
 import { AppContext, useAppContext } from './AppContext';
-import Offline from './components/Offline/Offline';
+import Offline from './Offline/Offline';
 import "./App.scss";
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>

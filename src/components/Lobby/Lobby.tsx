@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useAppContext } from "../../AppContext";
-import { Avatar } from "../../types/Avatar";
-import { Player } from "../../types/Player";
+import { useAppContext } from "../AppContext";
+import { Avatar } from "../../types/enums/Avatar";
+import { Player } from "../../types/class/Player";
 import { useConnectionManagerContext } from "../ConnectionManager/ConnectionManagerContext";
 import MateCard from "./MateCard/MateCard";
 import "./Lobby.scss";

@@ -1,8 +1,8 @@
 import { ReactNode, useEffect, useState } from "react";
-import { SpectrumCard } from "../../../types/SpectrumCard";
+import { SpectrumCard } from "../../../types/class/SpectrumCard";
 import { PrepareContext, usePrepareContext } from "./PrepareContext";
-import { prepareSplashscreenDuration } from "../../../services/Settings";
-import { PrepareState } from "../../../types/PrepareState";
+import { prepareSplashscreenDuration } from "../../../Settings";
+import { PrepareState } from "../../../types/enums/PrepareState";
 import Finishscreen from "./Finishscreen/Finishscreen";
 import Splashscreen from "./Splashscreen/Splashscreen";
 import Clue from "./Clue/Clue";

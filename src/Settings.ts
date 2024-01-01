@@ -1,9 +1,5 @@
 export const debug: boolean = false;
 
-// dial
-export const defaultValue: number = 90;
-export const maxDialhandValue: number = 180;
-
 // home
 export const usernameMaxLength: number = 10;
 export const roomIdLength: number = 4;

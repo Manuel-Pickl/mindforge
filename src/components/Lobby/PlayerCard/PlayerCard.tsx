@@ -1,4 +1,4 @@
-import { Avatar } from "../../../types/Avatar";
+import { Avatar } from "../../../types/enums/Avatar";
 import "./PlayerCard.scss";
 import arrowLeft from "../../../assets/icons/arrow_left.svg";
 import arrowRight from "../../../assets/icons/arrow_right.svg";

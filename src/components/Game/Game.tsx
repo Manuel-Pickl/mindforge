@@ -1,6 +1,6 @@
 import Play from "./Play/Play";
 import Prepare from "./Prepare/Prepare";
-import { GameState } from "../../types/GameState";
+import { GameState } from "../../types/enums/GameState";
 import { ReactNode, useState } from "react";
 import Result from "./Result/Result";
 import { GameContext, useGameContext } from "./GameContext";
