@@ -1,21 +1,20 @@
+import { prepareTime } from "../../../../Settings";
 import Counter from "../Counter/Counter";
+import { usePrepareContext } from "../PrepareContext";
 import "./Finishscreen.scss";
-
-interface FinishscreenProps {
-    startTime: number;
-    remainingTime: number;
-}
   
-function Finishscreen({
-    startTime,
-    remainingTime }: FinishscreenProps)
+function Finishscreen()
 {
+    const {
+        remainingPrepareTime,
+    } = usePrepareContext();
+
     return (
         <div className="finishscreenComponent">
             <div className="counterWrapper">
                 <Counter
-                    startTime={startTime}
-                    remainingTime={remainingTime}
+                    startTime={prepareTime}
+                    remainingTime={remainingPrepareTime}
                 />
             </div>
 

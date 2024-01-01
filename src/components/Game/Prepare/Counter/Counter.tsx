@@ -10,23 +10,22 @@ function Counter({
     remainingTime }: CounterProps)
 {
     function formatTime(): string {
-        const minutes: number = Math.floor(remainingTime / 60);
-        const secondsDecimal: number = Math.floor(remainingTime % 60 / 10);
-        const secondsSingular: number = remainingTime % 10;
+        const minutes: number = Math.floor(remainingTime / 1000/ 60);
+        const seconds: number = remainingTime / 1000 % 60;
 
         const minutesString: string = minutes > 0 ? `${minutes}:` : "";
-        const secondsDecimalString: string = minutes > 0 || secondsDecimal > 0 ? secondsDecimal.toString() : ""
-        const secondsSingularString: string = secondsSingular.toString();
+        const secondsString: string = seconds < 10 && minutes > 0 ? `0${seconds}` : seconds.toString();
 
-        const formattedTime: string = `${minutesString}${secondsDecimalString}${secondsSingularString}`;
+        const formattedTime: string = `${minutesString}${secondsString}`;
     
         return formattedTime;
     }
 
-    console.log(startTime)
-
     return (
-    <div className="counterComponent">
+    <div
+        className="counterComponent"
+        style={{ '--startTime': startTime } as React.CSSProperties}
+    >
         {formatTime()}
     </div>
     );

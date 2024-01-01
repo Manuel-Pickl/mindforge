@@ -1,5 +1,5 @@
 import { useAppContext } from "../../AppContext";
-import { roomIdLength, usernameMaxLength } from "../../../Settings";
+import { roomIdMaxLength, usernameMaxLength } from "../../../Settings";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 import "./Join.scss";
 
@@ -54,7 +54,7 @@ function Join()
                 <input
                     type="text"
                     placeholder="Raum"
-                    maxLength={roomIdLength}
+                    maxLength={roomIdMaxLength}
                     value={room}
                     onChange={onRoomInputChange}
                 />

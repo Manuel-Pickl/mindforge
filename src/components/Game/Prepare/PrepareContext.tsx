@@ -10,6 +10,8 @@ export const PrepareContext = createContext<{
     startPrepare: (aPrepareSpectrumCards: SpectrumCard[], aPrepareSpectrumCount: number) => void;
     prepareState: PrepareState;
     setPrepareState: Dispatch<SetStateAction<PrepareState>>;
+    remainingPrepareTime: number;
+    setRemainingPrepareTime: Dispatch<SetStateAction<number>>;
 
 } | undefined>(undefined);
 

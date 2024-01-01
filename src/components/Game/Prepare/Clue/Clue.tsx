@@ -1,7 +1,7 @@
-import {  useEffect, useState } from "react";
+import { useState } from "react";
 import { usePrepareContext } from "../PrepareContext";
 import { useConnectionManagerContext } from "../../../ConnectionManager/ConnectionManagerContext";
-import { clueMaxLength, skipsPerCard } from "../../../../Settings";
+import { clueMaxLength, prepareTime, skipsPerCard } from "../../../../Settings";
 import Dial from "../../../Dial/Dial";
 import "./Clue.scss";
 import { PrepareState } from "../../../../types/enums/PrepareState";
@@ -9,16 +9,16 @@ import Counter from "../Counter/Counter";
 
 function Clue ()
 {
-    const startTime: number = 300; // get calc and sent
-    
-    const [remainingTime, setRemainingTime] = useState<number>(startTime);
-    
     const [clue, setClue] = useState<string>("");
     const [currentSpectrumCardIndex, setCurrentSpectrumCardIndex] = useState<number>(0);
     const [spectrumCardCount, setSpectrumCardCount] = useState<number>(1);
     const [currentSkipsCount, setCurrentSkipsCount] = useState<number>(0);
     const [skipDisabled, setSkipDisabled] = useState<boolean>(false);
     
+    const {
+        remainingPrepareTime,
+    } = usePrepareContext();
+
     const {
         setPrepareState,
         prepareSpectrumCards, setPrepareSpectrumCards,
@@ -28,16 +28,6 @@ function Clue ()
     const {
         sendPrepareFinished
     } = useConnectionManagerContext();
-
-    useEffect(() => {
-        const remainingTimeInterval = setInterval(() => {
-            setRemainingTime(aRemainingTime => aRemainingTime - 1);
-        }, 1000);
-
-        return () => {
-            clearInterval(remainingTimeInterval);
-        };    
-    }, []);
 
     function skipSpectrumCard() {
         const newSkipCount = currentSkipsCount + 1;
@@ -51,7 +41,6 @@ function Clue ()
 
     function showNextSpectrumCard() {
         prepareSpectrumCards[currentSpectrumCardIndex].clue = clue;
-        prepareSpectrumCards[currentSpectrumCardIndex].skipped = false;
         setPrepareSpectrumCards([...prepareSpectrumCards]);
 
         const finishedAllSpectrumCards: boolean = spectrumCardCount >= spectrumCardMaxCount;
@@ -76,8 +65,8 @@ function Clue ()
         <div className="clueComponent">
             <div className="counterWrapper">
                 <Counter
-                    startTime={startTime}
-                    remainingTime={remainingTime}
+                    startTime={prepareTime}
+                    remainingTime={remainingPrepareTime}
                 />
             </div>
 

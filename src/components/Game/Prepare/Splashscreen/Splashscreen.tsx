@@ -1,35 +1,37 @@
 import { useEffect, useState } from "react";
-import { prepareSplashscreenDuration } from "../../../../Settings";
+import { prepareSplashscreenDuration, prepareTime } from "../../../../Settings";
 import "./Splashscreen.scss";
 import Counter from "../Counter/Counter";
 
 interface SplashscreenProps {
-    totalTime: number;
     spectrumCardMaxCount: number;
 }
   
 function Splashscreen({
-    totalTime,
     spectrumCardMaxCount }: SplashscreenProps)
 {
-    const counterStart: number = prepareSplashscreenDuration / 1000;
+    const counterStart: number = prepareSplashscreenDuration;
     const [counter, setCounter] = useState<number>(counterStart);
     
     useEffect(() => {
-        const counterInterval = setInterval(() => {
-            setCounter(aCounter => aCounter - 1);
+        const splashscreenInterval = setInterval(() => {
+            setCounter(aCounter => aCounter - 1000);
         }, 1000);
 
         return () => {
-            clearInterval(counterInterval);
+            clearInterval(splashscreenInterval);
         };
     }, []);
+
+    function prepareTimeInMinutes(): string {
+        return Math.round(prepareTime/1000/60).toString();
+    }
 
     return (
     <div className="splashscreenComponent">
         <div className="info">
-            Du hast {totalTime/60} Minuten um {spectrumCardMaxCount} Hinweise zu schreiben
-        </div>
+            Du hast {prepareTimeInMinutes()} Minuten um {spectrumCardMaxCount} Hinweise zu schreiben
+            </div>
 
         <div className="counterWrapper">
             <Counter

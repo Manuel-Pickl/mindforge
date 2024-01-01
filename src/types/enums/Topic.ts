@@ -6,6 +6,7 @@ export enum Topic {
     // host -> guest
     LobbyData = "LobbyData",
     StartPrepare = "StartPrepare",
+    RemainingPrepareTime = "RemainingPrepareTime",
     StartPlayRound = "StartPlayRound",
     PlayRoundFinished = "PlayRoundFinished",
     ShowPlayRoundSolution = "ShowPlayRoundSolution",

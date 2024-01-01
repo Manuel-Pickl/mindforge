@@ -7,7 +7,7 @@ import { Player } from '../../types/class/Player';
 import { GameState } from '../../types/enums/GameState';
 import { SpectrumCard } from '../../types/class/SpectrumCard';
 import { getInitialSpectrumCards } from '../../services/SpectrumCardManager';
-import { cardsPerPlayer, debug, debugRoom, gameSolutionDuration } from '../../Settings';
+import { cardsPerPlayer, debug, debugRoom, gameSolutionDuration, prepareSplashscreenDuration } from '../../Settings';
 import { getMaxPoints, getPoints } from '../../services/ResultManager';
 import { useGameContext } from '../Game/GameContext';
 import { usePlayContext } from '../Game/Play/PlayContext';
@@ -19,6 +19,7 @@ import MqttHelper from './MqttHelper/MqttHelper';
 import { getRoomId } from '../../services/RoomManager';
 import { changeAvatar } from '../../services/AvatarManager';
 import { defaultValue } from '../../services/Constants';
+import { useServerContext } from '../Server/ServerContext';
 
 export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const mqttHelperRef = useRef<any>();
@@ -29,6 +30,10 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     setPlayers,
     setRoom,
   } = useAppContext();
+
+  const {
+    setRemainingPrepareTime,
+  } = useServerContext();
 
   // host
   function createRoom() {
@@ -58,6 +63,17 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
 
     mqttHelperRef.current.subscribe(Topic.PrepareFinished);
 
+    setTimeout(() => {
+      setInterval(() => {
+        setRemainingPrepareTime(aRemainingPrepareTime => {
+          const newRemainingPrepareTime = aRemainingPrepareTime - 1000;
+          mqttHelperRef.current.publish(Topic.RemainingPrepareTime, newRemainingPrepareTime);
+  
+          return newRemainingPrepareTime;
+        });
+      }, 1000);
+    }, prepareSplashscreenDuration);
+    
     return players});
   }
 
@@ -119,6 +135,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
 
     mqttHelperRef.current.subscribe(Topic.LobbyData);
     mqttHelperRef.current.subscribe(`${Topic.StartPrepare}/${username}`);
+    mqttHelperRef.current.subscribe(Topic.RemainingPrepareTime);
     mqttHelperRef.current.subscribe(Topic.StartPlayRound);
     mqttHelperRef.current.subscribe(Topic.UpdateGlobalDial);
     mqttHelperRef.current.subscribe(Topic.ShowPlayRoundSolution);
@@ -161,6 +178,7 @@ function ConnectionManager()
   
   const {
     startPrepare,
+    setRemainingPrepareTime,
   } = usePrepareContext();
   
   const {
@@ -212,6 +230,9 @@ function ConnectionManager()
         break;
       case `${Topic.StartPrepare}/${username}`:
         onPrepareStart(data);
+        break;
+      case Topic.RemainingPrepareTime:
+        onRemainingPrepareTime(data);
         break;
       case Topic.StartPlayRound:
         onPlayStart(data);
@@ -277,8 +298,8 @@ function ConnectionManager()
 
     // we have to nest the update functions, because React is shit
     setSpectrumCards(spectrumCards => {
-      const filteredPrepareSpectrumCards = aPrepareSpectrumCards.filter(card => !card.skipped);
-      const newPlaySpectrumCards = [...spectrumCards, ...filteredPrepareSpectrumCards];
+      const prepareSpectrumCardsWithClue = aPrepareSpectrumCards.filter(card => card.clue.length > 0);
+      const newPlaySpectrumCards = [...spectrumCards, ...prepareSpectrumCardsWithClue];
 
       setPlayers((oldPlayers) => {
         const updatedPlayers = 
@@ -414,6 +435,10 @@ function ConnectionManager()
     setPage(Page.Game);
   }
   
+  function onRemainingPrepareTime(aRemainingPrepareTime: number) {
+    setRemainingPrepareTime(aRemainingPrepareTime);
+  }
+
   // @ts-ignore
   function onPlayStart({ aPlaySpectrumCard, aCurrentRound, aRoundsCount }) {
     setPlaySpectrumCard(aPlaySpectrumCard);
