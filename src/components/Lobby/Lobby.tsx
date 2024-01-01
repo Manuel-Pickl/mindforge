@@ -6,6 +6,7 @@ import { useConnectionManagerContext } from "../ConnectionManager/ConnectionMana
 import MateCard from "./MateCard/MateCard";
 import "./Lobby.scss";
 import PlayerCard from "./PlayerCard/PlayerCard";
+import { maxPlayers } from "../../Settings";
 
 function Lobby ()
 {
@@ -29,7 +30,7 @@ function Lobby ()
         let mates = getMates();
         let addElementSet = false;
 
-        for (let i: number = 0; i < 7; i++) {
+        for (let i: number = 0; i < maxPlayers - 1; i++) {
             const currentUser: Player = mates[i];
 
             mateCards.push(

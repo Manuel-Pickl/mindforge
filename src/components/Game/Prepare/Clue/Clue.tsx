@@ -1,7 +1,7 @@
 import {  useEffect, useState } from "react";
 import { usePrepareContext } from "../PrepareContext";
 import { useConnectionManagerContext } from "../../../ConnectionManager/ConnectionManagerContext";
-import { clueMaxLength, prepareSplashscreenDuration } from "../../../../Settings";
+import { clueMaxLength, skipsPerCard } from "../../../../Settings";
 import Dial from "../../../Dial/Dial";
 import "./Clue.scss";
 import { PrepareState } from "../../../../types/enums/PrepareState";
@@ -10,13 +10,15 @@ import Counter from "../Counter/Counter";
 function Clue ()
 {
     const startTime: number = 300; // get calc and sent
+    
     const [remainingTime, setRemainingTime] = useState<number>(startTime);
     
     const [clue, setClue] = useState<string>("");
     const [currentSpectrumCardIndex, setCurrentSpectrumCardIndex] = useState<number>(0);
     const [spectrumCardCount, setSpectrumCardCount] = useState<number>(1);
+    const [currentSkipsCount, setCurrentSkipsCount] = useState<number>(0);
     const [skipDisabled, setSkipDisabled] = useState<boolean>(false);
-
+    
     const {
         setPrepareState,
         prepareSpectrumCards, setPrepareSpectrumCards,
@@ -28,19 +30,21 @@ function Clue ()
     } = useConnectionManagerContext();
 
     useEffect(() => {
-        setTimeout(() => {
-            const remainingTimeInterval = setInterval(() => {
-                setRemainingTime(aRemainingTime => aRemainingTime - 1);
-            }, 1000);
-    
-            return () => {
-                clearInterval(remainingTimeInterval);
-            };    
-        }, prepareSplashscreenDuration);
+        const remainingTimeInterval = setInterval(() => {
+            setRemainingTime(aRemainingTime => aRemainingTime - 1);
+        }, 1000);
+
+        return () => {
+            clearInterval(remainingTimeInterval);
+        };    
     }, []);
 
     function skipSpectrumCard() {
-        setSkipDisabled(true);
+        const newSkipCount = currentSkipsCount + 1;
+        const skipDisabled = newSkipCount >= skipsPerCard;
+        setCurrentSkipsCount(newSkipCount);
+        setSkipDisabled(skipDisabled);
+
         setClue("");
         setCurrentSpectrumCardIndex(currentSpectrumCardIndex + 1);
     }
@@ -55,6 +59,7 @@ function Clue ()
             setCurrentSpectrumCardIndex(currentSpectrumCardIndex + 1);
             setSpectrumCardCount(spectrumCardCount + 1);
             setClue("");
+            setCurrentSkipsCount(0);
             setSkipDisabled(false);
         }
         else {

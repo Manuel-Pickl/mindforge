@@ -7,7 +7,7 @@ import { Player } from '../../types/class/Player';
 import { GameState } from '../../types/enums/GameState';
 import { SpectrumCard } from '../../types/class/SpectrumCard';
 import { getInitialSpectrumCards } from '../../services/SpectrumCardManager';
-import { gameSolutionDuration } from '../../Settings';
+import { cardsPerPlayer, debug, debugRoom, gameSolutionDuration } from '../../Settings';
 import { getMaxPoints, getPoints } from '../../services/ResultManager';
 import { useGameContext } from '../Game/GameContext';
 import { usePlayContext } from '../Game/Play/PlayContext';
@@ -32,7 +32,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
 
   // host
   function createRoom() {
-    const roomId = getRoomId();
+    const roomId = debug ? debugRoom : getRoomId();
     setRoom(roomId);
 
     mqttHelperRef.current.subscribe(Topic.Join);
@@ -49,11 +49,10 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
 
     players.forEach(player => {
       const prepareSpectrumCardsForPlayer: SpectrumCard[] = prepareSpectrumCards.filter(x => x.owner == player.username);
-      const prepareSpectrumCount: number = prepareSpectrumCardsForPlayer.length / 2;
 
       mqttHelperRef.current.publish(`${Topic.StartPrepare}/${player.username}`, {
         aPrepareSpectrumCards: prepareSpectrumCardsForPlayer,
-        aPrepareSpectrumCount: prepareSpectrumCount,
+        aPrepareSpectrumCount: cardsPerPlayer,
       });
     });
 
