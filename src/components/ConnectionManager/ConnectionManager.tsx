@@ -66,13 +66,13 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     setTimeout(() => {
       setInterval(() => {
         setRemainingPrepareTime(aRemainingPrepareTime => {
-          const newRemainingPrepareTime = aRemainingPrepareTime - 1000;
+          const newRemainingPrepareTime = aRemainingPrepareTime - 1;
           mqttHelperRef.current.publish(Topic.RemainingPrepareTime, newRemainingPrepareTime);
   
           return newRemainingPrepareTime;
         });
       }, 1000);
-    }, prepareSplashscreenDuration);
+    }, prepareSplashscreenDuration * 1000);
     
     return players});
   }
@@ -102,7 +102,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
           alert("Der Raum existiert nicht oder du kannst nicht mehr beitreten")
         }
       return aJoined})
-    }, joinWaitingTime);
+    }, joinWaitingTime * 1000);
 
     return username});
   }
@@ -404,11 +404,11 @@ function ConnectionManager()
         if (playFinished) {
           setTimeout(() => {
             showResult();
-          }, gameSolutionDuration);
+          }, gameSolutionDuration * 1000);
         } else {
           setTimeout(() => {
             startPlayRound(aSpectrumCards);
-          }, gameSolutionDuration);
+          }, gameSolutionDuration * 1000);
         }
       }
 

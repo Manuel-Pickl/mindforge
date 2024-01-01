@@ -50,7 +50,7 @@ function Join()
 
         setTimeout(() => {
             setJoinInProgress(false);
-        }, joinWaitingTime);
+        }, joinWaitingTime * 1000);
     }
 
     return (

@@ -15,7 +15,7 @@ function Splashscreen({
     
     useEffect(() => {
         const splashscreenInterval = setInterval(() => {
-            setCounter(aCounter => aCounter - 1000);
+            setCounter(aCounter => aCounter - 1);
         }, 1000);
 
         return () => {
@@ -24,13 +24,13 @@ function Splashscreen({
     }, []);
 
     function prepareTimeInMinutes(): string {
-        return Math.round(prepareTime/1000/60).toString();
+        return Math.round(prepareTime / 60).toString();
     }
 
     return (
     <div className="splashscreenComponent">
         <div className="info">
-            Du hast {prepareTimeInMinutes()} Minuten um {spectrumCardMaxCount} Hinweise zu schreiben
+            Du hast {prepareTimeInMinutes()} Minuten um {spectrumCardMaxCount} {spectrumCardMaxCount > 1 ? "Hinweise" : "Hinweis"} zu schreiben
             </div>
 
         <div className="counterWrapper">

@@ -10,8 +10,8 @@ function Counter({
     remainingTime }: CounterProps)
 {
     function formatTime(): string {
-        const minutes: number = Math.floor(remainingTime / 1000/ 60);
-        const seconds: number = remainingTime / 1000 % 60;
+        const minutes: number = Math.floor(remainingTime / 60);
+        const seconds: number = remainingTime % 60;
 
         const minutesString: string = minutes > 0 ? `${minutes}:` : "";
         const secondsString: string = seconds < 10 && minutes > 0 ? `0${seconds}` : seconds.toString();

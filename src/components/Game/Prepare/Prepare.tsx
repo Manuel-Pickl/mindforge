@@ -19,7 +19,7 @@ export const PrepareProvider: React.FC<{ children: ReactNode }> = ({ children })
         
         setTimeout(() => {
             setPrepareState(PrepareState.Prepare)
-        }, prepareSplashscreenDuration);
+        }, prepareSplashscreenDuration * 1000);
     }
 
     return (<PrepareContext.Provider value={{ prepareSpectrumCards, setPrepareSpectrumCards, spectrumCardMaxCount, setSpectrumCardMaxCount, startPrepare, prepareState, setPrepareState, remainingPrepareTime, setRemainingPrepareTime }}>{children}</PrepareContext.Provider>);
