@@ -1,9 +1,7 @@
+import { cardsPerPlayer, skipsPerCard } from "../Settings";
 import { Player } from "../types/class/Player";
 import { SpectrumCard } from "../types/class/SpectrumCard"
 import { maxDialhandValue } from "./Constants";
-
-const cardsPerPlayer: number = 2;
-const skipsPerCard: number = 1;
 
 export function getInitialSpectrumCards(players: Player[]): SpectrumCard[] {
     const spectrumCards: SpectrumCard[] = [];

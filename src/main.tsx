@@ -16,9 +16,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <PrepareProvider>
         <PlayProvider>
         <ResultProvider>
-
             <App />
-        
         </ResultProvider>
         </PlayProvider>
         </PrepareProvider>
