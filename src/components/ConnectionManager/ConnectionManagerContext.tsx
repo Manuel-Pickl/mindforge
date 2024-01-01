@@ -1,7 +1,8 @@
-import { MutableRefObject, createContext, useContext } from 'react';
+import { Dispatch, MutableRefObject, SetStateAction, createContext, useContext } from 'react';
 import { SpectrumCard } from '../../types/class/SpectrumCard';
 
 export const ConnectionManagerContext = createContext<{
+    setJoined: Dispatch<SetStateAction<boolean>>;
     mqttHelperRef: MutableRefObject<any>;
     createRoom: () => void;
     startPrepare: () => void;

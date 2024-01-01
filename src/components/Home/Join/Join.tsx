@@ -2,9 +2,13 @@ import { useAppContext } from "../../AppContext";
 import { roomIdMaxLength, usernameMaxLength } from "../../../Settings";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 import "./Join.scss";
+import { useState } from "react";
+import { joinWaitingTime } from "../../../services/Constants";
 
 function Join()
 {
+    const [joinInProgress, setJoinInProgress] = useState<boolean>(false);
+
     const {
         username, setUsername,
         room, setRoom,
@@ -23,6 +27,10 @@ function Join()
     }
 
     function joinDisabled() {
+        if (joinInProgress) {
+            return true;
+        }
+
         const roomIsEmpty: boolean = room.trim().length == 0;
         if (roomIsEmpty) {
             return true;
@@ -34,6 +42,15 @@ function Join()
         }
 
         return false;
+    }
+
+    function clickOnJoin() {
+        setJoinInProgress(true);
+        joinRoom(false);
+
+        setTimeout(() => {
+            setJoinInProgress(false);
+        }, joinWaitingTime);
     }
 
     return (
@@ -63,7 +80,7 @@ function Join()
             <button
                 className="actionButton"
                 disabled={joinDisabled()}
-                onClick={() => joinRoom(false)}
+                onClick={clickOnJoin}
             >
                 Raum Beitreten
             </button>

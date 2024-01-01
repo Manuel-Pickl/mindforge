@@ -18,14 +18,14 @@ import { ConnectionManagerContext, useConnectionManagerContext } from './Connect
 import MqttHelper from './MqttHelper/MqttHelper';
 import { getRoomId } from '../../services/RoomManager';
 import { changeAvatar } from '../../services/AvatarManager';
-import { defaultValue } from '../../services/Constants';
+import { defaultValue, joinWaitingTime } from '../../services/Constants';
 import { useServerContext } from '../Server/ServerContext';
 
 export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const mqttHelperRef = useRef<any>();
+  const [_, setJoined] = useState<boolean>(false);
 
   const {
-    setPage,
     setUsername,
     setPlayers,
     setRoom,
@@ -82,13 +82,27 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   function joinRoom(aIsHost: boolean) {
     setUsername(username => {
 
+    mqttHelperRef.current.subscribe(`${Topic.JoinSuccess}/${username}`);
+    mqttHelperRef.current.subscribe(Topic.LobbyData);
+    mqttHelperRef.current.subscribe(`${Topic.StartPrepare}/${username}`);
+    mqttHelperRef.current.subscribe(Topic.RemainingPrepareTime);
+    mqttHelperRef.current.subscribe(Topic.StartPlayRound);
+    mqttHelperRef.current.subscribe(Topic.UpdateGlobalDial);
+    mqttHelperRef.current.subscribe(Topic.ShowPlayRoundSolution);
+    mqttHelperRef.current.subscribe(Topic.StartResult);
+  
     mqttHelperRef.current.publish(Topic.Join, {
       aUsername: username, 
       aIsHost: aIsHost,
     });
 
-    subscribeGuest();
-    setPage(Page.Lobby);
+    setTimeout(() => {
+      setJoined(aJoined => {
+        if (!aJoined) {
+          alert("Der Raum existiert nicht oder du kannst nicht mehr beitreten")
+        }
+      return aJoined})
+    }, joinWaitingTime);
 
     return username});
   }
@@ -130,21 +144,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     return username});
   }
 
-  function subscribeGuest() {
-    setUsername(username => {
-
-    mqttHelperRef.current.subscribe(Topic.LobbyData);
-    mqttHelperRef.current.subscribe(`${Topic.StartPrepare}/${username}`);
-    mqttHelperRef.current.subscribe(Topic.RemainingPrepareTime);
-    mqttHelperRef.current.subscribe(Topic.StartPlayRound);
-    mqttHelperRef.current.subscribe(Topic.UpdateGlobalDial);
-    mqttHelperRef.current.subscribe(Topic.ShowPlayRoundSolution);
-    mqttHelperRef.current.subscribe(Topic.StartResult);
-
-    return username});
-  }
-
-  return (<ConnectionManagerContext.Provider value={{ mqttHelperRef, createRoom, startPrepare: startPrepare_host, joinRoom, updateGlobalDial, sendPrepareFinished, sendPlayRoundFinished, sendChangeAvatar }}>{children}</ConnectionManagerContext.Provider>);
+  return (<ConnectionManagerContext.Provider value={{ setJoined, mqttHelperRef, createRoom, startPrepare: startPrepare_host, joinRoom, updateGlobalDial, sendPrepareFinished, sendPlayRoundFinished, sendChangeAvatar }}>{children}</ConnectionManagerContext.Provider>);
 };
 
 function ConnectionManager()
@@ -153,6 +153,7 @@ function ConnectionManager()
   let connectionLostTime: number | null = null;
 
   const {
+    setJoined,
     mqttHelperRef,
     updateGlobalDial,
   } = useConnectionManagerContext();
@@ -225,6 +226,9 @@ function ConnectionManager()
         break;
 
       // guest
+      case `${Topic.JoinSuccess}/${username}`:
+        onJoinSuccess();
+        break;
       case Topic.LobbyData:
         onLobbyData(data);
         break;
@@ -275,8 +279,12 @@ function ConnectionManager()
   function onJoin({ aUsername, aIsHost }) {
     setPlayers(players => {
 
-    const updatedPlayers = [...players, new Player(aUsername, aIsHost)];
-    mqttHelperRef.current.publish(Topic.LobbyData, updatedPlayers);
+    mqttHelperRef.current.publish(`${Topic.JoinSuccess}/${aUsername}`);
+
+    setTimeout(() => {
+      const updatedPlayers = [...players, new Player(aUsername, aIsHost)];
+      mqttHelperRef.current.publish(Topic.LobbyData, updatedPlayers);
+    }, 1000);
     
     return players });
   }
@@ -424,6 +432,11 @@ function ConnectionManager()
   }
   
 
+
+  function onJoinSuccess() {
+    setJoined(true);
+    setPage(Page.Lobby);
+  }
 
   function onLobbyData(aPlayers: Player[]) {
     setPlayers([...aPlayers]);

@@ -4,6 +4,7 @@ export enum Topic {
     PrepareFinished = "PrepareFinished",
     
     // host -> guest
+    JoinSuccess = "JoinSuccess",
     LobbyData = "LobbyData",
     StartPrepare = "StartPrepare",
     RemainingPrepareTime = "RemainingPrepareTime",
