@@ -11,16 +11,10 @@
   },
   "dependencies": {
     "@types/node": "^20.10.5",
-    "@types/socket.io-client": "^3.0.0",
-    "base-x": "^4.0.0",
     "mqtt": "^5.3.3",
-    "peerjs": "^1.5.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.21.0",
-    "shortid": "^2.2.16",
-    "simple-peer": "^9.11.1",
-    "socket.io-client": "^4.7.2"
+    "react-router-dom": "^6.21.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
