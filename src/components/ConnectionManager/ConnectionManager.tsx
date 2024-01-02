@@ -274,10 +274,10 @@ function ConnectionManager()
 
   useEffect(() =>
   {
-    const protocoll: string = "wss";
-    const address: string = "test.mosquitto.org";
-    const port: string = "8081";
-    const mqttUrl = `${protocoll}://${address}:${port}`;
+    // const protocoll: string = "wss";
+    // const address: string = "test.mosquitto.org";
+    // const port: string = "8081";
+    // const mqttUrl = `${protocoll}://${address}:${port}`;
     // const mqttClient: MqttClient = mqtt.connect(mqttUrl);
     const mqttClient: MqttClient = mqtt.connect("ws://localhost:9001");
 
@@ -544,7 +544,7 @@ function ConnectionManager()
     const updateComesFromUserItself: boolean = username == aUsername;
     if (updateComesFromUserItself)
     {
-      return;
+      return username;
     }
 
     setDial(aValue);
