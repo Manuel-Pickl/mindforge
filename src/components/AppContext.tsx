@@ -14,7 +14,7 @@ export const AppContext = createContext<{
     setRoom: Dispatch<SetStateAction<string>>;
     spectrumCards: SpectrumCard[];
     setSpectrumCards: Dispatch<SetStateAction<SpectrumCard[]>>;
-    getPlayer: () => Player | undefined;
+    getPlayer: () => Player;
     getMates: () => Player[];
 } | undefined>(undefined);
 

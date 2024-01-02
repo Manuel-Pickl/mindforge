@@ -1,5 +1,6 @@
 import { Avatar } from "../types/enums/Avatar";
 import { Player } from "../types/class/Player";
+import "./Extensions/ArrayExtensions";
 
 const avatars = [
     Avatar.Giraffe,
@@ -23,11 +24,8 @@ export function changeAvatar(
     aUsername: string,
     aPlayers: Player[]): Player[]
 {
-    const player: Player | undefined = aPlayers
-        .find(player => player.username == aUsername);
-    if (!player) {
-        return aPlayers;
-    }
+    const player: Player = aPlayers
+        .first(player => player.username == aUsername);
 
     const currentAvatarIndex = avatars.indexOf(player.avatar);
     const newAvatarIndex = (currentAvatarIndex + aIndexDelta + avatars.length) % (avatars.length);

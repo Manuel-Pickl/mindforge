@@ -58,8 +58,8 @@ function Lobby ()
 
             <PlayerCard
                 username={username}
-                avatar={getPlayer()?.avatar}
-                isHost={getPlayer()?.isHost ?? false}
+                avatar={getPlayer().avatar}
+                isHost={getPlayer().isHost ?? false}
             />
 
             <div className="guestCards">
@@ -68,7 +68,7 @@ function Lobby ()
 
             <br />
 
-            {getPlayer()?.isHost ? (
+            {getPlayer().isHost ? (
                 <button
                     disabled={players.length < 2}
                     className="actionButton"

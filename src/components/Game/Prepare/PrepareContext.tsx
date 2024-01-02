@@ -7,7 +7,7 @@ export const PrepareContext = createContext<{
     setPrepareSpectrumCards: Dispatch<SetStateAction<SpectrumCard[]>>;
     spectrumCardMaxCount: number;
     setSpectrumCardMaxCount: Dispatch<SetStateAction<number>>;
-    startPrepare: (aPrepareSpectrumCards: SpectrumCard[], aPrepareSpectrumCount: number) => void;
+    startPrepare: (aPrepareSpectrumCards: SpectrumCard[]) => void;
     prepareState: PrepareState;
     setPrepareState: Dispatch<SetStateAction<PrepareState>>;
     remainingPrepareTime: number;

@@ -1,7 +1,7 @@
 import { ReactNode, useState } from "react";
 import { SpectrumCard } from "../../../types/class/SpectrumCard";
 import { PrepareContext, usePrepareContext } from "./PrepareContext";
-import { prepareSplashscreenDuration, prepareTime } from "../../../Settings";
+import { cardsPerPlayer, prepareSplashscreenDuration, prepareTime } from "../../../Settings";
 import { PrepareState } from "../../../types/enums/PrepareState";
 import Finishscreen from "./Finishscreen/Finishscreen";
 import Splashscreen from "./Splashscreen/Splashscreen";
@@ -13,9 +13,9 @@ export const PrepareProvider: React.FC<{ children: ReactNode }> = ({ children })
     const [prepareState, setPrepareState] = useState<PrepareState>(PrepareState.Splashscreen);
     const [remainingPrepareTime, setRemainingPrepareTime] = useState<number>(prepareTime);
 
-    function startPrepare(aPrepareSpectrumCards: SpectrumCard[], aPrepareSpectrumCount: number) {
+    function startPrepare(aPrepareSpectrumCards: SpectrumCard[]) {
         setPrepareSpectrumCards(aPrepareSpectrumCards);
-        setSpectrumCardMaxCount(aPrepareSpectrumCount);
+        setSpectrumCardMaxCount(cardsPerPlayer);
         
         setTimeout(() => {
             setPrepareState(PrepareState.Prepare)
