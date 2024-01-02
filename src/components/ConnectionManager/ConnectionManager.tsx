@@ -7,7 +7,7 @@ import { Player } from '../../types/class/Player';
 import { GameState } from '../../types/enums/GameState';
 import { SpectrumCard } from '../../types/class/SpectrumCard';
 import { getInitialSpectrumCards } from '../../services/SpectrumCardManager';
-import { cardsPerPlayer, debugBrokerRunning, debugRoom, gameSolutionDuration, mqttUrl, prepareSplashscreenDuration } from '../../Settings';
+import { cardsPerPlayer, debugRoom, gameSolutionDuration, mqttUrl, prepareSplashscreenDuration } from '../../Settings';
 import { getMaxPoints, getTotalPoints } from '../../services/ResultManager';
 import { useGameContext } from '../Game/GameContext';
 import { usePlayContext } from '../Game/Play/PlayContext';
