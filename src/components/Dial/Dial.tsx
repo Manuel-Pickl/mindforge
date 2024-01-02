@@ -1,10 +1,13 @@
 import { useEffect, useRef } from "react";
 import "./Dial.scss";
 import { debugLog } from "../../services/Logger";
+import { solutionSectorDegrees } from "../../Settings";
+import { Sector } from "../../types/enums/Sector";
+import { getHitSector } from "../../services/ResultManager";
 
 interface DialProps {
     hideHand: boolean;
-    showSolution: boolean;
+    solutionVisible: boolean;
     solution: number;
     onDialChange?: (value: number) => void;
     dial?: number;
@@ -13,7 +16,7 @@ interface DialProps {
   
 function Dial({
     hideHand,
-    showSolution,
+    solutionVisible,
     solution,
     onDialChange,
     dial,
@@ -22,7 +25,7 @@ function Dial({
     const isDraggingRef = useRef<boolean>(false);
     const dialComponentRef = useRef<HTMLDivElement | null>(null);
     const handRef = useRef<HTMLDivElement | null>(null);
-
+    
     useEffect(() => {
         window.addEventListener("mouseup", handleMouseUp);
         window.addEventListener("touchend", handleMouseUp);
@@ -87,6 +90,27 @@ function Dial({
         onDialChange?.(angleCorrected);
     }
 
+    function isSectorActive(aSector: Sector): boolean {
+        if (!solutionVisible) {
+            return false;
+        }
+
+        if (hideHand) {
+            return false;
+        }
+
+        const hitSector: Sector = getHitSector(dial ?? 0, solution);
+        const sectorIsActive: boolean = aSector == hitSector;
+        return sectorIsActive;
+    }
+
+    function getStatusClass(aSector: Sector): string {
+        const statusClass: string = isSectorActive(aSector)
+            ? " enabled" : "";
+        
+        return statusClass;
+    }
+
     return (
         <div 
             ref={dialComponentRef}
@@ -97,24 +121,27 @@ function Dial({
             <div className="dial">
                 <div className="dialBackground" />
                 
-                {showSolution &&
+                {solutionVisible &&
                 <div 
                     className="solution"
-                    style={{ '--angle': `${solution}deg` } as React.CSSProperties}
+                    style={{
+                        "--angle": `${solution}deg`,
+                        "--widthInDegrees": `${solutionSectorDegrees}deg`
+                    } as React.CSSProperties}
                 >
-                    <div className="sector points1 points1-left">
+                    <div className={"sector points1 points1-left" + getStatusClass(Sector.OnePointLeft)}>
                         <span>1</span>
                     </div>
-                    <div className="sector points2 points2-left active">
+                    <div className={"sector points2 points2-left" + getStatusClass(Sector.TwoPointsLeft)}>
                         <span>2</span>
                     </div>
-                    <div className="sector points3">
+                    <div className={"sector points3" + getStatusClass(Sector.ThreePoints)}>
                         <span>3</span>
                     </div>
-                    <div className="sector points2 points2-right">
+                    <div className={"sector points2 points2-right" + getStatusClass(Sector.TwoPointsRight)}>
                         <span>2</span>
                     </div>
-                    <div className="sector points1 points1-right">
+                    <div className={"sector points1 points1-right" + getStatusClass(Sector.OnePointRight)}>
                         <span>1</span>
                     </div>
                 </div>

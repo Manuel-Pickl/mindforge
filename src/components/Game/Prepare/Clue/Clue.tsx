@@ -76,7 +76,7 @@ function Clue ()
 
             <Dial
                 hideHand={true}
-                showSolution={true}
+                solutionVisible={true}
                 solution={prepareSpectrumCards[currentCardIndex].realDial}
                 scale={prepareSpectrumCards[currentCardIndex].scale}
             />

@@ -1,9 +1,14 @@
 .dialComponent {
-    --hand-width: 4%;
-    --hand-root-width: 25%;
     --hand-background-color: red;
     --dial-background-color: var(--accent-color);
-    --active-sector: 5%;
+    --points3-color: mediumaquamarine;
+    --points2-color: orange;
+    --points1-color: yellow;
+    
+    --hand-height: 40%;
+    --hand-width: 4%;
+    --hand-root-width: 25%;
+    --active-sector: 6%;
     
     position: relative;
     width: 100%;
@@ -26,11 +31,9 @@
         }
 
         .solution {
-            // --angle -> comes from parent
-            --widthInDegrees: 6deg;
-            --points3-color: mediumaquamarine;
-            --points2-color: orange;
-            --points1-color: yellow;
+            // come from parent:
+            // --angle
+            // --widthInDegrees
 
             position: absolute;
             inset: 0;
@@ -44,11 +47,12 @@
                 border-radius: 100%;
                 transform: rotate(var(--angle));
                 scale: calc(100% - var(--active-sector));
+
                 clip-path: polygon(
                     50% 50%,
-                    0 calc(50% + calc(50% * sin(var(--widthInDegrees)))),
-                    0 calc(50% - calc(50% * sin(var(--widthInDegrees)))),
-                ); 
+                    0 calc(50% + calc(50% * sin(var(--widthInDegrees))/2)),
+                    0 calc(50% - calc(50% * sin(var(--widthInDegrees))/2)),
+                );
     
                 span {
                     position: absolute;
@@ -60,32 +64,30 @@
                 }
             }
     
+            .enabled {
+                scale: 100%;
+            }
+
             .points3 {
                 background-color: var(--points3-color);
             }
-
             .points2 {
                 background-color: var(--points2-color);
             }
             .points2-left {
-                transform: rotate(calc(var(--angle) - var(--widthInDegrees)*2));
+                transform: rotate(calc(var(--angle) - var(--widthInDegrees)*1));
             }
             .points2-right {
-                transform: rotate(calc(var(--angle) + var(--widthInDegrees)*2));
+                transform: rotate(calc(var(--angle) + var(--widthInDegrees)*1));
             }
-
             .points1 {
                 background-color: var(--points1-color);
             }
             .points1-left {
-                transform: rotate(calc(var(--angle) - var(--widthInDegrees)*4));
+                transform: rotate(calc(var(--angle) - var(--widthInDegrees)*2));
             }
             .points1-right {
-                transform: rotate(calc(var(--angle) + var(--widthInDegrees)*4));
-            }
-
-            .active {
-                scale: 100%;
+                transform: rotate(calc(var(--angle) + var(--widthInDegrees)*2));
             }
         }
     }
@@ -94,11 +96,11 @@
         z-index: 2;
         position: absolute;
         width: var(--hand-width);
-        height: 42%;
+        height: var(--hand-height);
         background-color: var(--hand-background-color);
         border-radius: 10px;
         left: 50%;
-        bottom: calc(50% + var(--hand-width) / 2);
+        bottom: 50%;
         translate: -50%;
         transform-origin: bottom;
     }
@@ -108,7 +110,7 @@
         position: absolute;
         width: var(--hand-root-width);
         aspect-ratio: 1;
-        bottom: calc(50% + var(--hand-width) / 2);
+        bottom: 50%;
         left: 50%;
         translate: -50% 50%;
         background-color: var(--hand-background-color);

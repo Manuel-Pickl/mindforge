@@ -8,7 +8,7 @@ import { GameState } from '../../types/enums/GameState';
 import { SpectrumCard } from '../../types/class/SpectrumCard';
 import { getInitialSpectrumCards } from '../../services/SpectrumCardManager';
 import { cardsPerPlayer, debugRoom, gameSolutionDuration, prepareSplashscreenDuration } from '../../Settings';
-import { getMaxPoints, getPoints } from '../../services/ResultManager';
+import { getMaxPoints, getTotalPoints } from '../../services/ResultManager';
 import { useGameContext } from '../Game/GameContext';
 import { usePlayContext } from '../Game/Play/PlayContext';
 import { usePrepareContext } from '../Game/Prepare/PrepareContext';
@@ -492,7 +492,7 @@ function ConnectionManager()
     //#region variable wrapper
     setSpectrumCards(spectrumCards => {
     //#endregion
-    const totalPoints: number = getPoints(spectrumCards);
+    const totalPoints: number = getTotalPoints(spectrumCards);
     mqttHelperRef.current.publish(Topic.StartResult, {
       aPoints: totalPoints,
       aMaxPoints: getMaxPoints(spectrumCards),

@@ -82,7 +82,7 @@ function Play()
                 
                 <Dial
                     hideHand={false}
-                    showSolution={solutionVisible}
+                    solutionVisible={solutionVisible}
                     solution={playSpectrumCard?.realDial ?? 0}
                     onDialChange={onDialChange}
                     dial={dial}
