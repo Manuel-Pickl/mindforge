@@ -64,13 +64,13 @@ function Dial({
 
         // bottom middle
         const spectrumBoundingBox = dialComponentRef.current.getBoundingClientRect();
-        const dialOriginX = spectrumBoundingBox.left + spectrumBoundingBox.width / 2;
-        const dialOriginY = spectrumBoundingBox.bottom - handRef.current.clientWidth / 2;
+        const dialCenterX = spectrumBoundingBox.left + spectrumBoundingBox.width / 2;
+        const dialCenterY = spectrumBoundingBox.bottom - spectrumBoundingBox.height / 2 - handRef.current.clientWidth / 2;
         
         // Calculate the angle based on mouse position
         const angleRadian = Math.atan2(
-            dialOriginY - mouseY,
-            dialOriginX - mouseX,     
+            dialCenterY - mouseY,
+            dialCenterX - mouseX,     
         );
         const angle = (angleRadian * 180) / Math.PI;
         const angleRounded = Math.round(angle);
@@ -95,28 +95,30 @@ function Dial({
             onTouchMove={handleTouchMove}
         >
             <div className="dial">
-            {showSolution &&
+                <div className="dialBackground" />
+                
+                {showSolution &&
                 <div 
                     className="solution"
                     style={{ '--angle': `${solution}deg` } as React.CSSProperties}
                 >
-                    <div className="sector sector1 sector1-left">
+                    <div className="sector points1 points1-left">
                         <span>1</span>
                     </div>
-                    <div className="sector sector2 sector2-left">
+                    <div className="sector points2 points2-left active">
                         <span>2</span>
                     </div>
-                    <div className="sector sector3">
+                    <div className="sector points3">
                         <span>3</span>
                     </div>
-                    <div className="sector sector2 sector2-right">
+                    <div className="sector points2 points2-right">
                         <span>2</span>
                     </div>
-                    <div className="sector sector1 sector1-right">
+                    <div className="sector points1 points1-right">
                         <span>1</span>
                     </div>
                 </div>
-            }
+                }
             </div>
             
             {!hideHand &&
