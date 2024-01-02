@@ -31,7 +31,7 @@ function Result ()
             
             <br/>
             
-            {getPlayer()?.isHost &&
+            {getPlayer().isHost &&
                 <button
                     onClick={startPrepare}
                 >
