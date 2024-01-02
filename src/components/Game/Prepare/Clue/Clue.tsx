@@ -10,9 +10,9 @@ import Counter from "../Counter/Counter";
 function Clue ()
 {
     const [clue, setClue] = useState<string>("");
-    const [currentSpectrumCardIndex, setCurrentSpectrumCardIndex] = useState<number>(0);
-    const [spectrumCardCount, setSpectrumCardCount] = useState<number>(1);
-    const [currentSkipsCount, setCurrentSkipsCount] = useState<number>(0);
+    const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
+    const [preparedCardsCount, setPreparedCardsCount] = useState<number>(1);
+    const [currentSkipCount, setCurrentSkipCount] = useState<number>(0);
     const [skipDisabled, setSkipDisabled] = useState<boolean>(false);
     
     const {
@@ -21,39 +21,37 @@ function Clue ()
 
     const {
         setPrepareState,
-        prepareSpectrumCards, setPrepareSpectrumCards,
+        prepareSpectrumCards,
         spectrumCardMaxCount,
     } = usePrepareContext();
 
     const {
-        sendPrepareFinished
+        sendPreparedCard
     } = useConnectionManagerContext();
 
     function skipSpectrumCard() {
-        const newSkipCount = currentSkipsCount + 1;
+        const newSkipCount = currentSkipCount + 1;
         const skipDisabled = newSkipCount >= skipsPerCard;
-        setCurrentSkipsCount(newSkipCount);
+        setCurrentSkipCount(newSkipCount);
         setSkipDisabled(skipDisabled);
 
         setClue("");
-        setCurrentSpectrumCardIndex(currentSpectrumCardIndex + 1);
+        setCurrentCardIndex(currentCardIndex + 1);
     }
 
     function showNextSpectrumCard() {
-        prepareSpectrumCards[currentSpectrumCardIndex].clue = clue;
-        setPrepareSpectrumCards([...prepareSpectrumCards]);
+        prepareSpectrumCards[currentCardIndex].clue = clue;
+        sendPreparedCard(prepareSpectrumCards[currentCardIndex]);
+        
+        setCurrentCardIndex(currentCardIndex + 1);
+        setPreparedCardsCount(preparedCardsCount + 1);
+        setClue("");
+        setCurrentSkipCount(0);
+        setSkipDisabled(false);
 
-        const finishedAllSpectrumCards: boolean = spectrumCardCount >= spectrumCardMaxCount;
-        if (!finishedAllSpectrumCards) {            
-            setCurrentSpectrumCardIndex(currentSpectrumCardIndex + 1);
-            setSpectrumCardCount(spectrumCardCount + 1);
-            setClue("");
-            setCurrentSkipsCount(0);
-            setSkipDisabled(false);
-        }
-        else {
+        const finishedAllSpectrumCards: boolean = preparedCardsCount >= spectrumCardMaxCount;
+        if (finishedAllSpectrumCards) {          
             setPrepareState(PrepareState.Finished);
-            sendPrepareFinished(prepareSpectrumCards);
         }
     }
 
@@ -71,7 +69,7 @@ function Clue ()
             </div>
 
             <div className="counter">
-                {spectrumCardCount} von {spectrumCardMaxCount}
+                {preparedCardsCount} von {spectrumCardMaxCount}
             </div>
             
             <h2>Schreiben einen Hinweis</h2>
@@ -79,8 +77,8 @@ function Clue ()
             <Dial
                 hideHand={true}
                 showSolution={true}
-                solution={prepareSpectrumCards[currentSpectrumCardIndex].realDial}
-                scale={prepareSpectrumCards[currentSpectrumCardIndex].scale}
+                solution={prepareSpectrumCards[currentCardIndex].realDial}
+                scale={prepareSpectrumCards[currentCardIndex].scale}
             />
 
             <input

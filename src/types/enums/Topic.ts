@@ -1,7 +1,7 @@
 export enum Topic {
     // guest -> host
     Join = "Join",
-    PrepareFinished = "PrepareFinished",
+    preparedCard = "preparedCard",
     
     // host -> guest
     JoinSuccess = "JoinSuccess",

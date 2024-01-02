@@ -7,7 +7,7 @@ import { Player } from '../../types/class/Player';
 import { GameState } from '../../types/enums/GameState';
 import { SpectrumCard } from '../../types/class/SpectrumCard';
 import { getInitialSpectrumCards } from '../../services/SpectrumCardManager';
-import { cardsPerPlayer, debug, debugRoom, gameSolutionDuration, prepareSplashscreenDuration } from '../../Settings';
+import { cardsPerPlayer, debugRoom, gameSolutionDuration, prepareSplashscreenDuration } from '../../Settings';
 import { getMaxPoints, getPoints } from '../../services/ResultManager';
 import { useGameContext } from '../Game/GameContext';
 import { usePlayContext } from '../Game/Play/PlayContext';
@@ -16,14 +16,14 @@ import { useResultContext } from '../Game/Result/ResultContext';
 import { useAppContext } from '../AppContext';
 import { ConnectionManagerContext, useConnectionManagerContext } from './ConnectionManagerContext';
 import MqttHelper from './MqttHelper/MqttHelper';
-import { getRoomId } from '../../services/RoomManager';
 import { changeAvatar } from '../../services/AvatarManager';
 import { defaultValue, joinWaitingTime } from '../../services/Constants';
 import { useServerContext } from '../Server/ServerContext';
 
 export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const mqttHelperRef = useRef<any>();
-  const [_, setJoined] = useState<boolean>(false);
+  const [_joined, setJoined] = useState<boolean>(false);
+  const [_remainingPrepareTimeInterval, setRemainingPrepareTimeInterval] = useState<NodeJS.Timeout>();
 
   const {
     setUsername,
@@ -32,12 +32,22 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   } = useAppContext();
 
   const {
+    setCurrentPlayRound,
+    setDial,
+  } = usePlayContext();
+
+  const {
+    setSpectrumCards,
+  } = useAppContext();
+
+  const {
     setRemainingPrepareTime,
   } = useServerContext();
 
   // host
   function createRoom() {
-    const roomId = debug ? debugRoom : getRoomId();
+    // const roomId = debug ? debugRoom : getRoomId();
+    const roomId = debugRoom;
     setRoom(roomId);
 
     mqttHelperRef.current.subscribe(Topic.Join);
@@ -48,8 +58,10 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
 
   // host
   function startPrepare_host() {
+    //#region variable wrapper
     setPlayers(players => {
-
+    setRemainingPrepareTime(remainingPrepareTime => {
+    //#endregion variable wrapper
     const prepareSpectrumCards: SpectrumCard[] = getInitialSpectrumCards(players);
 
     players.forEach(player => {
@@ -61,20 +73,27 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
       });
     });
 
-    mqttHelperRef.current.subscribe(Topic.PrepareFinished);
+    mqttHelperRef.current.subscribe(Topic.preparedCard);
 
     setTimeout(() => {
-      setInterval(() => {
-        setRemainingPrepareTime(aRemainingPrepareTime => {
-          const newRemainingPrepareTime = aRemainingPrepareTime - 1;
-          mqttHelperRef.current.publish(Topic.RemainingPrepareTime, newRemainingPrepareTime);
-  
-          return newRemainingPrepareTime;
-        });
-      }, 1000);
+      setRemainingPrepareTimeInterval(
+          setInterval(() => {
+            const prepareTimeUp: boolean = remainingPrepareTime <= 0;
+            if (prepareTimeUp) {
+              startPlay();
+            }
+
+            console.log(remainingPrepareTime)
+            remainingPrepareTime -= 1;
+            mqttHelperRef.current.publish(Topic.RemainingPrepareTime, remainingPrepareTime);
+        
+        }, 1000)
+      );
     }, prepareSplashscreenDuration * 1000);
-    
+    //#region variable wrapper
+    return remainingPrepareTime});
     return players});
+    //#endregion variable wrapper
   }
 
 
@@ -129,8 +148,8 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     return username});
   }
 
-  function sendPrepareFinished(aPrepareSpectrumCards: SpectrumCard[]) {
-    mqttHelperRef.current.publish(Topic.PrepareFinished, aPrepareSpectrumCards);
+  function sendPreparedCard(aPreparedCard: SpectrumCard) {
+    mqttHelperRef.current.publish(Topic.preparedCard, aPreparedCard);
   }
 
   function sendPlayRoundFinished(aValue: boolean) {
@@ -144,7 +163,55 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     return username});
   }
 
-  return (<ConnectionManagerContext.Provider value={{ setJoined, mqttHelperRef, createRoom, startPrepare: startPrepare_host, joinRoom, updateGlobalDial, sendPrepareFinished, sendPlayRoundFinished, sendChangeAvatar }}>{children}</ConnectionManagerContext.Provider>);
+  // host
+  function startPlay() {
+    //#region variable wrapper
+    setSpectrumCards(spectrumCards => {;
+    setRemainingPrepareTimeInterval(remainingPrepareTimeInterval => {
+    //#endregion variable wrapper
+    clearInterval(remainingPrepareTimeInterval);
+
+    mqttHelperRef.current.subscribe(Topic.PlayRoundFinished);
+    
+    const shuffledSpectrumCards: SpectrumCard[] =
+      spectrumCards.sort(() => Math.random() - 0.5);
+    setSpectrumCards(shuffledSpectrumCards);
+
+    startPlayRound(shuffledSpectrumCards);
+    //#region variable wrapper
+    return remainingPrepareTimeInterval; });
+    return spectrumCards; });
+    //#endregion variable wrapper
+  }
+
+    // host
+    function startPlayRound(aSpectrumCards: SpectrumCard[]) {
+      //#region variable wrapper
+      setCurrentPlayRound(currentPlayRound => {
+      setPlayers(players => {
+      //#endregion variable wrapper
+      players.forEach(player => {
+        player.playRoundFinished = false;
+      })
+    
+      updateGlobalDial(defaultValue);
+      setDial(defaultValue);
+  
+      const playSpectrumCard: SpectrumCard = aSpectrumCards[currentPlayRound];
+      currentPlayRound++;
+
+      mqttHelperRef.current.publish(Topic.StartPlayRound, {
+        aPlaySpectrumCard: playSpectrumCard,
+        aCurrentRound: currentPlayRound,
+        aRoundsCount: aSpectrumCards.length,
+      });
+      //#region variable wrapper
+      return players; });
+      return currentPlayRound; });
+      //#endregion variable wrapper
+    }
+
+  return (<ConnectionManagerContext.Provider value={{ setJoined, mqttHelperRef, createRoom, startPrepare: startPrepare_host, joinRoom, updateGlobalDial, sendPreparedCard: sendPreparedCard, sendPlayRoundFinished, sendChangeAvatar, startPlay, startPlayRound }}>{children}</ConnectionManagerContext.Provider>);
 };
 
 function ConnectionManager()
@@ -155,7 +222,8 @@ function ConnectionManager()
   const {
     setJoined,
     mqttHelperRef,
-    updateGlobalDial,
+    startPlay,
+    startPlayRound,
   } = useConnectionManagerContext();
 
   const {
@@ -170,10 +238,10 @@ function ConnectionManager()
   } = useGameContext();
 
   const {
-    /*currentPlayRound, */setCurrentPlayRound,
-    /*playSpectrumCard, */setPlaySpectrumCard,
-    /*roundsCount, */setRoundsCount,
-    /*dial, */setDial,
+    setCurrentPlayRound,
+    setPlaySpectrumCard,
+    setRoundsCount,
+    setDial,
     showSolution,
   } = usePlayContext();
   
@@ -192,7 +260,8 @@ function ConnectionManager()
     const address: string = "test.mosquitto.org";
     const port: string = "8081";
     const mqttUrl = `${protocoll}://${address}:${port}`;
-    const mqttClient: MqttClient = mqtt.connect(mqttUrl);
+    // const mqttClient: MqttClient = mqtt.connect(mqttUrl);
+    const mqttClient: MqttClient = mqtt.connect("ws://localhost:9001");
 
     mqttClient.on('message', onMessage);
     mqttClient.on('connect', onConnect);
@@ -218,8 +287,8 @@ function ConnectionManager()
       case Topic.ChangeAvatar:
         onChangeAvatar(data);
         break;
-      case Topic.PrepareFinished:
-        onPrepareFinished(data)
+      case Topic.preparedCard:
+        onPreparedCard(data)
         break;
       case Topic.PlayRoundFinished:
         onPlayRoundFinished(data);
@@ -252,8 +321,7 @@ function ConnectionManager()
         break;
 
       default:
-        console.log("error: unknown topic!");
-        console.log(topic);
+        throw new Error(`unknown topic:\n${topic}`);
     }
 
     return username});
@@ -301,71 +369,28 @@ function ConnectionManager()
   }
 
   // host
-  function onPrepareFinished(aPrepareSpectrumCards: SpectrumCard[]) {
-    const correspondingUsername = aPrepareSpectrumCards[0].owner;
-
-    // we have to nest the update functions, because React is shit
+  function onPreparedCard(aPreparedCard: SpectrumCard) 
+  {
+    //#region variable wrapper
+    setPlayers(players => {
+    setRemainingPrepareTime(remainingPrepareTime => {
     setSpectrumCards(spectrumCards => {
-      const prepareSpectrumCardsWithClue = aPrepareSpectrumCards.filter(card => card.clue.length > 0);
-      const newPlaySpectrumCards = [...spectrumCards, ...prepareSpectrumCardsWithClue];
+    //#endregion variable wrapper
+    spectrumCards.push(aPreparedCard);
 
-      setPlayers((oldPlayers) => {
-        const updatedPlayers = 
-          Array.from(oldPlayers).map((player) =>
-            player.username === correspondingUsername
-              ? new Player(player.username, player.isHost, true)
-              : player
-        );
-  
-        const allPlayersPrepareFinished = Array.from(updatedPlayers).every(
-          (player) => player.prepareFinished
-        );
-        if (allPlayersPrepareFinished) {
-          startPlay(newPlaySpectrumCards);
-        }
-  
-        return updatedPlayers;
-      });
-  
-      return newPlaySpectrumCards;
-    });
-  }
-
-  // host
-  function startPlay(aSpectrumCards: SpectrumCard[]) {
-    mqttHelperRef.current.subscribe(Topic.PlayRoundFinished);
+    const currentCardsCount: number = spectrumCards.length;
+    const maxCards: number = cardsPerPlayer * players.length;
     
-    const shuffledSpectrumCards: SpectrumCard[] =
-      aSpectrumCards.sort(() => Math.random() - 0.5);
-    startPlayRound(shuffledSpectrumCards);
-    setSpectrumCards([...shuffledSpectrumCards]);
-  }
-
-  // host
-  function startPlayRound(aSpectrumCards: SpectrumCard[]) {
-    setCurrentPlayRound(aCurrentPlayRound => {
-      setPlayers(aPlayers => {
-        aPlayers.forEach(player => {
-          player.playRoundFinished = false;
-        })
-        return aPlayers;
-      });
+    const prepareFinished: boolean = currentCardsCount == maxCards;
+    if (prepareFinished) {
+      startPlay();
+    }
   
-      updateGlobalDial(defaultValue);
-      setDial(defaultValue);
-
-      const currentSpectrumCardIndex = aCurrentPlayRound;
-      const playSpectrumCard: SpectrumCard = aSpectrumCards[currentSpectrumCardIndex];
-      const newCurrentPlayRound: number = aCurrentPlayRound + 1;
-      
-      mqttHelperRef.current.publish(Topic.StartPlayRound, {
-        aPlaySpectrumCard: playSpectrumCard,
-        aCurrentRound: newCurrentPlayRound,
-        aRoundsCount: aSpectrumCards.length,
-      });
-      
-      return newCurrentPlayRound;
-    });
+    //#region variable wrapper
+    return spectrumCards; });
+    return remainingPrepareTime; });
+    return players; });
+    //#endregion variable wrapper
   }
 
   // host

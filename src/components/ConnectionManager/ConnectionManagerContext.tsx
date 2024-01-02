@@ -8,9 +8,11 @@ export const ConnectionManagerContext = createContext<{
     startPrepare: () => void;
     joinRoom: (aIsHost: boolean) => void;
     updateGlobalDial: (aValue: number) => void;
-    sendPrepareFinished: (aPrepareSpectrumCards: SpectrumCard[]) => void;
+    sendPreparedCard: (aPrepareSpectrumCards: SpectrumCard) => void;
     sendPlayRoundFinished: (aValue: boolean) => void;
     sendChangeAvatar: (aIndexDelta: number) => void;
+    startPlay: () => void;
+    startPlayRound: (aSpectrumCards: SpectrumCard[]) => void;
 } | undefined>(undefined);
 
 export const useConnectionManagerContext = () => {

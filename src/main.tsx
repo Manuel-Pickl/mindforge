@@ -13,17 +13,17 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
         <AppProvider>
         <ServerProvider>
+        <PlayProvider>
         <ConnectionManagerProvider>
         <GameProvider>
         <PrepareProvider>
-        <PlayProvider>
         <ResultProvider>
             <App />
         </ResultProvider>
-        </PlayProvider>
         </PrepareProvider>
         </GameProvider>
         </ConnectionManagerProvider>
+        </PlayProvider>
         </ServerProvider>
         </AppProvider>
     </BrowserRouter>
