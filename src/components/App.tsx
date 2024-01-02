@@ -20,8 +20,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [players, setPlayers] = useState<Player[]>([]);
   const [spectrumCards, setSpectrumCards] = useState<SpectrumCard[]>([]);
 
-  function getPlayer(): Player {
-    return players.first(player => player.username == username);
+  function getPlayer(): Player | undefined {
+    return players.find(player => player.username == username);
   }
 
   function getMates(): Player[] {
