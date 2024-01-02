@@ -20,3 +20,21 @@ export const gameSolutionDuration: number = 5;
 // debug
 export const debug: boolean = false;
 export const debugRoom: string = "ZZZZ";
+
+// broker
+const debugBrokerRunning: boolean = false;
+
+// debug
+const debugProtocoll: string = "ws";
+const debugAddress: string = "localhost:9001";
+const debugPort: string = "9001";
+
+// release
+const releaseProtocoll: string = "wss";
+const releaseAddress: string = "test.mosquitto.org";
+const releasePort: string = "8081";
+
+const protocoll: string = debugBrokerRunning ? debugProtocoll : releaseProtocoll;
+const address: string = debugBrokerRunning ? debugAddress : releaseAddress;
+const port: string = debugBrokerRunning ? debugPort : releasePort;
+export const mqttUrl = `${protocoll}://${address}:${port}`;

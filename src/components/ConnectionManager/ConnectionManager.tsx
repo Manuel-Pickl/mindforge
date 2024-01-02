@@ -7,7 +7,7 @@ import { Player } from '../../types/class/Player';
 import { GameState } from '../../types/enums/GameState';
 import { SpectrumCard } from '../../types/class/SpectrumCard';
 import { getInitialSpectrumCards } from '../../services/SpectrumCardManager';
-import { cardsPerPlayer, debugRoom, gameSolutionDuration, prepareSplashscreenDuration } from '../../Settings';
+import { cardsPerPlayer, debugBrokerRunning, debugRoom, gameSolutionDuration, mqttUrl, prepareSplashscreenDuration } from '../../Settings';
 import { getMaxPoints, getTotalPoints } from '../../services/ResultManager';
 import { useGameContext } from '../Game/GameContext';
 import { usePlayContext } from '../Game/Play/PlayContext';
@@ -274,12 +274,7 @@ function ConnectionManager()
 
   useEffect(() =>
   {
-    // const protocoll: string = "wss";
-    // const address: string = "test.mosquitto.org";
-    // const port: string = "8081";
-    // const mqttUrl = `${protocoll}://${address}:${port}`;
-    // const mqttClient: MqttClient = mqtt.connect(mqttUrl);
-    const mqttClient: MqttClient = mqtt.connect("ws://localhost:9001");
+    const mqttClient: MqttClient = mqtt.connect(mqttUrl);
 
     mqttClient.on('message', onMessage);
     mqttClient.on('connect', onConnect);
