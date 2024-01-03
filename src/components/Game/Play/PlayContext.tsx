@@ -12,6 +12,7 @@ export const PlayContext = createContext<{
     setDial: Dispatch<SetStateAction<number>>;
     solutionVisible: boolean;
     setSolutionVisible: Dispatch<SetStateAction<boolean>>;
+    startPlayRound: (aPlaySpectrumCard: SpectrumCard, aCurrentRound: number, aRoundsCount: number) => void;
     showSolution: () => void;
 } | undefined>(undefined);
 

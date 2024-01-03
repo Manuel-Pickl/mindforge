@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { useAppContext } from "../AppContext";
 import { Avatar } from "../../types/enums/Avatar";
 import { Player } from "../../types/class/Player";
@@ -7,17 +7,35 @@ import MateCard from "./MateCard/MateCard";
 import "./Lobby.scss";
 import PlayerCard from "./PlayerCard/PlayerCard";
 import { maxPlayers } from "../../Settings";
+import { LobbyContext, useLobbyContext } from "./LobbyContext";
+
+export const LobbyProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [lobbyPlayers, setLobbyPlayers] = useState<Player[]>([]);
+  
+    return (<LobbyContext.Provider value={{ lobbyPlayers, setLobbyPlayers }}>{children}</LobbyContext.Provider>);
+};
 
 function Lobby ()
 {
     const [activePacks, _setActivePacks] = useState<string[]>(["Standard", "Furios"]);
-
+    
     const {
-        players,
+        lobbyPlayers,
+    } = useLobbyContext();
+    
+    function getPlayer(): Player | undefined {
+        return lobbyPlayers
+            .find(player => player.username == username);
+    }
+
+    function getMates(): Player[] {
+        return lobbyPlayers
+            .filter(player =>player.username != username);
+    }
+    const {
         room,
         username,
-        getPlayer,
-        getMates,
+        isHost,
     } = useAppContext();
     
     const {
@@ -59,7 +77,7 @@ function Lobby ()
             <PlayerCard
                 username={username}
                 avatar={getPlayer()?.avatar}
-                isHost={getPlayer()?.isHost ?? false}
+                isHost={isHost}
             />
 
             <div className="guestCards">
@@ -68,9 +86,9 @@ function Lobby ()
 
             <br />
 
-            {getPlayer()?.isHost ? (
+            {isHost ? (
                 <button
-                    disabled={players.length < 2}
+                    disabled={lobbyPlayers.length < 2}
                     className="actionButton"
                     onClick={startPrepare}
                 >

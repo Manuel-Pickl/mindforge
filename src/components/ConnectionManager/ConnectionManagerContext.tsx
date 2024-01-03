@@ -11,8 +11,8 @@ export const ConnectionManagerContext = createContext<{
     sendPreparedCard: (aPrepareSpectrumCards: SpectrumCard) => void;
     sendPlayRoundFinished: (aValue: boolean) => void;
     sendChangeAvatar: (aIndexDelta: number) => void;
-    startPlay: () => void;
-    startPlayRound: (aSpectrumCards: SpectrumCard[]) => void;
+    startPlay_host: () => void;
+    startPlayRound_host: (aSpectrumCards: SpectrumCard[]) => void;
 } | undefined>(undefined);
 
 export const useConnectionManagerContext = () => {

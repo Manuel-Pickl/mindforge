@@ -5,8 +5,6 @@ import { Page } from '../types/enums/Page';
 import Lobby from './Lobby/Lobby';
 import Game from './Game/Game';
 import ConnectionManager from './ConnectionManager/ConnectionManager';
-import { Player } from '../types/class/Player';
-import { SpectrumCard } from '../types/class/SpectrumCard';
 import { useLocation } from 'react-router-dom';
 import { AppContext, useAppContext } from './AppContext';
 import Offline from './Offline/Offline';
@@ -17,19 +15,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [page, setPage] = useState<Page>(Page.Offline);
   const [username, setUsername] = useState<string>(sessionStorage.getItem("username") ?? "");
   const [room, setRoom] = useState<string>("");
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [spectrumCards, setSpectrumCards] = useState<SpectrumCard[]>([]);
+  const [isHost, setIsHost] = useState<boolean>(false);
 
-  function getPlayer(): Player | undefined {
-    return players.find(player => player.username == username);
-  }
-
-  function getMates(): Player[] {
-    return players.filter(player =>
-        player.username != username);
-  }
-
-  return (<AppContext.Provider value={{ page, setPage, username, setUsername, room, setRoom, players, setPlayers, spectrumCards, setSpectrumCards, getPlayer, getMates }}>{children}</AppContext.Provider>);
+  return (<AppContext.Provider value={{ page, setPage, username, setUsername, room, setRoom, isHost, setIsHost }}>{children}</AppContext.Provider>);
 };
 
 function App() {

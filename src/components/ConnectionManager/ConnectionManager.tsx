@@ -20,32 +20,28 @@ import { changeAvatar } from '../../services/AvatarManager';
 import { defaultValue, joinWaitingTime } from '../../services/Constants';
 import { useServerContext } from '../Server/ServerContext';
 import '../../services/Extensions/ArrayExtensions';
+import { useLobbyContext } from '../Lobby/LobbyContext';
 
 export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const mqttHelperRef = useRef<any>();
   const [_joined, setJoined] = useState<boolean>(false);
-  const [_remainingPrepareTimeInterval, setRemainingPrepareTimeInterval] = useState<NodeJS.Timeout>();
 
   const {
     setUsername,
-    setPlayers,
     setRoom,
+    setIsHost,
   } = useAppContext();
 
   const {
-    setCurrentPlayRound,
-  } = usePlayContext();
-
-  const {
+    setPlayers,
     setSpectrumCards,
-  } = useAppContext();
-
-  const {
+    setCurrentPlayRound,
     setRemainingPrepareTime,
+    setRemainingPrepareTimeInterval,
   } = useServerContext();
 
   // host
-  function createRoom()
+  function createRoom_host()
   {
     // const roomId = debug ? debugRoom : getRoomId();
     const roomId = debugRoom;
@@ -83,7 +79,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
             const prepareTimeUp: boolean = remainingPrepareTime <= 0;
             if (prepareTimeUp)
             {
-              startPlay();
+              startPlay_host();
             }
 
             remainingPrepareTime -= 1;
@@ -114,6 +110,8 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     mqttHelperRef.current.subscribe(Topic.ShowPlayRoundSolution);
     mqttHelperRef.current.subscribe(Topic.StartResult);
   
+    setIsHost(aIsHost);
+
     mqttHelperRef.current.publish(Topic.Join, {
       aUsername: username, 
       aIsHost: aIsHost,
@@ -178,7 +176,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   }
 
   // host
-  function startPlay()
+  function startPlay_host()
   {
     //#region variable wrapper
     setSpectrumCards(spectrumCards => {;
@@ -192,41 +190,41 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
       spectrumCards.sort(() => Math.random() - 0.5);
     setSpectrumCards(shuffledSpectrumCards);
 
-    startPlayRound(shuffledSpectrumCards);
+    startPlayRound_host(shuffledSpectrumCards);
     //#region variable wrapper
     return remainingPrepareTimeInterval; });
     return spectrumCards; });
     //#endregion variable wrapper
   }
 
-    // host
-    function startPlayRound(aSpectrumCards: SpectrumCard[]) {
-      //#region variable wrapper
-      setCurrentPlayRound(currentPlayRound => {
-      setPlayers(players => {
-      //#endregion
-      players.forEach(player =>
-      {
-        player.playRoundFinished = false;
-      })
-      
-      const playSpectrumCard: SpectrumCard = aSpectrumCards[currentPlayRound];
-      currentPlayRound++;
+  // host
+  function startPlayRound_host(aSpectrumCards: SpectrumCard[]) {
+    //#region variable wrapper
+    setCurrentPlayRound(currentPlayRound => {
+    setPlayers(players => {
+    //#endregion
+    players.forEach(player =>
+    {
+      player.playRoundFinished = false;
+    })
+    
+    const playSpectrumCard: SpectrumCard = aSpectrumCards[currentPlayRound];
+    currentPlayRound++;
 
-      mqttHelperRef.current.publish(Topic.StartPlayRound, {
-        aPlaySpectrumCard: playSpectrumCard,
-        aCurrentRound: currentPlayRound,
-        aRoundsCount: aSpectrumCards.length,
-      });
+    mqttHelperRef.current.publish(Topic.StartPlayRound, {
+      aPlaySpectrumCard: playSpectrumCard,
+      aCurrentRound: currentPlayRound,
+      aRoundsCount: aSpectrumCards.length,
+    });
 
-      updateGlobalDial(defaultValue);
-      //#region variable wrapper
-      return players; });
-      return currentPlayRound; });
-      //#endregion
-    }
+    updateGlobalDial(defaultValue);
+    //#region variable wrapper
+    return players; });
+    return currentPlayRound; });
+    //#endregion
+  }
 
-  return (<ConnectionManagerContext.Provider value={{ setJoined, mqttHelperRef, createRoom, startPrepare: startPrepare_host, joinRoom, updateGlobalDial, sendPreparedCard: sendPreparedCard, sendPlayRoundFinished, sendChangeAvatar, startPlay, startPlayRound }}>{children}</ConnectionManagerContext.Provider>);
+  return (<ConnectionManagerContext.Provider value={{ setJoined, mqttHelperRef, createRoom: createRoom_host, startPrepare: startPrepare_host, joinRoom, updateGlobalDial, sendPreparedCard: sendPreparedCard, sendPlayRoundFinished, sendChangeAvatar, startPlay_host: startPlay_host, startPlayRound_host: startPlayRound_host }}>{children}</ConnectionManagerContext.Provider>);
 };
 
 function ConnectionManager()
@@ -237,34 +235,42 @@ function ConnectionManager()
   const {
     setJoined,
     mqttHelperRef,
-    startPlay,
-    startPlayRound,
+    startPlay_host,
+    startPlayRound_host,
   } = useConnectionManagerContext();
+
+  const {
+    setPlayers,
+    setSpectrumCards,
+    setCurrentPlayRound,
+  } = useServerContext();
 
   const {
     setPage,
     setUsername,
-    setPlayers,
-    setSpectrumCards,
   } = useAppContext();
+
+  const {
+    setLobbyPlayers,
+  } = useLobbyContext();
 
   const {
     setGameState
   } = useGameContext();
 
-  const {
-    setCurrentPlayRound,
-    setPlaySpectrumCard,
-    setRoundsCount,
-    setDial,
-    showSolution,
-  } = usePlayContext();
-  
+    
   const {
     startPrepare,
     setRemainingPrepareTime,
   } = usePrepareContext();
   
+  const {
+    setPlaySpectrumCard,
+    setDial,
+    startPlayRound,
+    showSolution,
+  } = usePlayContext();
+
   const {
     setPoints,
     setMaxPoints,
@@ -319,7 +325,7 @@ function ConnectionManager()
         onRemainingPrepareTime(data);
         break;
       case Topic.StartPlayRound:
-        onPlayStart(data);
+        onStartPlayRound(data);
         break;
       case Topic.UpdateGlobalDial:
         onUpdateGlobalDial(data);
@@ -410,7 +416,7 @@ function ConnectionManager()
     const prepareFinished: boolean = currentCardsCount == maxCards;
     if (prepareFinished)
     {
-      startPlay();
+      startPlay_host();
     }
     //#region variable wrapper
     return spectrumCards; });
@@ -449,7 +455,6 @@ function ConnectionManager()
     setPlaySpectrumCard(playSpectrumCard => {
     setDial(dial => {
     setCurrentPlayRound(currentPlayRound => {
-    setRoundsCount(roundsCount => {
     //#endregion
     const currentSpectrumCard: SpectrumCard = spectrumCards
       .first(card => card.scale[0] == playSpectrumCard?.scale[0]);
@@ -457,20 +462,19 @@ function ConnectionManager()
 
     showPlayRoundSolution();
 
-    const playFinished: boolean = currentPlayRound >= roundsCount;
+    const playFinished: boolean = currentPlayRound >= spectrumCards.length;
     setTimeout(() =>
     {
       if (playFinished)
       {
-        showResult();
+        showResult_host();
       } 
       else
       {
-        startPlayRound(spectrumCards);
+        startPlayRound_host(spectrumCards);
       }
     }, gameSolutionDuration * 1000);
     //#region variable wrapper
-    return roundsCount });
     return currentPlayRound });
     return dial });
     return playSpectrumCard });
@@ -479,7 +483,7 @@ function ConnectionManager()
   }
 
   // host
-  function showResult()
+  function showResult_host()
   {
     //#region variable wrapper
     setSpectrumCards(spectrumCards => {
@@ -504,7 +508,7 @@ function ConnectionManager()
 
   function onLobbyData(aPlayers: Player[])
   {
-    setPlayers(aPlayers);
+    setLobbyPlayers(aPlayers);
   }
 
   function onPrepareStart(aPrepareSpectrumCards: SpectrumCard[])
@@ -519,11 +523,9 @@ function ConnectionManager()
   }
 
   // @ts-ignore
-  function onPlayStart({ aPlaySpectrumCard, aCurrentRound, aRoundsCount })
+  function onStartPlayRound({ aPlaySpectrumCard, aCurrentRound, aRoundsCount })
   {
-    setPlaySpectrumCard(aPlaySpectrumCard);
-    setCurrentPlayRound(aCurrentRound);
-    setRoundsCount(aRoundsCount);
+    startPlayRound(aPlaySpectrumCard, aCurrentRound, aRoundsCount)
     setGameState(GameState.Play);
   }
 

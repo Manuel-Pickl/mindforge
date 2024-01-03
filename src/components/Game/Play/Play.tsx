@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import { SpectrumCard } from "../../../types/class/SpectrumCard";
-import { gameSolutionDuration, gameSplashscreenDuration } from "../../../Settings";
+import { gameSplashscreenDuration } from "../../../Settings";
 import { PlayContext, usePlayContext } from "./PlayContext";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 import Dial from "../../Dial/Dial";
@@ -13,11 +13,21 @@ export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [dial, setDial] = useState<number>(defaultValue);
     const [solutionVisible, setSolutionVisible] = useState<boolean>(false);
     
+    function startPlayRound(
+        aPlaySpectrumCard: SpectrumCard,
+        aCurrentRound: number,
+        aRoundsCount: number)
+    {
+        setPlaySpectrumCard(aPlaySpectrumCard);
+        setCurrentPlayRound(aCurrentRound);
+        setRoundsCount(aRoundsCount);
+    }
+
     function showSolution() {
         setSolutionVisible(true);
     }
 
-    return (<PlayContext.Provider value={{ currentPlayRound, setCurrentPlayRound, roundsCount, setRoundsCount, playSpectrumCard, setPlaySpectrumCard, dial, setDial, solutionVisible, setSolutionVisible, showSolution }}>{children}</PlayContext.Provider>);
+    return (<PlayContext.Provider value={{ currentPlayRound, setCurrentPlayRound, roundsCount, setRoundsCount, playSpectrumCard, setPlaySpectrumCard, dial, setDial, solutionVisible, setSolutionVisible, startPlayRound, showSolution }}>{children}</PlayContext.Provider>);
 };
 
 function Play()

@@ -1,6 +1,4 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
-import { SpectrumCard } from '../types/class/SpectrumCard';
-import { Player } from '../types/class/Player';
 import { Page } from '../types/enums/Page';
 
 export const AppContext = createContext<{
@@ -8,14 +6,10 @@ export const AppContext = createContext<{
     setPage: Dispatch<SetStateAction<Page>>;
     username: string;
     setUsername: Dispatch<SetStateAction<string>>;
-    players: Player[];
-    setPlayers: Dispatch<SetStateAction<Player[]>>;
     room: string;
     setRoom: Dispatch<SetStateAction<string>>;
-    spectrumCards: SpectrumCard[];
-    setSpectrumCards: Dispatch<SetStateAction<SpectrumCard[]>>;
-    getPlayer: () => Player | undefined;
-    getMates: () => Player[];
+    isHost: boolean;
+    setIsHost: Dispatch<SetStateAction<boolean>>;
 } | undefined>(undefined);
 
 export const useAppContext = () => {
