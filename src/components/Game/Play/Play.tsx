@@ -5,9 +5,9 @@ import { PlayContext, usePlayContext } from "./PlayContext";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 import Dial from "../../Dial/Dial";
 import { defaultValue } from "../../../services/Constants";
-import { useAppContext } from "../../AppContext";
+import PlaySplashscreen from "./PlaySplashscreen/PlaySplashscreen";
 import "./Play.scss";
-import AvatarBubble from "../../AvatarBubble/AvatarBubble";
+import { useAppContext } from "../../AppContext";
 
 export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currentPlayRound, setCurrentPlayRound] = useState<number>(0);
@@ -15,7 +15,9 @@ export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [playSpectrumCard, setPlaySpectrumCard] = useState<SpectrumCard | null>(null);
     const [dial, setDial] = useState<number>(defaultValue);
     const [solutionVisible, setSolutionVisible] = useState<boolean>(false);
-    
+    const [readyButtonDisabled, setReadyButtonDisabled] = useState<boolean>(false);
+    const [splashscreenVisible, setSplashscreenVisible] = useState<boolean>(true)
+
     function startPlayRound(
         aPlaySpectrumCard: SpectrumCard,
         aCurrentRound: number,
@@ -24,26 +26,34 @@ export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setPlaySpectrumCard(aPlaySpectrumCard);
         setCurrentPlayRound(aCurrentRound);
         setRoundsCount(aRoundsCount);
+
+        setReadyButtonDisabled(false);
+        setSolutionVisible(false);
+        
+        setSplashscreenVisible(true);
+        setTimeout(() => {
+            setSplashscreenVisible(false)
+        }, gameSplashscreenDuration * 1000);
     }
 
     function showSolution() {
         setSolutionVisible(true);
     }
 
-    return (<PlayContext.Provider value={{ currentPlayRound, setCurrentPlayRound, roundsCount, setRoundsCount, playSpectrumCard, setPlaySpectrumCard, dial, setDial, solutionVisible, setSolutionVisible, startPlayRound, showSolution }}>{children}</PlayContext.Provider>);
+    return (<PlayContext.Provider value={{ currentPlayRound, setCurrentPlayRound, roundsCount, setRoundsCount, playSpectrumCard, setPlaySpectrumCard, dial, setDial, solutionVisible, setSolutionVisible, startPlayRound, showSolution, readyButtonDisabled, setReadyButtonDisabled, splashscreenVisible, setSplashscreenVisible }}>{children}</PlayContext.Provider>);
 };
 
 function Play()
 {
-    const [readyButtonDisabled, setReadyButtonDisabled] = useState<boolean>(false);
-    const [splashscreenVisible, setSplashscreenVisible] = useState<boolean>(true)
-
     const {
         currentPlayRound,
         roundsCount,
         playSpectrumCard,
-        solutionVisible, setSolutionVisible,
+        solutionVisible,
         dial, setDial,
+        readyButtonDisabled, setReadyButtonDisabled,
+        splashscreenVisible,
+
     } = usePlayContext();
     
     const {
@@ -52,19 +62,9 @@ function Play()
     } = useConnectionManagerContext();
 
     const {
-        getPlayer,
+        username,
     } = useAppContext();
-
-    useEffect(() => {
-        setReadyButtonDisabled(false);
-        setSolutionVisible(false);
-        
-        setSplashscreenVisible(true);
-        setTimeout(() => {
-            setSplashscreenVisible(false)
-        }, gameSplashscreenDuration * 1000);
-    }, [playSpectrumCard]);
-
+    
     useEffect(() => {
         setReadyButtonDisabled(false);
         sendPlayRoundFinished(false);
@@ -76,7 +76,7 @@ function Play()
         }
 
         setDial(aValue);
-        updateGlobalDial(aValue);
+        updateGlobalDial(aValue, username);
     }
 
     function onFinishedClick() {
@@ -87,22 +87,11 @@ function Play()
     return (
         <div className="playComponent">
             {splashscreenVisible ? (
-            <>
-                <div className="avatar">
-                    <AvatarBubble
-                        avatar={getPlayer(playSpectrumCard?.owner)?.avatar}
-                        isHost={getPlayer(playSpectrumCard?.owner)?.isHost ?? false}
-                    />
-                </div>
-
-                <div className="round">
-                    {`Runde ${currentPlayRound} von ${roundsCount}`}
-                </div>
-
-                <div className="info">
-                    {`${playSpectrumCard?.owner}'s Hinweis ist...`}
-                </div>
-            </>
+                <PlaySplashscreen
+                    username={playSpectrumCard?.owner}
+                    currentPlayRound={currentPlayRound}
+                    roundsCount={roundsCount}
+                />
             ) : (
             <div>
                 <h2>Hinweis: {playSpectrumCard?.clue}</h2>
@@ -116,8 +105,6 @@ function Play()
                     scale={playSpectrumCard?.scale ?? ["",""]}
                 />
             
-                <br/><br/><br/><br/>
-
                 <button
                     disabled={readyButtonDisabled}
                     onClick={onFinishedClick}

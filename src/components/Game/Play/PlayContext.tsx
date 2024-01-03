@@ -14,6 +14,10 @@ export const PlayContext = createContext<{
     setSolutionVisible: Dispatch<SetStateAction<boolean>>;
     startPlayRound: (aPlaySpectrumCard: SpectrumCard, aCurrentRound: number, aRoundsCount: number) => void;
     showSolution: () => void;
+    readyButtonDisabled: boolean;
+    setReadyButtonDisabled: Dispatch<SetStateAction<boolean>>;
+    splashscreenVisible: boolean;
+    setSplashscreenVisible: Dispatch<SetStateAction<boolean>>;
 } | undefined>(undefined);
 
 export const usePlayContext = () => {

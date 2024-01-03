@@ -139,18 +139,12 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     //#endregion
   }
 
-  function updateGlobalDial(aValue: number)
+  function updateGlobalDial(aValue: number, aUsername: string = "")
   {
-    //#region variable wrapper
-    setUsername(username => {
-    //#endregion  
     mqttHelperRef.current.publish(Topic.UpdateGlobalDial, {
       aValue: aValue,
-      aUsername: username
+      aUsername: aUsername,
     });
-    //#region variable wrapper
-    return username});
-    //#endregion
   }
 
   function sendPreparedCard(aPreparedCard: SpectrumCard) {

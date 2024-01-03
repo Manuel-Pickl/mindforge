@@ -35,8 +35,8 @@ function Lobby ()
             const currentUser: Player = mates[i];
 
             mateCards.push(
-                <div className="avatarCard">
-                    <AvatarBubble key={i}
+                <div className="avatarCard" key={i}>
+                    <AvatarBubble
                         avatar={currentUser?.avatar}
                         isHost={currentUser?.isHost ?? false}
                         isShareButton={!addElementSet}
