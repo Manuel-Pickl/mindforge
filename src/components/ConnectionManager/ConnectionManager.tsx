@@ -20,7 +20,6 @@ import { changeAvatar } from '../../services/AvatarManager';
 import { defaultValue, joinWaitingTime } from '../../services/Constants';
 import { useServerContext } from '../Server/ServerContext';
 import '../../services/Extensions/ArrayExtensions';
-import { useLobbyContext } from '../Lobby/LobbyContext';
 
 export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const mqttHelperRef = useRef<any>();
@@ -29,7 +28,6 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   const {
     setUsername,
     setRoom,
-    setIsHost,
   } = useAppContext();
 
   const {
@@ -110,8 +108,6 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     mqttHelperRef.current.subscribe(Topic.ShowPlayRoundSolution);
     mqttHelperRef.current.subscribe(Topic.StartResult);
   
-    setIsHost(aIsHost);
-
     mqttHelperRef.current.publish(Topic.Join, {
       aUsername: username, 
       aIsHost: aIsHost,
@@ -248,11 +244,8 @@ function ConnectionManager()
   const {
     setPage,
     setUsername,
+    setPlayers: setClientPlayers,
   } = useAppContext();
-
-  const {
-    setLobbyPlayers,
-  } = useLobbyContext();
 
   const {
     setGameState
@@ -508,7 +501,7 @@ function ConnectionManager()
 
   function onLobbyData(aPlayers: Player[])
   {
-    setLobbyPlayers(aPlayers);
+    setClientPlayers(aPlayers);
   }
 
   function onPrepareStart(aPrepareSpectrumCards: SpectrumCard[])

@@ -1,4 +1,4 @@
-.mateCardComponent {
+.avatarBubbleComponent {
     position: relative;
     width: 100%;
     display: flex;
@@ -15,20 +15,6 @@
         aspect-ratio: 1;
         border-radius: 100%;
         background-color: mediumaquamarine;
-        padding: 5px;
-
-        img {
-            width: 100%;
-            height: 100%;
-        }
-    }
-
-    
-    .disabled {
-        padding: 8px;
-        background-color: Teal;
-    }
-    
-    .username {
+        padding: 10%;
     }
 }

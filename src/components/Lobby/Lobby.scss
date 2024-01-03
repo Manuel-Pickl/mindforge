@@ -4,6 +4,17 @@
     align-items: center;
     gap: 32px;
 
+    .playerBubble {
+        width: 75%;
+        display: grid;
+        grid-template-columns: 15% 70% 15%;
+        align-items: center;
+
+        &>img {
+            padding: 15%;
+        }
+    }
+
     .guestCards {
         display: grid;
         grid-template-rows: repeat(2, 1fr);
@@ -19,5 +30,10 @@
         translate: -50% -50%;
         background: var(--accent-color);
         border-radius: 20px;
+    }
+
+    .avatarCard {
+        position: relative;
+        text-align: center;
     }
 }

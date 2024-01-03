@@ -1,45 +1,28 @@
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { useAppContext } from "../AppContext";
-import { Avatar } from "../../types/enums/Avatar";
 import { Player } from "../../types/class/Player";
 import { useConnectionManagerContext } from "../ConnectionManager/ConnectionManagerContext";
-import MateCard from "./MateCard/MateCard";
-import "./Lobby.scss";
-import PlayerCard from "./PlayerCard/PlayerCard";
+import AvatarBubble from "../AvatarBubble/AvatarBubble";
 import { maxPlayers } from "../../Settings";
-import { LobbyContext, useLobbyContext } from "./LobbyContext";
-
-export const LobbyProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [lobbyPlayers, setLobbyPlayers] = useState<Player[]>([]);
-  
-    return (<LobbyContext.Provider value={{ lobbyPlayers, setLobbyPlayers }}>{children}</LobbyContext.Provider>);
-};
+import "./Lobby.scss";
+import arrowLeft from "../../assets/icons/arrow_left.svg";
+import arrowRight from "../../assets/icons/arrow_right.svg";
 
 function Lobby ()
 {
     const [activePacks, _setActivePacks] = useState<string[]>(["Standard", "Furios"]);
     
     const {
-        lobbyPlayers,
-    } = useLobbyContext();
-    
-    function getPlayer(): Player | undefined {
-        return lobbyPlayers
-            .find(player => player.username == username);
-    }
-
-    function getMates(): Player[] {
-        return lobbyPlayers
-            .filter(player =>player.username != username);
-    }
-    const {
         room,
         username,
-        isHost,
+        players,
+        getPlayer,
+        getMates,
     } = useAppContext();
     
     const {
         startPrepare,
+        sendChangeAvatar,
     } = useConnectionManagerContext();
 
     function getMateCards(): JSX.Element[]
@@ -52,12 +35,15 @@ function Lobby ()
             const currentUser: Player = mates[i];
 
             mateCards.push(
-                <MateCard key={i}
-                    username={currentUser ? currentUser.username : ""}
-                    avatar={currentUser ? currentUser.avatar : Avatar.None}
-                    isHost={currentUser? currentUser.isHost : false}
-                    isShareButton={!addElementSet}
-                />
+                <div className="avatarCard">
+                    <AvatarBubble key={i}
+                        avatar={currentUser?.avatar}
+                        isHost={currentUser?.isHost ?? false}
+                        isShareButton={!addElementSet}
+                    />
+
+                    {currentUser?.username}
+                </div>
             );
 
             if (!currentUser) {
@@ -74,11 +60,25 @@ function Lobby ()
 
             <div>Dein Raum ist {room}</div>            
 
-            <PlayerCard
-                username={username}
-                avatar={getPlayer()?.avatar}
-                isHost={isHost}
-            />
+            <div className="playerBubble">
+                <img src={arrowLeft} alt={arrowLeft}
+                    className="arrow left" 
+                    onClick={() => sendChangeAvatar(-1)}
+                />
+                
+                <div className="avatarCard">
+                    <AvatarBubble
+                        avatar={getPlayer()?.avatar}
+                        isHost={getPlayer()?.isHost ?? false}
+                    />
+
+                    {username}  
+                </div>
+                <img src={arrowRight} alt={arrowRight}
+                    className="arrow right"
+                    onClick={() => sendChangeAvatar(1)}
+                />
+            </div>
 
             <div className="guestCards">
                 {getMateCards()}
@@ -86,9 +86,9 @@ function Lobby ()
 
             <br />
 
-            {isHost ? (
+            {getPlayer()?.isHost ? (
                 <button
-                    disabled={lobbyPlayers.length < 2}
+                    disabled={players.length < 2}
                     className="actionButton"
                     onClick={startPrepare}
                 >

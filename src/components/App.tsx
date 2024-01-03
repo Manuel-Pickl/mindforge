@@ -9,15 +9,26 @@ import { useLocation } from 'react-router-dom';
 import { AppContext, useAppContext } from './AppContext';
 import Offline from './Offline/Offline';
 import "./App.scss";
+import { Player } from '../types/class/Player';
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 {
   const [page, setPage] = useState<Page>(Page.Offline);
   const [username, setUsername] = useState<string>(sessionStorage.getItem("username") ?? "");
   const [room, setRoom] = useState<string>("");
-  const [isHost, setIsHost] = useState<boolean>(false);
+  const [players, setPlayers] = useState<Player[]>([]);
 
-  return (<AppContext.Provider value={{ page, setPage, username, setUsername, room, setRoom, isHost, setIsHost }}>{children}</AppContext.Provider>);
+  function getPlayer(aUsername: string | null = null): Player | undefined {
+    return players.find(player =>
+      player.username == (aUsername ?? username));
+  }
+
+  function getMates(): Player[] {
+    return players
+      .filter(player =>player.username != username);
+  }
+
+  return (<AppContext.Provider value={{ page, setPage, username, setUsername, room, setRoom, players, setPlayers, getPlayer, getMates }}>{children}</AppContext.Provider>);
 };
 
 function App() {

@@ -1,0 +1,10 @@
+.playComponent {
+    display: grid;
+    place-items: center;
+    gap: 24px;
+    margin-top: 48px;
+    
+    .avatar {
+        width: 75%;
+    }
+}

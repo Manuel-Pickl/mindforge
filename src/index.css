@@ -9,6 +9,13 @@
   --accent-color: rgb(101, 101, 247);
 }
 
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
 input {
   width: 100%;
   background-color: hsl(0, 0%, 20%);
@@ -41,8 +48,12 @@ button {
   }
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+img {
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+  font-style: italic;
+  background-repeat: no-repeat;
+  background-size: cover;
+  shape-margin: 1rem;
 }

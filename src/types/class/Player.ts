@@ -1,19 +1,18 @@
 import { getRandomAvatar } from "../../services/AvatarManager";
-import { Avatar } from "../enums/Avatar";
 
 export class Player {
     username: string;
     isHost: boolean;
     prepareFinished: boolean;
     playRoundFinished: boolean;
-    avatar: Avatar;
+    avatar: string;
 
     constructor(
         aUsername: string,
         aIsHost: boolean,
         aPrepareFinished: boolean = false,
         aPlayRoundFinished: boolean = false,
-        aAvatar: Avatar = getRandomAvatar())
+        aAvatar: string = getRandomAvatar())
     {
         this.username = aUsername;
         this.isHost = aIsHost;

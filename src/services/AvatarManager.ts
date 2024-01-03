@@ -1,20 +1,29 @@
-import { Avatar } from "../types/enums/Avatar";
 import { Player } from "../types/class/Player";
 import "./Extensions/ArrayExtensions";
 
+// avatars
+import giraffe from "../assets/avatars/giraffe.svg";
+import hippo from "../assets/avatars/hippo.svg";
+import lion from "../assets/avatars/lion.svg";
+import panda from "../assets/avatars/panda.svg";
+import seal from "../assets/avatars/seal.svg";
+import sloth from "../assets/avatars/sloth.svg";
+import tiger from "../assets/avatars/tiger.svg";
+
+
 const avatars = [
-    Avatar.Giraffe,
-    Avatar.Hippo,
-    Avatar.Lion,
-    Avatar.Panda,
-    Avatar.Seal,
-    Avatar.Sloth,
-    Avatar.Tiger,
+    giraffe,
+    hippo,
+    lion,
+    panda,
+    seal,
+    sloth,
+    tiger,
 ];
 
-export function getRandomAvatar(): Avatar {
+export function getRandomAvatar(): string {
     const randomAvatarIndex: number = Math.floor(Math.random() * avatars.length);
-    const randomAvatar: Avatar = avatars[randomAvatarIndex];
+    const randomAvatar: string = avatars[randomAvatarIndex];
 
     return randomAvatar;
 }

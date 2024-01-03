@@ -18,7 +18,7 @@ function Result ()
     } = useResultContext();
 
     const {
-        isHost,
+        getPlayer,
     } = useAppContext();
 
     const {
@@ -31,7 +31,7 @@ function Result ()
             
             <br/>
             
-            {isHost &&
+            {getPlayer()?.isHost &&
                 <button
                     onClick={startPrepare}
                 >

@@ -5,6 +5,9 @@ import { PlayContext, usePlayContext } from "./PlayContext";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 import Dial from "../../Dial/Dial";
 import { defaultValue } from "../../../services/Constants";
+import { useAppContext } from "../../AppContext";
+import "./Play.scss";
+import AvatarBubble from "../../AvatarBubble/AvatarBubble";
 
 export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currentPlayRound, setCurrentPlayRound] = useState<number>(0);
@@ -48,6 +51,10 @@ function Play()
         updateGlobalDial,
     } = useConnectionManagerContext();
 
+    const {
+        getPlayer,
+    } = useAppContext();
+
     useEffect(() => {
         setReadyButtonDisabled(false);
         setSolutionVisible(false);
@@ -78,15 +85,26 @@ function Play()
     }
 
     return (
-        <div>
+        <div className="playComponent">
             {splashscreenVisible ? (
-            <div>
-                <h1>Hinweis von {playSpectrumCard?.owner} {"("}{currentPlayRound}/{roundsCount}{")"}</h1>
-            </div>
+            <>
+                <div className="avatar">
+                    <AvatarBubble
+                        avatar={getPlayer(playSpectrumCard?.owner)?.avatar}
+                        isHost={getPlayer(playSpectrumCard?.owner)?.isHost ?? false}
+                    />
+                </div>
+
+                <div className="round">
+                    {`Runde ${currentPlayRound} von ${roundsCount}`}
+                </div>
+
+                <div className="info">
+                    {`${playSpectrumCard?.owner}'s Hinweis ist...`}
+                </div>
+            </>
             ) : (
             <div>
-                <h1>Spektrum Karten abschätzen</h1>
-                <h2>Spektrum Karte von {playSpectrumCard?.owner}</h2>
                 <h2>Hinweis: {playSpectrumCard?.clue}</h2>
                 
                 <Dial

@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
 import { Page } from '../types/enums/Page';
+import { Player } from '../types/class/Player';
 
 export const AppContext = createContext<{
     page: Page;
@@ -8,8 +9,10 @@ export const AppContext = createContext<{
     setUsername: Dispatch<SetStateAction<string>>;
     room: string;
     setRoom: Dispatch<SetStateAction<string>>;
-    isHost: boolean;
-    setIsHost: Dispatch<SetStateAction<boolean>>;
+    players: Player[];
+    setPlayers: Dispatch<SetStateAction<Player[]>>;
+    getPlayer: (aUsername?: string | null) => Player | undefined;
+    getMates: () => Player[];
 } | undefined>(undefined);
 
 export const useAppContext = () => {
