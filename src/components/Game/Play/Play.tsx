@@ -15,9 +15,6 @@ export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     function showSolution() {
         setSolutionVisible(true);
-        setTimeout(() => {
-            setSolutionVisible(false)
-        }, gameSolutionDuration * 1000);
     }
 
     return (<PlayContext.Provider value={{ currentPlayRound, setCurrentPlayRound, roundsCount, setRoundsCount, playSpectrumCard, setPlaySpectrumCard, dial, setDial, solutionVisible, setSolutionVisible, showSolution }}>{children}</PlayContext.Provider>);
@@ -31,7 +28,8 @@ function Play()
     const {
         currentPlayRound,
         roundsCount,
-        playSpectrumCard, solutionVisible,
+        playSpectrumCard,
+        solutionVisible, setSolutionVisible,
         dial, setDial,
     } = usePlayContext();
     
@@ -42,6 +40,7 @@ function Play()
 
     useEffect(() => {
         setReadyButtonDisabled(false);
+        setSolutionVisible(false);
         
         setSplashscreenVisible(true);
         setTimeout(() => {

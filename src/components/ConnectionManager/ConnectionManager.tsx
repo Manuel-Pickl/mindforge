@@ -34,7 +34,6 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
 
   const {
     setCurrentPlayRound,
-    setDial,
   } = usePlayContext();
 
   const {
@@ -64,7 +63,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     //#region variable wrapper
     setPlayers(players => {
     setRemainingPrepareTime(remainingPrepareTime => {
-    //#endregion variable wrapper
+    //#endregion
     const prepareSpectrumCards: SpectrumCard[] = getInitialSpectrumCards(players);
 
     players.forEach(player =>
@@ -96,7 +95,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     //#region variable wrapper
     return remainingPrepareTime});
     return players});
-    //#endregion variable wrapper
+    //#endregion
   }
 
 
@@ -105,7 +104,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   {
     //#region variable wrapper
     setUsername(username => {
-    //#endregion variable wrapper
+    //#endregion
     mqttHelperRef.current.subscribe(`${Topic.JoinSuccess}/${username}`);
     mqttHelperRef.current.subscribe(Topic.LobbyData);
     mqttHelperRef.current.subscribe(`${Topic.StartPrepare}/${username}`);
@@ -129,7 +128,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     }, joinWaitingTime * 1000);
     //#region variable wrapper
     return username});
-    //#endregion variable wrapper
+    //#endregion
   }
 
   function sendChangeAvatar(aIndexDelta: number)
@@ -184,7 +183,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     //#region variable wrapper
     setSpectrumCards(spectrumCards => {;
     setRemainingPrepareTimeInterval(remainingPrepareTimeInterval => {
-    //#endregion variable wrapper
+    //#endregion
     clearInterval(remainingPrepareTimeInterval);
 
     mqttHelperRef.current.subscribe(Topic.PlayRoundFinished);
@@ -205,15 +204,12 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
       //#region variable wrapper
       setCurrentPlayRound(currentPlayRound => {
       setPlayers(players => {
-      //#endregion variable wrapper
+      //#endregion
       players.forEach(player =>
       {
         player.playRoundFinished = false;
       })
-    
-      updateGlobalDial(defaultValue);
-      setDial(defaultValue);
-  
+      
       const playSpectrumCard: SpectrumCard = aSpectrumCards[currentPlayRound];
       currentPlayRound++;
 
@@ -222,10 +218,12 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
         aCurrentRound: currentPlayRound,
         aRoundsCount: aSpectrumCards.length,
       });
+
+      updateGlobalDial(defaultValue);
       //#region variable wrapper
       return players; });
       return currentPlayRound; });
-      //#endregion variable wrapper
+      //#endregion
     }
 
   return (<ConnectionManagerContext.Provider value={{ setJoined, mqttHelperRef, createRoom, startPrepare: startPrepare_host, joinRoom, updateGlobalDial, sendPreparedCard: sendPreparedCard, sendPlayRoundFinished, sendChangeAvatar, startPlay, startPlayRound }}>{children}</ConnectionManagerContext.Provider>);
@@ -414,12 +412,11 @@ function ConnectionManager()
     {
       startPlay();
     }
-  
     //#region variable wrapper
     return spectrumCards; });
     return remainingPrepareTime; });
     return players; });
-    //#endregion variable wrapper
+    //#endregion
   }
 
   // host
