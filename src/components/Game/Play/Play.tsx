@@ -6,8 +6,10 @@ import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionM
 import Dial from "../../Dial/Dial";
 import { defaultValue } from "../../../services/Constants";
 import PlaySplashscreen from "./PlaySplashscreen/PlaySplashscreen";
-import "./Play.scss";
 import { useAppContext } from "../../AppContext";
+import { Player } from "../../../types/class/Player";
+import AvatarBubble from "../../AvatarBubble/AvatarBubble";
+import "./Play.scss";
 
 export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currentPlayRound, setCurrentPlayRound] = useState<number>(0);
@@ -45,6 +47,8 @@ export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 function Play()
 {
+    const [unfinishedPlayersVisible, setUnfinishedPlayersVisible] = useState<boolean>(false);
+
     const {
         currentPlayRound,
         roundsCount,
@@ -63,6 +67,7 @@ function Play()
 
     const {
         username,
+        players,
     } = useAppContext();
     
     useEffect(() => {
@@ -84,6 +89,16 @@ function Play()
         sendPlayRoundFinished(true);
     }
 
+    function getUnfinishedPlayers(): Player[] {
+        const activePlayers: Player[] = players
+            // .filter(player => player.username != playSpectrumCard?.owner);
+
+        const unfinishedPlayers: Player[] = activePlayers
+            .filter(player => !player.playRoundFinished);
+
+        return unfinishedPlayers;
+    }
+    
     return (
         <div className="playComponent">
             {splashscreenVisible ? (
@@ -93,8 +108,9 @@ function Play()
                     roundsCount={roundsCount}
                 />
             ) : (
-            <div>
-                <h2>Hinweis: {playSpectrumCard?.clue}</h2>
+            <>
+                <div className="info">{playSpectrumCard?.owner}'s Hinweis</div>
+                <div className="clue">{playSpectrumCard?.clue}</div>
                 
                 <Dial
                     hideHand={false}
@@ -105,13 +121,33 @@ function Play()
                     scale={playSpectrumCard?.scale ?? ["",""]}
                 />
             
-                <button
-                    disabled={readyButtonDisabled}
-                    onClick={onFinishedClick}
-                >
-                    Fertig
-                </button>
-            </div>
+                <div className="buttons">
+                    <button
+                        className="finishedPlayers"
+                        onClick={() => setUnfinishedPlayersVisible(true)}
+                    >
+                        Spieler
+                    </button>
+                    <button
+                        disabled={readyButtonDisabled}
+                        onClick={onFinishedClick}
+                    >
+                        Fertig
+                    </button>
+                </div>
+
+                {unfinishedPlayersVisible &&
+                    <div className="unfinishedPlayers">
+                        {getUnfinishedPlayers().map((player) => (
+                            <AvatarBubble
+                                key={player.username}
+                                avatar={player.avatar}
+                                isHost={player.isHost}
+                            />
+                        ))}
+                    </div>
+                }
+            </>
             )}
         </div>
     );

@@ -16,7 +16,7 @@ function Game ()
     const { gameState } = useGameContext();
 
     return (
-        <div>
+        <div className="gameComponent">
             {gameState == GameState.Prepare && (
                 <Prepare />
             )}

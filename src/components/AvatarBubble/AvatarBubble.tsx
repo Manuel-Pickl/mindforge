@@ -5,12 +5,14 @@ interface AvatarBubbleProps {
     avatar: string | undefined;
     isHost: boolean;
     isShareButton?: boolean;
+    username?: string;
   }
   
 function AvatarBubble({
     avatar,
     isHost,
-    isShareButton = false }: AvatarBubbleProps)
+    isShareButton = false,
+    username = "" }: AvatarBubbleProps)
 {
     function onClick() {
         // if (avatar) { } else 
@@ -32,7 +34,9 @@ function AvatarBubble({
     return (
        <div className={"avatarBubbleComponent"}>
             {isHost &&
-                <div className="host" >Host</div>
+                <div className="host">
+                    Host
+                </div>
             }
 
             <div
@@ -40,6 +44,10 @@ function AvatarBubble({
                 onClick={onClick}
             >
                 {getAvatarImage()}
+            </div>
+
+            <div className="username">
+                {username}
             </div>
         </div>
     )

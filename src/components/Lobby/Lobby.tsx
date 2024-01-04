@@ -35,14 +35,13 @@ function Lobby ()
             const currentUser: Player = mates[i];
 
             mateCards.push(
-                <div className="avatarCard" key={i}>
+                <div className="avatar" key={i}>
                     <AvatarBubble
                         avatar={currentUser?.avatar}
                         isHost={currentUser?.isHost ?? false}
                         isShareButton={!addElementSet}
+                        username={currentUser?.username}
                     />
-
-                    {currentUser?.username}
                 </div>
             );
 
@@ -62,20 +61,18 @@ function Lobby ()
 
             <div className="playerBubble">
                 <img src={arrowLeft} alt={arrowLeft}
-                    className="arrow left" 
+                    className="arrow" 
                     onClick={() => sendChangeAvatar(-1)}
                 />
                 
-                <div className="avatarCard">
-                    <AvatarBubble
-                        avatar={getPlayer()?.avatar}
-                        isHost={getPlayer()?.isHost ?? false}
-                    />
+                <AvatarBubble
+                    avatar={getPlayer()?.avatar}
+                    isHost={getPlayer()?.isHost ?? false}
+                    username={username}
+                />
 
-                    {username}  
-                </div>
                 <img src={arrowRight} alt={arrowRight}
-                    className="arrow right"
+                    className="arrow"
                     onClick={() => sendChangeAvatar(1)}
                 />
             </div>

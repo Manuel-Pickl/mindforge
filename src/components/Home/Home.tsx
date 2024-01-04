@@ -15,8 +15,6 @@ function Home ()
 
     return (
         <div className="homeComponent">
-            <button className="back">{"<"} ZURÜCK</button>
-
             <Navigation 
                 tabIsActive={tabIsActive}
                 setHomeTab={setHomeTab}    

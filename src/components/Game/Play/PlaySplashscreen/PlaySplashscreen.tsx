@@ -1,5 +1,6 @@
 import { useAppContext } from "../../../AppContext";
 import AvatarBubble from "../../../AvatarBubble/AvatarBubble";
+import "./PlaySplashscreen.scss";
 
 interface PlaySplashscreenProps {
     username: string | undefined;
@@ -18,7 +19,7 @@ function PlaySplashscreen({
     } = useAppContext();
     
     return (
-        <>
+        <div className="playSplashscreenComponent">
             <div className="avatar">
                 <AvatarBubble
                     avatar={getPlayer(username)?.avatar}
@@ -33,7 +34,7 @@ function PlaySplashscreen({
             <div className="info">
                 {`${username}'s Hinweis ist...`}
             </div>
-        </>
+        </div>
     );
 }
 

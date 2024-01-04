@@ -1,0 +1,9 @@
+.playSplashscreenComponent {
+    display: grid;
+    place-items: center;
+    gap: 16px;
+    
+    .avatar {
+        width: 75%;
+    }
+}

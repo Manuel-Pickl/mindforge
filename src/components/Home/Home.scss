@@ -1,17 +1,9 @@
 .homeComponent {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: 24px;
-    align-items: start;
-
-    .back {
-        margin-block: 24px;
-        font-size: 0.6rem;
-    }
 
     .input {
-        display: flex;
-        flex-direction: column;
+        display: grid;
         gap: 4px;
     }
 }
