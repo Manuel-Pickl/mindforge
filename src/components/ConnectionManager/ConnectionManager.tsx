@@ -334,6 +334,9 @@ function ConnectionManager()
 
   function onConnect()
   {
+    //#region variable wrapper
+    setPage(page => {
+    //#endregion
     if (connectionLostTime)
     {
       const millisecondsPerSecond: number = 1000;
@@ -345,7 +348,13 @@ function ConnectionManager()
       debugLog("connected to broker");
     }
     
-    setPage(Page.Home);
+    if (page == Page.Offline)
+    {
+      page = Page.Home;
+    }
+    //#region variable wrapper
+    return page});
+    //#endregion
   }
 
   function onClose()
