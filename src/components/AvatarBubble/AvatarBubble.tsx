@@ -15,8 +15,9 @@ function AvatarBubble({
     username = "" }: AvatarBubbleProps)
 {
     function onClick() {
-        // if (avatar) { } else 
-        if (isShareButton) {
+        if (avatar) {
+
+        } else if (isShareButton) {
             alert("share");
         }
     }
