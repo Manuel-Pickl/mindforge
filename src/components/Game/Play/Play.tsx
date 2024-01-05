@@ -7,9 +7,8 @@ import Dial from "../../Dial/Dial";
 import { defaultValue } from "../../../services/Constants";
 import PlaySplashscreen from "./PlaySplashscreen/PlaySplashscreen";
 import { useAppContext } from "../../AppContext";
-import { Player } from "../../../types/class/Player";
-import AvatarBubble from "../../AvatarBubble/AvatarBubble";
 import "./Play.scss";
+import UnfinishedPlayers from "./UnfinishedPlayers/UnfinishedPlayers";
 
 export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currentPlayRound, setCurrentPlayRound] = useState<number>(0);
@@ -88,16 +87,6 @@ function Play()
         setReadyButtonDisabled(true);
         sendPlayRoundFinished(true);
     }
-
-    function getUnfinishedPlayers(): Player[] {
-        const activePlayers: Player[] = players
-            // .filter(player => player.username != playSpectrumCard?.owner);
-
-        const unfinishedPlayers: Player[] = activePlayers
-            .filter(player => !player.playRoundFinished);
-
-        return unfinishedPlayers;
-    }
     
     return (
         <div className="playComponent">
@@ -137,15 +126,10 @@ function Play()
                 </div>
 
                 {unfinishedPlayersVisible &&
-                    <div className="unfinishedPlayers">
-                        {getUnfinishedPlayers().map((player) => (
-                            <AvatarBubble
-                                key={player.username}
-                                avatar={player.avatar}
-                                isHost={player.isHost}
-                            />
-                        ))}
-                    </div>
+                    <UnfinishedPlayers
+                        setUnfinishedPlayersVisible={setUnfinishedPlayersVisible}
+                        players={players}
+                    />
                 }
             </>
             )}

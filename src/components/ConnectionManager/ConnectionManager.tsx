@@ -100,7 +100,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     setUsername(username => {
     //#endregion
     mqttHelperRef.current.subscribe(`${Topic.JoinSuccess}/${username}`);
-    mqttHelperRef.current.subscribe(Topic.LobbyData);
+    mqttHelperRef.current.subscribe(Topic.Players);
     mqttHelperRef.current.subscribe(`${Topic.StartPrepare}/${username}`);
     mqttHelperRef.current.subscribe(Topic.RemainingPrepareTime);
     mqttHelperRef.current.subscribe(Topic.StartPlayRound);
@@ -197,7 +197,8 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     {
       player.playRoundFinished = false;
     })
-    
+    mqttHelperRef.current.publish(Topic.Players, players);
+
     const playSpectrumCard: SpectrumCard = aSpectrumCards[currentPlayRound];
     currentPlayRound++;
 
@@ -302,7 +303,7 @@ function ConnectionManager()
       case `${Topic.JoinSuccess}/${username}`:
         onJoinSuccess();
         break;
-      case Topic.LobbyData:
+      case Topic.Players:
         onLobbyData(data);
         break;
       case `${Topic.StartPrepare}/${username}`:
@@ -376,7 +377,7 @@ function ConnectionManager()
     // ToDo: we need a delay for slow connection
     // better solution -> solve via custom topic
     players.push(new Player(aUsername, aIsHost));
-    mqttHelperRef.current.publish(Topic.LobbyData, players);
+    mqttHelperRef.current.publish(Topic.Players, players);
     //#region variable wrapper
     return players });
     //#endregion
@@ -389,8 +390,8 @@ function ConnectionManager()
     //#region variable wrapper
     setPlayers(players => {
     //#endregion
-    const updatedPlayers = changeAvatar(aIndexDelta, aUsername, players);
-    mqttHelperRef.current.publish(Topic.LobbyData, updatedPlayers);
+    players = changeAvatar(aIndexDelta, aUsername, players);
+    mqttHelperRef.current.publish(Topic.Players, players);
     //#region variable wrapper
     return players });
     //#endregion
@@ -432,6 +433,8 @@ function ConnectionManager()
     players
       .first(player => player.username == aUsername)    
       .playRoundFinished = aPlayRoundFinished;
+
+    mqttHelperRef.current.publish(Topic.Players, players);
 
     const allPlayersPlayRoundFinished =
       players.every(player => player.playRoundFinished);

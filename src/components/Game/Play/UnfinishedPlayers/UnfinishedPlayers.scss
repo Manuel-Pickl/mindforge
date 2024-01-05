@@ -1,0 +1,29 @@
+.unfinishedPlayersComponent {
+    z-index: 100;
+    position: absolute;
+    inset: auto 0 0 0;
+    width: 100%;
+    background-color: hsl(0, 0%, 15%);
+    border-radius: 48px 48px 0 0;
+    padding: 32px;
+
+    display: grid;
+    gap: 24px;
+
+    button {
+        position: absolute;
+        --padding: 32px;
+        inset: var(--padding) var(--padding) auto auto;
+        border-radius: 50%;
+        background-color: hsl(0, 0%, 30%);
+        padding: 8px;
+    }
+
+    // .info {
+    // }
+
+    .avatars {
+        display: flex;
+        gap: 40px;
+    }
+}
