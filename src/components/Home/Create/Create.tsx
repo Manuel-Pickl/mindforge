@@ -2,6 +2,7 @@ import { useAppContext } from "../../AppContext";
 import { usernameMaxLength } from "../../../Settings";
 import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 import "./Create.scss";
+import Scroll from "../../Scroll/Scroll";
 
 function Create()
 {
@@ -25,23 +26,27 @@ function Create()
     return (
         <div className="createComponent">
             <div className="input">
-                Dein Name
                 <input
                     type="text"
-                    placeholder="Benutzer"
+                    placeholder="Dein Name"
                     maxLength={usernameMaxLength}
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                 />
             </div>
-            
-            <button
-                className="actionButton"
+
+            <div className="input"
+                data-disabled={true}
+            >
+                <input placeholder="Raum" />
+                <div className="disabled" />
+            </div>
+
+            <Scroll
+                text={"Raum Erstellen"}
                 disabled={createDisabled()}
                 onClick={createRoom}
-            >
-                Raum Erstellen
-            </button>
+            />
         </div>
     );
 }

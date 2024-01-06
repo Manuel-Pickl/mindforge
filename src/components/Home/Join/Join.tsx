@@ -4,6 +4,7 @@ import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionM
 import "./Join.scss";
 import { useState } from "react";
 import { joinWaitingTime } from "../../../services/Constants";
+import Scroll from "../../Scroll/Scroll";
 
 function Join()
 {
@@ -56,10 +57,9 @@ function Join()
     return (
         <div className="joinComponent">
             <div className="input">
-                Dein Name
                 <input
                     type="text"
-                    placeholder="Benutzer"
+                    placeholder="Dein Name"
                     maxLength={usernameMaxLength}
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
@@ -67,7 +67,6 @@ function Join()
             </div>
             
             <div className="input">
-                Raum
                 <input
                     type="text"
                     placeholder="Raum"
@@ -76,14 +75,13 @@ function Join()
                     onChange={onRoomInputChange}
                 />
             </div>
+
             
-            <button
-                className="actionButton"
+            <Scroll
+                text={"Raum Beitreten"}
                 disabled={joinDisabled()}
                 onClick={clickOnJoin}
-            >
-                Raum Beitreten
-            </button>
+            />
         </div>
     );
 }

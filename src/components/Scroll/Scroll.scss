@@ -1,0 +1,86 @@
+.scrollComponent {
+  // come from parent:
+  // --scroll-color
+  // --paper-color
+
+  --scroll-height: 105%;
+  --scroll-corner-width: 69%;
+  --scroll-corner-height: 13%;
+  
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 8px 16px;
+  border-block: solid 2px black;
+  background-color: var(--paper-color);
+  transition: width 0.7s;
+  text-wrap: nowrap;
+  display: grid;
+  align-items: center;
+
+  .rod {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    height: var(--scroll-height);
+    aspect-ratio: 0.3;
+
+    .rodBody {
+      z-index: 1;
+      position: absolute;
+      inset: -3%;
+      background-color: var(--scroll-color);
+      border-inline: solid 2px black;
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset: auto -1px 100% -1px;
+        translate: 0 50%;
+        height: 5%;
+        background-color: var(--scroll-color);
+        border-top: solid 2px black;
+        border-radius: 50%;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 100% -1px auto -1px;
+        translate: 0 -50%;
+        height: 5%;
+        background-color: var(--scroll-color);
+        border-bottom: solid 2px black;
+        border-radius: 50%;
+      }
+    }
+
+    .rodEnd {
+      position: absolute;
+      --inset: calc((100% - var(--scroll-corner-width)) / 2);
+      left: var(--inset);
+      right: var(--inset);
+      height: var(--scroll-corner-height);
+      background-color: var(--scroll-color);
+      border: solid 2px black;
+      border-radius: 30%;
+    }
+  }
+
+  .top-outer {
+    bottom: 100%;
+  }
+
+  .bottom-outer {
+    top: 100%;
+  }
+
+  .left {
+    left: 0;
+  }
+  
+  .right {
+    right: 0;
+  }
+}
+  

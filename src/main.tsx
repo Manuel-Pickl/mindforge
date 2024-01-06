@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom/client'
 import App, { AppProvider } from './components/App.tsx'
-import './index.css'
+import './index.scss'
 import { BrowserRouter } from 'react-router-dom'
 import { GameProvider } from './components/Game/Game.tsx'
 import { PlayProvider } from './components/Game/Play/Play.tsx'
