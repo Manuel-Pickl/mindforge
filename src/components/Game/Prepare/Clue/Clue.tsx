@@ -6,6 +6,8 @@ import Dial from "../../../Dial/Dial";
 import "./Clue.scss";
 import { PrepareState } from "../../../../types/enums/PrepareState";
 import Counter from "../Counter/Counter";
+import Card from "../../../Card/Card";
+import Scroll from "../../../Scroll/Scroll";
 
 function Clue ()
 {
@@ -68,11 +70,14 @@ function Clue ()
                 />
             </div>
 
-            <div className="counter">
-                {preparedCardsCount} von {spectrumCardMaxCount}
-            </div>
-            
-            <h2>Schreiben einen Hinweis</h2>
+            <Card>
+                <div>
+                    {preparedCardsCount} von {spectrumCardMaxCount}
+                </div>
+                <h3>
+                    Schreiben einen Hinweis                
+                </h3>
+            </Card>
 
             <Dial
                 hideHand={true}
@@ -81,26 +86,29 @@ function Clue ()
                 scale={prepareSpectrumCards[currentCardIndex].scale}
             />
 
-            <input
-                type="text"
-                maxLength={clueMaxLength}
-                value={clue}
-                onChange={(event) => setClue(event.target.value)}
-            />
+            <div className="input">
+                <input
+                    type="text"
+                    maxLength={clueMaxLength}
+                    value={clue}
+                    placeholder="Hinweis"
+                    onChange={(event) => setClue(event.target.value)}
+                />
+            </div>
 
             <div className="buttons">
-                <button className="actionButton"
+                <Scroll
                     disabled={skipDisabled}
                     onClick={skipSpectrumCard}
                 >
-                    Neues Spektrum
-                </button>
-                <button className="actionButton"
+                    Neues Spektrum    
+                </Scroll>
+                <Scroll
                     disabled={clue.trim().length == 0}
                     onClick={showNextSpectrumCard}
                 >
                     Einreichen
-                </button>
+                </Scroll>
             </div>
         </div>
     );

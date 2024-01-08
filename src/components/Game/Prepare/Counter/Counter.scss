@@ -1,11 +1,12 @@
 .counterComponent {
     font-size: inherit;
-    border: solid 3px var(--accent-color);
     border-radius: 100%;
     padding: 4px;
     width: 100%;
     aspect-ratio: 1;
-    color: var(--accent-color);
+    color: hsl(0, 0%, 20%);
+    border: solid 3px hsl(0, 0%, 20%);
+    background-color: #fcfce1;
     
     display: grid;
     place-items: center;

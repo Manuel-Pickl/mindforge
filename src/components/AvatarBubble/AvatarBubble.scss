@@ -18,10 +18,20 @@
     
     .avatar {
         width: 100%;
+        height: 100%;
         aspect-ratio: 1;
         border-radius: 100%;
-        background-color: mediumaquamarine;
-        padding: 10%;
+        background-color: antiquewhite;
+        border: solid 4px hsl(0, 0%, 20%);
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .add {
+            padding: 10px;
+        }
     }
 
     .username {

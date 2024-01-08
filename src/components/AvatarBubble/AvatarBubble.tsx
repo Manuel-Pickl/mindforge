@@ -1,4 +1,5 @@
-import addAvatar from "../../assets/avatars/add.svg";
+import addAvatar from "../../assets/avatars/add.png";
+import Card from "../Card/Card";
 import "./AvatarBubble.scss";
 
 interface AvatarBubbleProps {
@@ -28,7 +29,7 @@ function AvatarBubble({
         }
         
         if (isShareButton) {
-            return <img src={addAvatar} alt={addAvatar}/>;
+            return <img src={addAvatar} alt={addAvatar} className="add" />;
         }
     }
 
@@ -47,9 +48,11 @@ function AvatarBubble({
                 {getAvatarImage()}
             </div>
 
-            <div className="username">
-                {username}
-            </div>
+            {username &&
+                <Card>
+                    {username}
+                </Card>
+            }
         </div>
     )
 }

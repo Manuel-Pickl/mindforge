@@ -5,12 +5,13 @@
     display: grid;
     align-content: center;
     padding: 20px;
-    background-image: url(../assets/background.png);
+    background-image: url("../assets/background_light.png");
     background-size: cover;
     background-repeat: no-repeat;
 
     .input {
         position: relative;
+        width: 100%;
 
         input {
             width: 100%;
