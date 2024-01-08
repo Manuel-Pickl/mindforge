@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { prepareSplashscreenDuration, prepareTime } from "../../../../Settings";
 import "./Splashscreen.scss";
 import Counter from "../Counter/Counter";
+import Card from "../../../Card/Card";
 
 interface SplashscreenProps {
     spectrumCardMaxCount: number;
@@ -29,10 +30,10 @@ function Splashscreen({
 
     return (
     <div className="splashscreenComponent">
-        <div className="info">
+        <Card>
             Du hast {prepareTimeInMinutes()} Minuten um {spectrumCardMaxCount} {spectrumCardMaxCount > 1 ? "Hinweise" : "Hinweis"} zu schreiben
-            </div>
-
+        </Card>
+        
         <div className="counterWrapper">
             <Counter
                 startTime={counterStart}

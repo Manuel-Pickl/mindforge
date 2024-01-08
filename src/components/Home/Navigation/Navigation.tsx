@@ -20,20 +20,22 @@ function Navigation({
             {tabIsActive(HomeTab.Join) ? (
                 <div className="scroll">
                     <Scroll
-                        text="Beitreten"
                         onClick={() => setHomeTab(HomeTab.Create)}
                         paperColor={paperColor}
                         scrollColor={scollColor}
-                    />
+                    >
+                        Beitreten
+                    </Scroll>
                 </div>
             ) : (
                 <div className="scroll">
                     <Scroll
-                        text="Hosten"
                         onClick={() => setHomeTab(HomeTab.Join)}
                         paperColor={paperColor}
                         scrollColor={scollColor}
-                    />
+                    >
+                        Hosten
+                    </Scroll>
                 </div>
             )}
         </div>

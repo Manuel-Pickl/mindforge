@@ -8,6 +8,7 @@ function Create()
 {
     const {
         username, setUsername,
+        room,
     } = useAppContext();
 
     const {
@@ -38,15 +39,19 @@ function Create()
             <div className="input"
                 data-disabled={true}
             >
-                <input placeholder="Raum" />
+                <input 
+                    placeholder="Raum"
+                    value={room}
+                />
                 <div className="disabled" />
             </div>
 
             <Scroll
-                text={"Raum Erstellen"}
                 disabled={createDisabled()}
                 onClick={createRoom}
-            />
+            >
+                Raum Erstellen
+            </Scroll>
         </div>
     );
 }

@@ -78,10 +78,11 @@ function Join()
 
             
             <Scroll
-                text={"Raum Beitreten"}
                 disabled={joinDisabled()}
                 onClick={clickOnJoin}
-            />
+            >
+                Raum Beitreten
+            </Scroll>
         </div>
     );
 }

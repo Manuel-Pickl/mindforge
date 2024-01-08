@@ -7,6 +7,8 @@ import { maxPlayers } from "../../Settings";
 import "./Lobby.scss";
 import arrowLeft from "../../assets/icons/arrow_left.svg";
 import arrowRight from "../../assets/icons/arrow_right.svg";
+import Card from "../Card/Card";
+import Scroll from "../Scroll/Scroll";
 
 function Lobby ()
 {
@@ -57,7 +59,9 @@ function Lobby ()
         <div className="lobbyComponent">
             <div>{activePacks.join("· ")}</div>
 
-            <div>Dein Raum ist {room}</div>            
+            <Card>
+                Dein Raum ist {room}
+            </Card>            
 
             <div className="playerBubble">
                 <img src={arrowLeft} alt={arrowLeft}
@@ -84,20 +88,18 @@ function Lobby ()
             <br />
 
             {getPlayer()?.isHost ? (
-                <button
+                <Scroll
                     disabled={players.length < 2}
-                    className="actionButton"
                     onClick={startPrepare}
                 >
                     Starte Spiel
-                </button>
+                </Scroll>
             ) : (
-                <button
+                <Scroll
                     disabled={true}
-                    className="actionButton"
                 >
                     Warten auf Host
-                </button>
+                </Scroll>
             )}
         </div>
     );

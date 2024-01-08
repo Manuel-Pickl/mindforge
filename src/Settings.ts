@@ -8,7 +8,7 @@ export const roomIdMaxLength: number = 4;
 export const maxPlayers: number = 8;
 
 // prepare
-export const prepareSplashscreenDuration: number = 5;
+export const prepareSplashscreenDuration: number = 500;
 export const prepareTime: number = 300;
 export const clueMaxLength: number = 30;
 export const cardsPerPlayer: number = 1;

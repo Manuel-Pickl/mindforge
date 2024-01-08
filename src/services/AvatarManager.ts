@@ -2,14 +2,14 @@ import { Player } from "../types/class/Player";
 import "./Extensions/ArrayExtensions";
 
 // avatars
-import giraffe from "../assets/avatars/giraffe.svg";
-import hippo from "../assets/avatars/hippo.svg";
-import lion from "../assets/avatars/lion.svg";
-import panda from "../assets/avatars/panda.svg";
-import seal from "../assets/avatars/seal.svg";
-import sloth from "../assets/avatars/sloth.svg";
-import tiger from "../assets/avatars/tiger.svg";
-
+import giraffe from "../assets/avatars/giraffe.png";
+import hippo from "../assets/avatars/hippo.png";
+import lion from "../assets/avatars/red panda.png";
+import panda from "../assets/avatars/panda.png";
+import seal from "../assets/avatars/bear.png";
+import sloth from "../assets/avatars/wolf.png";
+import tiger from "../assets/avatars/tiger.png";
+import elephant from "../assets/avatars/elephant.png";
 
 const avatars = [
     giraffe,
@@ -19,6 +19,7 @@ const avatars = [
     seal,
     sloth,
     tiger,
+    elephant,
 ];
 
 export function getRandomAvatar(): string {

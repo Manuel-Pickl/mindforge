@@ -30,29 +30,8 @@
       position: absolute;
       inset: -3%;
       background-color: var(--scroll-color);
-      border-inline: solid 2px black;
-
-      &::before {
-        content: "";
-        position: absolute;
-        inset: auto -1px 100% -1px;
-        translate: 0 50%;
-        height: 5%;
-        background-color: var(--scroll-color);
-        border-top: solid 2px black;
-        border-radius: 50%;
-      }
-
-      &::after {
-        content: "";
-        position: absolute;
-        inset: 100% -1px auto -1px;
-        translate: 0 -50%;
-        height: 5%;
-        background-color: var(--scroll-color);
-        border-bottom: solid 2px black;
-        border-radius: 50%;
-      }
+      border: solid 2px black;
+      border-radius: 10%;
     }
 
     .rodEnd {

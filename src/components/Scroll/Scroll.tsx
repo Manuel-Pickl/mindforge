@@ -1,7 +1,8 @@
-import "./scroll.scss";
+import { ReactNode } from "react";
+import "./Scroll.scss";
 
 interface ScrollProps {
-    text: string;
+    children: ReactNode;
     disabled?: boolean;
     highlighted?: boolean;
     onClick?: any;
@@ -10,7 +11,7 @@ interface ScrollProps {
 }
 
 function Scroll({
-    text,
+    children,
     disabled = false,
     highlighted = false,
     onClick = () => {},
@@ -34,7 +35,7 @@ function Scroll({
                 <div className="rodEnd bottom-outer" />
             </div>
 
-            {text}
+            {children}
 
             <div className="rod right">
                 <div className="rodEnd top-outer" />
