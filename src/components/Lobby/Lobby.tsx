@@ -12,7 +12,7 @@ import Scroll from "../Scroll/Scroll";
 
 function Lobby ()
 {
-    const [activePacks, _setActivePacks] = useState<string[]>(["Standard", "Furios"]);
+    const [_activePacks, _setActivePacks] = useState<string[]>(["Standard", "Furios"]);
     
     const {
         room,
