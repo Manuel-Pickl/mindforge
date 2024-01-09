@@ -1,5 +1,4 @@
 import addAvatar from "../../assets/avatars/add.png";
-import Card from "../Card/Card";
 import "./AvatarBubble.scss";
 
 interface AvatarBubbleProps {
@@ -7,14 +6,16 @@ interface AvatarBubbleProps {
     isHost: boolean;
     isShareButton?: boolean;
     username?: string;
+    fontSize?: string;
   }
   
 function AvatarBubble({
     avatar,
     isHost,
     isShareButton = false,
-    username = "" }: AvatarBubbleProps)
-{
+    username = "",
+    fontSize = "1rem",
+}: AvatarBubbleProps) {
     function onClick() {
         if (avatar) {
 
@@ -34,7 +35,10 @@ function AvatarBubble({
     }
 
     return (
-       <div className={"avatarBubbleComponent"}>
+        <div
+            className={"avatarBubbleComponent"}
+            style={{"--font-size": fontSize } as React.CSSProperties}
+        >
             {isHost &&
                 <div className="host">
                     Host
@@ -48,11 +52,9 @@ function AvatarBubble({
                 {getAvatarImage()}
             </div>
 
-            {username &&
-                <Card>
-                    {username}
-                </Card>
-            }
+            <div className="outline">
+                {username}
+            </div>
         </div>
     )
 }

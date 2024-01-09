@@ -57,7 +57,13 @@ function Lobby ()
     
     return (
         <div className="lobbyComponent">
-            <div>{activePacks.join("· ")}</div>
+            {/* <div className="packs">
+                {activePacks.map(pack =>
+                    <Card>
+                        {pack}
+                    </Card>
+                )}
+            </div> */}
 
             <Card>
                 Dein Raum ist {room}
@@ -73,6 +79,7 @@ function Lobby ()
                     avatar={getPlayer()?.avatar}
                     isHost={getPlayer()?.isHost ?? false}
                     username={username}
+                    fontSize="1.3rem"
                 />
 
                 <img src={arrowRight} alt={arrowRight}
@@ -82,10 +89,13 @@ function Lobby ()
             </div>
 
             <div className="guestCards">
-                {getMateCards()}
+                <div className="row">
+                    {getMateCards().slice(0, 4)}
+                </div>
+                <div className="row second-row">
+                    {getMateCards().slice(4, 7)}
+                </div>
             </div>
-
-            <br />
 
             {getPlayer()?.isHost ? (
                 <Scroll

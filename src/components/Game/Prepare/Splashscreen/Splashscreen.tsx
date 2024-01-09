@@ -41,7 +41,7 @@ function Splashscreen({
             />
         </div>
         
-        <div className="soon">
+        <div className="outline">
             Das Spiel beginnt gleich...
         </div>
     </div>

@@ -1,5 +1,8 @@
 .navigationComponent {
-    .scroll {
-        width: 33%;
+    display: flex;
+    gap: 1.5rem;
+
+    [data-highlighted="true"] {
+        text-decoration: underline;
     }
 }

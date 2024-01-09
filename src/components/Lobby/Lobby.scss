@@ -1,7 +1,13 @@
 .lobbyComponent {
     display: grid;
     place-items: center;
-    gap: 32px;
+    gap: 3rem;
+
+    .packs {
+        width: 100%;
+        display: flex;
+        gap: 1rem;
+    }
 
     .playerBubble {
         width: 75%;
@@ -15,9 +21,19 @@
     }
 
     .guestCards {
+        width: 100%;
         display: grid;
-        grid-template-rows: repeat(2, 1fr);
-        grid-template-columns: repeat(4, 1fr);
-        gap: 24px;
+        gap: 0.7rem;
+
+        .row {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.4rem;
+        }
+
+        .second-row {
+            margin-left: 12.5%;
+        }
     }
 }

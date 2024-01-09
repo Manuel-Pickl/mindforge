@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { HomeTab } from "../../../services/HomeTab";
 import "./Navigation.scss";
-import Scroll from "../../Scroll/Scroll";
 
 interface NavigationProps {
     tabIsActive: (tab: HomeTab) => boolean;
@@ -12,32 +11,23 @@ function Navigation({
     tabIsActive,
     setHomeTab }: NavigationProps)
 {
-    const paperColor: string = "rgb(132, 216, 132)";
-    const scollColor: string = "rgb(72, 134, 72)";
-
     return (
         <div className="navigationComponent">
-            {tabIsActive(HomeTab.Join) ? (
-                <div className="scroll">
-                    <Scroll
-                        onClick={() => setHomeTab(HomeTab.Create)}
-                        paperColor={paperColor}
-                        scrollColor={scollColor}
-                    >
-                        Beitreten
-                    </Scroll>
-                </div>
-            ) : (
-                <div className="scroll">
-                    <Scroll
-                        onClick={() => setHomeTab(HomeTab.Join)}
-                        paperColor={paperColor}
-                        scrollColor={scollColor}
-                    >
-                        Hosten
-                    </Scroll>
-                </div>
-            )}
+            <div
+                className="outline"
+                data-highlighted={tabIsActive(HomeTab.Create)}
+                onClick={() => setHomeTab(HomeTab.Create)}
+            >
+                Beitreten
+            </div>
+
+            <div
+                className="outline"
+                data-highlighted={tabIsActive(HomeTab.Join)}
+                onClick={() => setHomeTab(HomeTab.Join)}
+            >
+                Hosten
+            </div>
         </div>
     );
 }

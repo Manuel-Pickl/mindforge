@@ -1,10 +1,13 @@
 .avatarBubbleComponent {
+    // from parent:
+    // --font-size
+    
     position: relative;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-size: 1rem;
+    font-size: var(--font-size);
 
     .host {
         position: absolute;
@@ -12,8 +15,10 @@
         left: 50%;
         translate: -50% -50%;
         background: var(--accent-color);
-        border-radius: 20px;
-        padding: 3px 12px;
+        border-radius: var(--font-size);
+        padding: 
+            calc(var(--font-size) / 5)
+            calc(var(--font-size) / 1.5);
     }
     
     .avatar {
@@ -22,7 +27,7 @@
         aspect-ratio: 1;
         border-radius: 100%;
         background-color: antiquewhite;
-        border: solid 4px hsl(0, 0%, 20%);
+        border: solid 0.15rem hsl(0, 0%, 20%);
 
         img {
             width: 100%;
@@ -30,10 +35,7 @@
         }
 
         .add {
-            padding: 10px;
+            padding: calc(var(--font-size) / 2);
         }
-    }
-
-    .username {
     }
 }
