@@ -23,15 +23,14 @@ function PlaySplashscreen({
             <div className="avatar">
                 <AvatarBubble
                     avatar={getPlayer(username)?.avatar}
-                    isHost={getPlayer(username)?.isHost ?? false}
                 />
             </div>
 
-            <div className="round">
+            <div className="round outline">
                 {`Runde ${currentPlayRound} von ${roundsCount}`}
             </div>
 
-            <div className="info">
+            <div className="info outline">
                 {`${username}'s Hinweis ist...`}
             </div>
         </div>

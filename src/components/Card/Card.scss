@@ -1,13 +1,13 @@
 .cardComponent {
     width: 100%;
     background: linear-gradient(115deg,
-        rgba(131,224,195,1) 10%,
-        rgba(252,252,225,1) 45%,
-        rgba(252,252,225,1) 55%,
-        rgba(255,176,126,1) 90%
+        var(--accent-color-2) 10%,
+        var(--prime-color) 45%,
+        var(--prime-color) 55%,
+        var(--accent-color-3) 90%
     );
-    border: solid 1px hsl(0, 0%, 30%);
-    outline: solid 1px hsl(0, 0%, 30%);
+    border: solid 1px var(--secondary-color);
+    outline: solid 1px var(--secondary-color);
     color: black;
     outline-offset: -6px;
     padding: 1rem;

@@ -26,8 +26,8 @@
         height: 100%;
         aspect-ratio: 1;
         border-radius: 100%;
-        background-color: antiquewhite;
-        border: solid 0.15rem hsl(0, 0%, 20%);
+        background-color: var(--prime-color);
+        border: solid 0.15rem var(--secondary-color);
 
         img {
             width: 100%;

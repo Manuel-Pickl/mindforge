@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { prepareSplashscreenDuration, prepareTime } from "../../../../Settings";
 import "./Splashscreen.scss";
-import Counter from "../Counter/Counter";
+import Counter from "../../../Counter/Counter";
 import Card from "../../../Card/Card";
 
 interface SplashscreenProps {

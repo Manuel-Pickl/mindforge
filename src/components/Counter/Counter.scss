@@ -5,9 +5,8 @@
     width: 100%;
     aspect-ratio: 1;
     color: hsl(0, 0%, 20%);
-    border: solid 3px hsl(0, 0%, 20%);
-    background-color: #fcfce1;
-    
+    border: solid 3px var(--secondary-color);
     display: grid;
     place-items: center;
+    background-color: var(--prime-color);
 }

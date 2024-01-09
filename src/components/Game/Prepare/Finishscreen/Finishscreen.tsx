@@ -1,5 +1,5 @@
 import { prepareTime } from "../../../../Settings";
-import Counter from "../Counter/Counter";
+import Counter from "../../../Counter/Counter";
 import { usePrepareContext } from "../PrepareContext";
 import "./Finishscreen.scss";
   
@@ -18,7 +18,7 @@ function Finishscreen()
                 />
             </div>
 
-            <div className="info">
+            <div className="outline">
                 Warten bis andere Spieler fertig sind...
             </div>
         </div>

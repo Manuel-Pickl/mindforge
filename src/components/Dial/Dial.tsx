@@ -161,7 +161,7 @@ function Dial({
             </> 
             }
 
-            <div className="scales">
+            <div className="scales outline">
                 <div className="scale">
                     <span>{"<---"}</span>
                     <span>{scale ? scale[0] : ""}</span>

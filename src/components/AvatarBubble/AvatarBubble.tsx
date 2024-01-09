@@ -3,7 +3,7 @@ import "./AvatarBubble.scss";
 
 interface AvatarBubbleProps {
     avatar: string | undefined;
-    isHost: boolean;
+    isHost?: boolean;
     isShareButton?: boolean;
     username?: string;
     fontSize?: string;

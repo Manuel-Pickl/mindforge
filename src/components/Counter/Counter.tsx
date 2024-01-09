@@ -6,7 +6,7 @@ interface CounterProps {
 }
   
 function Counter({
-    startTime,
+    // startTime,
     remainingTime }: CounterProps)
 {
     function formatTime(): string {
@@ -22,10 +22,7 @@ function Counter({
     }
 
     return (
-    <div
-        className="counterComponent"
-        style={{ '--startTime': startTime } as React.CSSProperties}
-    >
+    <div className="counterComponent">
         {formatTime()}
     </div>
     );

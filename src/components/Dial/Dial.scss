@@ -1,13 +1,14 @@
 .dialComponent {
-    --hand-background-color: red;
+    --hand-background-color: darkred;
+    --hand-border-color: darkred;
     --dial-background-color: hsl(0, 0%, 30%);
-    --points3-color: mediumaquamarine;
-    --points2-color: orange;
-    --points1-color: yellow;
+    --points3-color: var(--prime-color);
+    --points2-color: var(--accent-color-2);
+    --points1-color: var(--accent-color-3);
     
     --hand-height: 40%;
     --hand-width: 4%;
-    --hand-root-width: 25%;
+    --hand-root-width: 15%;
     --active-sector: 6%;
     
     position: relative;
@@ -26,8 +27,11 @@
             inset: 0;
             aspect-ratio: 1;
             scale: calc(100% - var(--active-sector));
-            background-color: var(--dial-background-color);
-            border-radius: 100%;
+            // background-color: var(--dial-background-color);
+            // border-radius: 100%;
+            background-image: url("../../assets/paper fan.png"); 
+            background-size: contain;
+            background-repeat: no-repeat;
         }
 
         .solution {
@@ -93,16 +97,25 @@
     }
 
     .hand {
-        z-index: 2;
+        z-index: 20;
         position: absolute;
         width: var(--hand-width);
         height: var(--hand-height);
         background-color: var(--hand-background-color);
-        border-radius: 10px;
+        border: solid 4px var(--hand-border-color);
+        border-bottom: none;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
         left: 50%;
         bottom: 50%;
         translate: -50%;
         transform-origin: bottom;
+        clip-path: polygon(
+            0 0,
+            100% 0,
+            100% calc(99% - var(--hand-root-width)),
+            0% calc(99% - var(--hand-root-width)),
+        );
     }
 
     .handRoot {
@@ -115,6 +128,7 @@
         translate: -50% 50%;
         background-color: var(--hand-background-color);
         border-radius: 100%;
+        border: solid 4px var(--hand-border-color);
     }
 
     .scales {

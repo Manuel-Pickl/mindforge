@@ -15,16 +15,16 @@ function Navigation({
         <div className="navigationComponent">
             <div
                 className="outline"
-                data-highlighted={tabIsActive(HomeTab.Create)}
-                onClick={() => setHomeTab(HomeTab.Create)}
+                data-highlighted={tabIsActive(HomeTab.Join)}
+                onClick={() => setHomeTab(HomeTab.Join)}
             >
                 Beitreten
             </div>
 
             <div
                 className="outline"
-                data-highlighted={tabIsActive(HomeTab.Join)}
-                onClick={() => setHomeTab(HomeTab.Join)}
+                data-highlighted={tabIsActive(HomeTab.Create)}
+                onClick={() => setHomeTab(HomeTab.Create)}
             >
                 Hosten
             </div>

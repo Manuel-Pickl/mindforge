@@ -9,6 +9,8 @@ import PlaySplashscreen from "./PlaySplashscreen/PlaySplashscreen";
 import { useAppContext } from "../../AppContext";
 import "./Play.scss";
 import UnfinishedPlayers from "./UnfinishedPlayers/UnfinishedPlayers";
+import Scroll from "../../Scroll/Scroll";
+import Card from "../../Card/Card";
 
 export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currentPlayRound, setCurrentPlayRound] = useState<number>(0);
@@ -98,8 +100,15 @@ function Play()
                 />
             ) : (
             <>
-                <div className="info">{playSpectrumCard?.owner}'s Hinweis</div>
-                <div className="clue">{playSpectrumCard?.clue}</div>
+                <Card>
+                    <div>
+                        {playSpectrumCard?.owner}'s Hinweis
+                    </div>
+
+                    <h3>
+                        {playSpectrumCard?.clue}
+                    </h3>
+                </Card>
                 
                 <Dial
                     hideHand={false}
@@ -111,18 +120,17 @@ function Play()
                 />
             
                 <div className="buttons">
-                    <button
-                        className="finishedPlayers"
+                    <Scroll
                         onClick={() => setUnfinishedPlayersVisible(true)}
                     >
                         Spieler
-                    </button>
-                    <button
+                    </Scroll>
+                    <Scroll
                         disabled={readyButtonDisabled}
                         onClick={onFinishedClick}
                     >
                         Fertig
-                    </button>
+                    </Scroll>
                 </div>
 
                 {unfinishedPlayersVisible &&

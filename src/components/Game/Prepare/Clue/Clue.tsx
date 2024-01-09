@@ -5,7 +5,7 @@ import { clueMaxLength, prepareTime, skipsPerCard } from "../../../../Settings";
 import Dial from "../../../Dial/Dial";
 import "./Clue.scss";
 import { PrepareState } from "../../../../types/enums/PrepareState";
-import Counter from "../Counter/Counter";
+import Counter from "../../../Counter/Counter";
 import Card from "../../../Card/Card";
 import Scroll from "../../../Scroll/Scroll";
 

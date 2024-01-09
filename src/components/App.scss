@@ -16,13 +16,13 @@
         input {
             width: 100%;
             background: linear-gradient(115deg,
-                rgba(131,224,195,1) 10%,
-                rgba(252,252,225,1) 45%,
-                rgba(252,252,225,1) 55%,
-                rgba(255,176,126,1) 90%
+                var(--accent-color-2) 10%,
+                var(--prime-color) 45%,
+                var(--prime-color) 55%,
+                var(--accent-color-3) 90%
             );
-            border: solid 1px hsl(0, 0%, 30%);
-            outline: solid 1px hsl(0, 0%, 30%);
+            border: solid 1px var(--secondary-color);
+            outline: solid 1px var(--secondary-color);
             color: black;
             outline-offset: -6px;
             padding: 16px;
@@ -46,5 +46,25 @@
         background-color: black;
         opacity: 0.5;
         display: none;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+        vertical-align: middle;
+        font-style: italic;
+        background-repeat: no-repeat;
+        background-size: cover;
+        shape-margin: 1rem;
+    }
+    
+    .outline {
+    color: var(--prime-color);
+    --outline-color: var(--secondary-color);
+    text-shadow:
+        -1px -1px 0 var(--outline-color),  
+        1px -1px 0 var(--outline-color),
+        -1px  1px 0 var(--outline-color),
+        1px  1px 0 var(--outline-color);
     }
 }
