@@ -23,7 +23,7 @@ export const debug: boolean = false;
 export const debugRoom: string = "ZZZZ";
 
 // broker
-const debugBrokerRunning: boolean = true;
+const debugBrokerRunning: boolean = false;
 
 // debug
 const debugProtocoll: string = "ws";
