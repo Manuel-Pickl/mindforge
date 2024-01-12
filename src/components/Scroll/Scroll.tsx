@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import "./Scroll.scss";
 
 interface ScrollProps {
+    className?: string;
     children: ReactNode;
     disabled?: boolean;
     highlighted?: boolean;
@@ -11,6 +12,7 @@ interface ScrollProps {
 }
 
 function Scroll({
+    className,
     children,
     disabled = false,
     highlighted = false,
@@ -20,7 +22,7 @@ function Scroll({
 }: ScrollProps) {
     return (
         <div 
-            className="scrollComponent"
+            className={`scrollComponent ${className}`}
             data-disabled={disabled}
             data-highlighted={highlighted}
             onClick={() => {if (!disabled) onClick()}}

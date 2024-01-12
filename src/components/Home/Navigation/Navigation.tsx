@@ -3,16 +3,18 @@ import { HomeTab } from "../../../services/HomeTab";
 import "./Navigation.scss";
 
 interface NavigationProps {
+    className?: string;
     tabIsActive: (tab: HomeTab) => boolean;
     setHomeTab: Dispatch<SetStateAction<HomeTab>>;
 }
 
 function Navigation({
+    className,
     tabIsActive,
     setHomeTab }: NavigationProps)
 {
     return (
-        <div className="navigationComponent">
+        <div className={`navigationComponent ${className}`}>
             <div
                 className="outline"
                 data-highlighted={tabIsActive(HomeTab.Join)}
