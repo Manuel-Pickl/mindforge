@@ -1,8 +1,12 @@
 .dialComponent {
     --hand-background-color: darkred;
     --hand-border-color: darkred;
-    --dial-background-color: hsl(0, 0%, 30%);
-    --points3-color: var(--prime-color);
+
+    --dial-background-color: hsl(34, 78%, 86%);
+    --dial-border-color: var(--secondary-color);
+    --dial-border-width: 0;
+
+    --points3-color: hsl(0, 0%, 95%);
     --points2-color: var(--accent-color-2);
     --points1-color: var(--accent-color-3);
     
@@ -27,13 +31,28 @@
             inset: 0;
             aspect-ratio: 1;
             scale: calc(100% - var(--active-sector));
-            // background-color: var(--dial-background-color);
-            // border-radius: 100%;
-            background-image: url("../../assets/paper fan.png"); 
-            background-size: contain;
-            background-repeat: no-repeat;
-        }
+            border: solid var(--dial-border-width) var(--dial-border-color);
+            background-color: var(--dial-background-color);
+            border-radius: 100%;
+            clip-path: polygon(
+                0 0,
+                100% 0,
+                100% 50%,
+                0 50%,
+            );
 
+            &::after {
+                content: "";
+                position: absolute;
+                inset: auto 0 50% 0;
+                border-bottom: solid var(--dial-border-width) var(--dial-border-color);
+            }
+                
+            // background-image: url("../../assets/paper fan.png"); 
+            // background-size: contain;
+            // background-repeat: no-repeat;
+        }
+            
         .solution {
             // come from parent:
             // --angle
