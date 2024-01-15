@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { HomeTab } from "../../../services/HomeTab";
+import { HomeTab } from "../../../types/enums/HomeTab";
 import "./Navigation.scss";
 
 interface NavigationProps {

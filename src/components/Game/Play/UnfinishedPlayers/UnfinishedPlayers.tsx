@@ -30,7 +30,7 @@ function UnfinishedPlayers({
                 x
             </button>
 
-            <div className="info">
+            <div>
                 Warten auf Konsens...
             </div>
 

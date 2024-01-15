@@ -10,6 +10,8 @@ import { AppContext, useAppContext } from './AppContext';
 import Offline from './Offline/Offline';
 import "./App.scss";
 import { Player } from '../types/class/Player';
+import { useHomeContext } from './Home/HomeContext';
+import { HomeTab } from '../types/enums/HomeTab';
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 {
@@ -36,15 +38,24 @@ function App() {
   const queryParams = new URLSearchParams(search);
 
   const {
-    page,
+    page, setPage,
     username,
     setRoom,
   } = useAppContext();
+
+  const {
+    setHomeTab,
+  } = useHomeContext();
 
   useEffect(() => {   
     const parameterRoom: string | null = queryParams.get('room');
     if (parameterRoom) {
       setRoom(parameterRoom);
+    }
+
+    const parameterTab: string | null = queryParams.get('tab');
+    if (parameterTab) {
+      setHomeTab(parameterTab as unknown as HomeTab);
     }
   }, []);
 

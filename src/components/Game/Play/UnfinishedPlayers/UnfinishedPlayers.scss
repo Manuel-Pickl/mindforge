@@ -3,27 +3,31 @@
     position: absolute;
     inset: auto 0 0 0;
     width: 100%;
-    background-color: hsl(0, 0%, 15%);
-    border-radius: 48px 48px 0 0;
-    padding: 32px;
+    background-color: var(--prime-color);
+    border-radius: 3rem 3rem 0 0;
+    padding: 1rem;
 
     display: grid;
-    gap: 24px;
+    gap: 2rem;
+    box-shadow: 0 0 1rem black;
 
     button {
         position: absolute;
-        --padding: 32px;
-        inset: var(--padding) var(--padding) auto auto;
+        --margin: 1.5rem;
+        inset: var(--margin) var(--margin) auto auto;
         border-radius: 50%;
-        background-color: hsl(0, 0%, 30%);
-        padding: 8px;
+        background-color: var(--prime-color);
+        border: none;
     }
-
-    // .info {
-    // }
 
     .avatars {
         display: flex;
-        gap: 40px;
+        flex-wrap: wrap;
+        place-content: center;
+        gap: 5%;
+
+        &>* {
+            width: 21%;
+        }
     }
 }

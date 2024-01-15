@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { HomeTab } from "../../services/HomeTab";
+import { ReactNode, useState } from "react";
 import "./Home.scss";
 import Navigation from "./Navigation/Navigation";
 import Scroll from "../Scroll/Scroll";
@@ -7,11 +6,22 @@ import { roomIdMaxLength, usernameMaxLength } from "../../Settings";
 import { useAppContext } from "../AppContext";
 import { useConnectionManagerContext } from "../ConnectionManager/ConnectionManagerContext";
 import { joinWaitingTime } from "../../services/Constants";
+import { HomeContext, useHomeContext } from "./HomeContext";
+import { HomeTab } from "../../types/enums/HomeTab";
+
+export const HomeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [homeTab, setHomeTab] = useState<HomeTab>(HomeTab.Join);
+  
+    return (<HomeContext.Provider value={{ homeTab, setHomeTab }}>{children}</HomeContext.Provider>);
+};
 
 function Home ()
 {
-    const [homeTab, setHomeTab] = useState<HomeTab>(HomeTab.Join);
     const [joinInProgress, setJoinInProgress] = useState<boolean>(false);
+
+    const {
+        homeTab, setHomeTab,
+    } = useHomeContext();
 
     const {
         username, setUsername,

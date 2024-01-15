@@ -61,8 +61,8 @@
     }
     
     .outline {
-    color: var(--prime-color);
-    --outline-color: var(--secondary-color);
+    color: black;
+    --outline-color: var(--prime-color);
     text-shadow:
         -1px -1px 0 var(--outline-color),  
         1px -1px 0 var(--outline-color),

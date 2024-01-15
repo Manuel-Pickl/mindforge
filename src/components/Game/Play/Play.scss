@@ -1,4 +1,7 @@
 .playComponent {
+    display: grid;
+    gap: 1rem;
+
     .buttons {
         width: 100%;
         display: flex;
