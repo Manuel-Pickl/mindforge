@@ -38,7 +38,7 @@ function App() {
   const queryParams = new URLSearchParams(search);
 
   const {
-    page, setPage,
+    page,
     username,
     setRoom,
   } = useAppContext();
