@@ -1,6 +1,6 @@
 export enum Page {
-    Offline,
-    Home,
-    Lobby,
-    Game
+    Offline = "Offline",
+    Home = "Home",
+    Lobby = "Lobby",
+    Game = "Game"
 }

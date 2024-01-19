@@ -12,6 +12,7 @@ import "./App.scss";
 import { Player } from '../types/class/Player';
 import { useHomeContext } from './Home/HomeContext';
 import { HomeTab } from '../types/enums/HomeTab';
+import PreventLeave from './PreventLeave';
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 {
@@ -81,6 +82,9 @@ function App() {
         <Game />
       )}
 
+      <PreventLeave
+        page={page} 
+      />
       <ConnectionManager />
     </div>
   );
