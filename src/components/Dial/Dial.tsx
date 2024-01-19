@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
 import "./Dial.scss";
+import { useEffect, useRef } from "react";
 import { debugLog } from "../../services/Logger";
 import { solutionSectorDegrees } from "../../Settings";
 import { Sector } from "../../types/enums/Sector";
@@ -36,9 +36,16 @@ function Dial({
         };
     }, []);
     
-    function handleMouseDown() {
+    function handleMouseDown(e: React.MouseEvent<HTMLDivElement>) {
         debugLog("dial move start")
         isDraggingRef.current = true;
+        moveDial(e.clientX, e.clientY);
+    };
+    
+    function handleTouchStart(e: React.TouchEvent<HTMLDivElement>) {
+        debugLog("dial move start")
+        isDraggingRef.current = true;
+        moveDial(e.touches[0].clientX, e.touches[0].clientY);
     };
     
     function handleMouseUp() {
@@ -50,11 +57,11 @@ function Dial({
         isDraggingRef.current = false;
     };
 
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
         moveDial(e.clientX, e.clientY)
     };
 
-    const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    function handleTouchMove(e: React.TouchEvent<HTMLDivElement>){
         moveDial(e.touches[0].clientX, e.touches[0].clientY);
     };
 
@@ -117,6 +124,8 @@ function Dial({
             className="dialComponent"
             onMouseMove={handleMouseMove}
             onTouchMove={handleTouchMove}
+            onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
         >
             <div className="dial">
                 <div className="dialBackground" />
@@ -153,8 +162,6 @@ function Dial({
                 <div
                     ref={handRef}
                     className="hand"
-                    onMouseDown={handleMouseDown}
-                    onTouchStart={handleMouseDown}
                     style={{ transform: `rotate(${(dial ?? 0) - 90}deg)` }}
                 />
                 <div className="handRoot" />

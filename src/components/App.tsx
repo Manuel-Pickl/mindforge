@@ -12,7 +12,7 @@ import "./App.scss";
 import { Player } from '../types/class/Player';
 import { useHomeContext } from './Home/HomeContext';
 import { HomeTab } from '../types/enums/HomeTab';
-import PreventLeave from './PreventLeave';
+import LeavePrompt from './LeavePrompt/LeavePrompt';
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 {
@@ -64,6 +64,12 @@ function App() {
     sessionStorage.setItem("username", username);
   }, [username]);
 
+  // ToDo ma.pickl: debug code for dial testing
+  // const [test, setTest] = useState<number>(80);
+  // function onDialChange(aValue: number) {
+  //   setTest(aValue);
+  // }
+
   return (
     <div className="appComponent">
       {page == Page.Offline && (
@@ -82,10 +88,19 @@ function App() {
         <Game />
       )}
 
-      <PreventLeave
+      <LeavePrompt
         page={page} 
       />
       <ConnectionManager />
+
+      {/* <Dial 
+        hideHand={false}
+        solutionVisible={false}
+        solution={0}
+        dial={test}
+        scale={["", ""]}
+        onDialChange={onDialChange}
+      /> */}
     </div>
   );
 };
