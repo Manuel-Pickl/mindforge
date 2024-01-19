@@ -11,6 +11,7 @@ import "./Play.scss";
 import UnfinishedPlayers from "./UnfinishedPlayers/UnfinishedPlayers";
 import Scroll from "../../Scroll/Scroll";
 import Card from "../../Card/Card";
+import { UserTouch } from "../../../types/class/UserTouch";
 
 export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currentPlayRound, setCurrentPlayRound] = useState<number>(0);
@@ -20,6 +21,7 @@ export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [solutionVisible, setSolutionVisible] = useState<boolean>(false);
     const [readyButtonDisabled, setReadyButtonDisabled] = useState<boolean>(false);
     const [splashscreenVisible, setSplashscreenVisible] = useState<boolean>(true)
+    const [userTouches, setUserTouches] = useState<UserTouch[]>([]);
 
     function startPlayRound(
         aPlaySpectrumCard: SpectrumCard,
@@ -43,7 +45,20 @@ export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setSolutionVisible(true);
     }
 
-    return (<PlayContext.Provider value={{ currentPlayRound, setCurrentPlayRound, roundsCount, setRoundsCount, playSpectrumCard, setPlaySpectrumCard, dial, setDial, solutionVisible, setSolutionVisible, startPlayRound, showSolution, readyButtonDisabled, setReadyButtonDisabled, splashscreenVisible, setSplashscreenVisible }}>{children}</PlayContext.Provider>);
+    function updateUserPosition(aUsername: string, x: number, y: number) {
+        if (aUsername == "" || x == -1 || y == -1) {
+            return;
+        }
+
+        // remove existing UserTouch with the same username
+        const filteredUserTouches = userTouches.filter(userTouch => userTouch.username !== aUsername);
+
+        const userTouch = new UserTouch(aUsername, x, y);
+        filteredUserTouches.push(userTouch);
+        setUserTouches(filteredUserTouches);
+    }
+
+    return (<PlayContext.Provider value={{ currentPlayRound, setCurrentPlayRound, roundsCount, setRoundsCount, playSpectrumCard, setPlaySpectrumCard, dial, setDial, updateUserPosition, userTouches, solutionVisible, setSolutionVisible, startPlayRound, showSolution, readyButtonDisabled, setReadyButtonDisabled, splashscreenVisible, setSplashscreenVisible }}>{children}</PlayContext.Provider>);
 };
 
 function Play()
@@ -56,6 +71,7 @@ function Play()
         playSpectrumCard,
         solutionVisible,
         dial, setDial,
+        userTouches,
         readyButtonDisabled, setReadyButtonDisabled,
         splashscreenVisible,
 
@@ -76,13 +92,13 @@ function Play()
         sendPlayRoundFinished(false);
     }, [dial]);
 
-    function onDialChange(aValue: number) {
+    function onDialChange(aValue: number, x: number, y: number) {
         if (solutionVisible) {
             return;
         }
 
         setDial(aValue);
-        updateGlobalDial(aValue, username);
+        updateGlobalDial(aValue, username, x, y);
     }
 
     function onFinishedClick() {
@@ -117,6 +133,7 @@ function Play()
                     onDialChange={onDialChange}
                     dial={dial}
                     scale={playSpectrumCard?.scale ?? ["",""]}
+                    userTouches={userTouches}
                 />
             
                 <div className="buttons">

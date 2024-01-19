@@ -52,6 +52,33 @@
             // background-size: contain;
             // background-repeat: no-repeat;
         }
+
+        .avatarWrapper {
+            // from parent:
+            // --left
+            // --top
+
+            z-index: 25;
+            position: absolute;
+            width: 15%;
+            left: var(--left);
+            top: var(--top);
+            translate: -50% -50%;
+        }
+
+        .fadeout {
+            animation: fadeout 2s;
+            animation-fill-mode: forwards;
+        }
+        @keyframes fadeout {
+            0% {
+                opacity: 100%
+            }
+
+            100% {
+                opacity: 0%;
+            }
+        }
             
         .solution {
             // come from parent:

@@ -36,14 +36,13 @@ function UnfinishedPlayers({
 
             <div className="avatars">
                 {getUnfinishedPlayers().map((player) => (
-                <AvatarBubble
-                    key={player.username}
-                    avatar={player.avatar}
-                    isHost={player.isHost}
-                    username={player.username}
-                />
+                    <AvatarBubble
+                        key={player.username}
+                        avatar={player.avatar}
+                        isHost={player.isHost}
+                        username={player.username}
+                    />
                 ))}
-
             </div>
         </div>
     )

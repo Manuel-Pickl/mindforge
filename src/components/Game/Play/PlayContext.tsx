@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
 import { SpectrumCard } from '../../../types/class/SpectrumCard';
+import { UserTouch } from '../../../types/class/UserTouch';
 
 export const PlayContext = createContext<{
     currentPlayRound : number;
@@ -10,6 +11,8 @@ export const PlayContext = createContext<{
     setPlaySpectrumCard: Dispatch<SetStateAction<SpectrumCard | null>>;
     dial: number;
     setDial: Dispatch<SetStateAction<number>>;
+    updateUserPosition: (aUsername: string, x: number, y: number) => void;
+    userTouches: UserTouch[];
     solutionVisible: boolean;
     setSolutionVisible: Dispatch<SetStateAction<boolean>>;
     startPlayRound: (aPlaySpectrumCard: SpectrumCard, aCurrentRound: number, aRoundsCount: number) => void;

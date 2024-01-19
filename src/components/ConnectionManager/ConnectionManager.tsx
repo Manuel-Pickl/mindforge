@@ -139,11 +139,17 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     //#endregion
   }
 
-  function updateGlobalDial(aValue: number, aUsername: string = "")
+  function updateGlobalDial(
+    aValue: number,
+    aUsername: string = "",
+    x: number = -1,
+    y: number = -1)
   {
     mqttHelperRef.current.publish(Topic.UpdateGlobalDial, {
       aValue: aValue,
       aUsername: aUsername,
+      x: x,
+      y: y,
     });
   }
 
@@ -255,6 +261,7 @@ function ConnectionManager()
   const {
     setPlaySpectrumCard,
     setDial,
+    updateUserPosition,
     startPlayRound,
     showSolution,
   } = usePlayContext();
@@ -529,7 +536,7 @@ function ConnectionManager()
   }
 
   // @ts-ignore
-  function onUpdateGlobalDial({ aValue, aUsername })
+  function onUpdateGlobalDial({ aValue, aUsername, x, y })
   {
     //#region variable wrapper
     setUsername(username => {
@@ -541,6 +548,7 @@ function ConnectionManager()
     }
 
     setDial(aValue);
+    updateUserPosition(aUsername, x, y);
     //#region variable wrapper
     return username});
     //#endregion

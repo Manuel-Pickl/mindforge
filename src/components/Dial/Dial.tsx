@@ -4,14 +4,18 @@ import { debugLog } from "../../services/Logger";
 import { solutionSectorDegrees } from "../../Settings";
 import { Sector } from "../../types/enums/Sector";
 import { getHitSector } from "../../services/ResultManager";
+import AvatarBubble from "../AvatarBubble/AvatarBubble";
+import { useAppContext } from "../AppContext";
+import { UserTouch } from "../../types/class/UserTouch";
 
 interface DialProps {
     hideHand: boolean;
     solutionVisible: boolean;
     solution: number;
-    onDialChange?: (value: number) => void;
+    onDialChange?: (value: number, x: number, y: number) => void;
     dial?: number;
     scale: [string, string];
+    userTouches?: UserTouch[];
 }
   
 function Dial({
@@ -20,12 +24,17 @@ function Dial({
     solution,
     onDialChange,
     dial,
-    scale }: DialProps)
-{
+    scale,
+    userTouches = [],
+}: DialProps) {
     const isDraggingRef = useRef<boolean>(false);
     const dialComponentRef = useRef<HTMLDivElement | null>(null);
     const handRef = useRef<HTMLDivElement | null>(null);
     
+    const {
+        players,
+    } = useAppContext();
+
     useEffect(() => {
         window.addEventListener("mouseup", handleMouseUp);
         window.addEventListener("touchend", handleMouseUp);
@@ -73,9 +82,9 @@ function Dial({
         }
 
         // bottom middle
-        const spectrumBoundingBox = dialComponentRef.current.getBoundingClientRect();
-        const dialCenterX = spectrumBoundingBox.left + spectrumBoundingBox.width / 2;
-        const dialCenterY = spectrumBoundingBox.bottom - spectrumBoundingBox.height / 2 - handRef.current.clientWidth / 2;
+        const dialBoundingBox = dialComponentRef.current.getBoundingClientRect();
+        const dialCenterX = dialBoundingBox.left + dialBoundingBox.width / 2;
+        const dialCenterY = dialBoundingBox.bottom - dialBoundingBox.height / 2 - handRef.current.clientWidth / 2;
         
         // Calculate the angle based on mouse position
         const angleRadian = Math.atan2(
@@ -94,7 +103,17 @@ function Dial({
             angleCorrected = 180;
         }
         
-        onDialChange?.(angleCorrected);
+        // calculate relative mouse position in percentage
+        var relativeX: number = Math.round(((mouseX - dialBoundingBox.left) / dialBoundingBox.width) * 100);
+        var relativeY: number = Math.round(((mouseY - dialBoundingBox.top) / dialBoundingBox.height * 2) * 100);
+        
+        // keep values inside percentage range
+        if (relativeX < 0) relativeX = 0;
+        if (relativeX > 100) relativeX = 100;
+        if (relativeY < 0) relativeY = 0;
+        if (relativeY > 100) relativeY = 100;
+
+        onDialChange?.(angleCorrected, relativeX, relativeY);
     }
 
     function isSectorActive(aSector: Sector): boolean {
@@ -130,6 +149,23 @@ function Dial({
             <div className="dial">
                 <div className="dialBackground" />
                 
+                {userTouches.map((userTouch: UserTouch) => (
+                    <div
+                        key={userTouch.username}
+                        className="avatarWrapper fadeout"
+                        style={{
+                            "--left": `${userTouch.x}%`,
+                            "--top": `${userTouch.y}%`
+                        } as React.CSSProperties}
+                    >
+                        <AvatarBubble
+                            avatar={players.first(player => player.username == userTouch.username).avatar}
+                            isHost={players.first(player => player.username == userTouch.username).isHost}
+                            username={userTouch.username}
+                        />
+                    </div>
+                ))}
+
                 {solutionVisible &&
                 <div 
                     className="solution"
