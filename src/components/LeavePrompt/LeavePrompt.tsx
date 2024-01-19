@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
-import { Page } from '../types/enums/Page';
+import { Page } from '../../types/enums/Page';
 
-interface PreventLeaveProps {
+interface LeavePromptProps {
     page: Page;
 }
-function PreventLeave({
+function LeavePrompt({
     page,
-}: PreventLeaveProps) {
+}: LeavePromptProps) {
     useEffect(() => {
         window.addEventListener('beforeunload', handleBeforeUnload);
 
@@ -28,4 +28,4 @@ function PreventLeave({
     return null;
 };
 
-export default PreventLeave;
+export default LeavePrompt;
