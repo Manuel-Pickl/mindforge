@@ -363,7 +363,7 @@ function ConnectionManager()
     
     if (page == Page.Offline)
     {
-      page = Page.Home;
+      page = Page.Start;
     }
     //#region variable wrapper
     return page});

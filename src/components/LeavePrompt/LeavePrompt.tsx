@@ -17,6 +17,7 @@ function LeavePrompt({
 
     function handleBeforeUnload(e: BeforeUnloadEvent) {
         if (page == Page.Offline
+            || page == Page.Start
             || page == Page.Home) {
             return;
         }

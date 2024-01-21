@@ -13,6 +13,7 @@ import { Player } from '../types/class/Player';
 import { useHomeContext } from './Home/HomeContext';
 import { HomeTab } from '../types/enums/HomeTab';
 import LeavePrompt from './LeavePrompt/LeavePrompt';
+import Start from './Start/Start';
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 {
@@ -70,10 +71,15 @@ function App() {
         <Offline />
       )}
 
+      {page == Page.Start && (
+        <Start />
+      )}
+
+
       {page == Page.Home && (
         <Home />
       )}
-    
+
       {page == Page.Lobby && (
         <Lobby />
       )}
