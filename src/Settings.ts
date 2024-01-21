@@ -16,6 +16,7 @@ export const skipsPerCard: number = 1;
 
 // play
 export const gameSplashscreenDuration: number = 6;
+export const userTouchDuration: number = 1;
 export const gameSolutionDuration: number = 5;
 
 // debug

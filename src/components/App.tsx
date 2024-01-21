@@ -13,7 +13,6 @@ import { Player } from '../types/class/Player';
 import { useHomeContext } from './Home/HomeContext';
 import { HomeTab } from '../types/enums/HomeTab';
 import LeavePrompt from './LeavePrompt/LeavePrompt';
-import Dial from './Dial/Dial';
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 {
@@ -65,17 +64,6 @@ function App() {
     sessionStorage.setItem("username", username);
   }, [username]);
 
-  // ToDo ma.pickl: debug code for dial testing
-  const [test, setTest] = useState<number>(80);
-  function onDialChange(aValue: number, x: number, y: number) {
-    if (x >= 0 && x <= 100
-      && y >= 0 && y <= 100) {
-      console.log(`x=${x}, y=${y}`)
-    }
-
-    setTest(aValue);
-  }
-
   return (
     <div className="appComponent">
       {page == Page.Offline && (
@@ -98,15 +86,6 @@ function App() {
         page={page} 
       />
       <ConnectionManager />
-
-      {/* <Dial 
-        hideHand={false}
-        solutionVisible={false}
-        solution={0}
-        dial={test}
-        scale={["", ""]}
-        onDialChange={onDialChange}
-      /> */}
     </div>
   );
 };

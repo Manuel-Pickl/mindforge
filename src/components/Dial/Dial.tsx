@@ -1,12 +1,13 @@
 import "./Dial.scss";
-import { useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { debugLog } from "../../services/Logger";
-import { solutionSectorDegrees } from "../../Settings";
+import { solutionSectorDegrees, userTouchDuration } from "../../Settings";
 import { Sector } from "../../types/enums/Sector";
 import { getHitSector } from "../../services/ResultManager";
 import AvatarBubble from "../AvatarBubble/AvatarBubble";
 import { useAppContext } from "../AppContext";
 import { UserTouch } from "../../types/class/UserTouch";
+import { DialContext } from "./DialContext";
 
 interface DialProps {
     hideHand: boolean;
@@ -15,9 +16,41 @@ interface DialProps {
     onDialChange?: (value: number, x: number, y: number) => void;
     dial?: number;
     scale: [string, string];
-    userTouches?: UserTouch[];
 }
-  
+
+export const DialProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const touchTimeouts = useRef<Record<string, NodeJS.Timeout>>({});
+
+    function showUserTouch(aUserTouch: UserTouch) {
+        if (aUserTouch.username == "" || aUserTouch.x == -1 || aUserTouch.y == -1) {
+            return;
+        }
+
+        const userTouchElement = document.getElementById(`touch-${aUserTouch.username}`);
+        if (!userTouchElement) {
+            return;
+        }
+
+        userTouchElement.style.left = `${aUserTouch.x}%`;
+        userTouchElement.style.top = `${aUserTouch.y}%`;
+
+         // Clear any existing timeout for this user
+         if (touchTimeouts.current[aUserTouch.username]) {
+            clearTimeout(touchTimeouts.current[aUserTouch.username]);
+        }
+
+        // Set a new timeout
+        userTouchElement.style.opacity = "100%";
+        const timeout = setTimeout(() => {
+            userTouchElement.style.opacity = "0%";
+        }, userTouchDuration * 1000);
+
+        touchTimeouts.current[aUserTouch.username] = timeout;
+    }
+
+    return (<DialContext.Provider value={{ showUserTouch }}>{children}</DialContext.Provider>);
+};
+
 function Dial({
     hideHand,
     solutionVisible,
@@ -25,7 +58,6 @@ function Dial({
     onDialChange,
     dial,
     scale,
-    userTouches = [],
 }: DialProps) {
     const isDraggingRef = useRef<boolean>(false);
     const dialComponentRef = useRef<HTMLDivElement | null>(null);
@@ -149,19 +181,15 @@ function Dial({
             <div className="dial">
                 <div className="dialBackground" />
                 
-                {userTouches.map((userTouch: UserTouch) => (
+                {players.map((player) => (
                     <div
-                        key={userTouch.username}
-                        className="avatarWrapper fadeout"
-                        style={{
-                            "--left": `${userTouch.x}%`,
-                            "--top": `${userTouch.y}%`
-                        } as React.CSSProperties}
+                        key={player.username}
+                        id={`touch-${player.username}`}
+                        className="avatarWrapper"
                     >
                         <AvatarBubble
-                            avatar={players.first(player => player.username == userTouch.username).avatar}
-                            isHost={players.first(player => player.username == userTouch.username).isHost}
-                            username={userTouch.username}
+                            avatar={player.avatar}
+                            username={player.username}
                         />
                     </div>
                 ))}

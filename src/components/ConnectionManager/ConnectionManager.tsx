@@ -20,6 +20,8 @@ import { changeAvatar } from '../../services/AvatarManager';
 import { defaultValue, joinWaitingTime } from '../../services/Constants';
 import { useServerContext } from '../Server/ServerContext';
 import '../../services/Extensions/ArrayExtensions';
+import { UserTouch } from '../../types/class/UserTouch';
+import { useDialContext } from '../Dial/DialContext';
 
 export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const mqttHelperRef = useRef<any>();
@@ -261,11 +263,14 @@ function ConnectionManager()
   const {
     setPlaySpectrumCard,
     setDial,
-    updateUserPosition,
     startPlayRound,
     showSolution,
   } = usePlayContext();
 
+  const {
+    showUserTouch,
+  } = useDialContext();
+  
   const {
     setPoints,
     setMaxPoints,
@@ -548,7 +553,7 @@ function ConnectionManager()
     }
 
     setDial(aValue);
-    updateUserPosition(aUsername, x, y);
+    showUserTouch(new UserTouch(aUsername, x, y));
     //#region variable wrapper
     return username});
     //#endregion
