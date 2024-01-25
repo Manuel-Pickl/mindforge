@@ -18,6 +18,8 @@ export const PlayContext = createContext<{
     setReadyButtonDisabled: Dispatch<SetStateAction<boolean>>;
     splashscreenVisible: boolean;
     setSplashscreenVisible: Dispatch<SetStateAction<boolean>>;
+    unfinishedPlayersVisible: boolean;
+    setUnfinishedPlayersVisible: Dispatch<SetStateAction<boolean>>;
 } | undefined>(undefined);
 
 export const usePlayContext = () => {

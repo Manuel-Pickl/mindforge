@@ -201,15 +201,19 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     setCurrentPlayRound(currentPlayRound => {
     setPlayers(players => {
     //#endregion
-    players.forEach(player =>
-    {
-      player.playRoundFinished = false;
-    })
-    mqttHelperRef.current.publish(Topic.Players, players);
-
     const playSpectrumCard: SpectrumCard = aSpectrumCards[currentPlayRound];
     currentPlayRound++;
 
+    players.forEach(player =>
+    {
+      player.playRoundFinished = false;
+    });
+    
+    const currentCardOwner: Player = players.first(player => player.username == playSpectrumCard.owner);
+    currentCardOwner.playRoundFinished = true;
+    
+    mqttHelperRef.current.publish(Topic.Players, players);
+  
     mqttHelperRef.current.publish(Topic.StartPlayRound, {
       aPlaySpectrumCard: playSpectrumCard,
       aCurrentRound: currentPlayRound,

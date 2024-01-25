@@ -6,15 +6,17 @@ import "./UnfinishedPlayers.scss";
 interface UnfinishedPlayersProps {
     setUnfinishedPlayersVisible: Dispatch<SetStateAction<boolean>>;
     players: Player[];
+    cardOwner: string | undefined;
   }
 
 function UnfinishedPlayers({
     setUnfinishedPlayersVisible,
     players,
+    cardOwner,
 }: UnfinishedPlayersProps) {
     function getUnfinishedPlayers(): Player[] {
         const activePlayers: Player[] = players
-            // .filter(player => player.username != playSpectrumCard?.owner);
+            .filter(player => player.username != cardOwner);
 
         const unfinishedPlayers: Player[] = activePlayers
             .filter(player => !player.playRoundFinished);

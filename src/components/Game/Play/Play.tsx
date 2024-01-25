@@ -20,6 +20,7 @@ export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [solutionVisible, setSolutionVisible] = useState<boolean>(false);
     const [readyButtonDisabled, setReadyButtonDisabled] = useState<boolean>(false);
     const [splashscreenVisible, setSplashscreenVisible] = useState<boolean>(true)
+    const [unfinishedPlayersVisible, setUnfinishedPlayersVisible] = useState<boolean>(false);
 
     function startPlayRound(
         aPlaySpectrumCard: SpectrumCard,
@@ -41,15 +42,14 @@ export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     function showSolution() {
         setSolutionVisible(true);
+        setUnfinishedPlayersVisible(false);
     }
 
-    return (<PlayContext.Provider value={{ currentPlayRound, setCurrentPlayRound, roundsCount, setRoundsCount, playSpectrumCard, setPlaySpectrumCard, dial, setDial, solutionVisible, setSolutionVisible, startPlayRound, showSolution, readyButtonDisabled, setReadyButtonDisabled, splashscreenVisible, setSplashscreenVisible }}>{children}</PlayContext.Provider>);
+    return (<PlayContext.Provider value={{ currentPlayRound, setCurrentPlayRound, roundsCount, setRoundsCount, playSpectrumCard, setPlaySpectrumCard, dial, setDial, solutionVisible, setSolutionVisible, startPlayRound, showSolution, readyButtonDisabled, setReadyButtonDisabled, splashscreenVisible, setSplashscreenVisible, unfinishedPlayersVisible, setUnfinishedPlayersVisible }}>{children}</PlayContext.Provider>);
 };
 
 function Play()
 {
-    const [unfinishedPlayersVisible, setUnfinishedPlayersVisible] = useState<boolean>(false);
-
     const {
         currentPlayRound,
         roundsCount,
@@ -58,7 +58,7 @@ function Play()
         dial, setDial,
         readyButtonDisabled, setReadyButtonDisabled,
         splashscreenVisible,
-
+        unfinishedPlayersVisible, setUnfinishedPlayersVisible,
     } = usePlayContext();
     
     const {
@@ -73,11 +73,26 @@ function Play()
     
     useEffect(() => {
         setReadyButtonDisabled(false);
+
+        if (isCardOwner()) {
+            return;
+        }
+
         sendPlayRoundFinished(false);
     }, [dial]);
 
+    function isCardOwner(): boolean {
+        const isCardOwner: boolean = username == playSpectrumCard?.owner;
+
+        return isCardOwner;
+    }
+
     function onDialChange(aValue: number, x: number, y: number) {
         if (solutionVisible) {
+            return;
+        }
+
+        if (isCardOwner()) {
             return;
         }
 
@@ -119,24 +134,34 @@ function Play()
                     scale={playSpectrumCard?.scale ?? ["",""]}
                 />
             
+                {isCardOwner() &&
+                    <div className="outline">
+                        Das ist deine Karte, nichts verraten!
+                    </div>
+                }
+
                 <div className="buttons">
                     <Scroll
                         onClick={() => setUnfinishedPlayersVisible(true)}
                     >
                         Spieler
                     </Scroll>
-                    <Scroll
-                        disabled={readyButtonDisabled}
-                        onClick={onFinishedClick}
-                    >
-                        Fertig
-                    </Scroll>
+                    
+                    {!isCardOwner() &&
+                        <Scroll
+                            disabled={readyButtonDisabled}
+                            onClick={onFinishedClick}
+                        >
+                            Fertig
+                        </Scroll>
+                    }
                 </div>
 
                 {unfinishedPlayersVisible &&
                     <UnfinishedPlayers
                         setUnfinishedPlayersVisible={setUnfinishedPlayersVisible}
                         players={players}
+                        cardOwner={playSpectrumCard?.owner}
                     />
                 }
             </>
