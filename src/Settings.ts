@@ -11,7 +11,6 @@ export const maxPlayers: number = 8;
 export const prepareSplashscreenDuration: number = 5;
 export const prepareTime: number = 300;
 export const clueMaxLength: number = 30;
-export const cardsPerPlayer: number = 1;
 export const skipsPerCard: number = 1;
 
 // play

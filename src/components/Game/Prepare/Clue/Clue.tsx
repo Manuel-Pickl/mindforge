@@ -8,6 +8,8 @@ import { PrepareState } from "../../../../types/enums/PrepareState";
 import Counter from "../../../Counter/Counter";
 import Card from "../../../Card/Card";
 import Scroll from "../../../Scroll/Scroll";
+import { useAppContext } from "../../../AppContext";
+import { getPlayCardsPerPlayer } from "../../../../services/SpectrumCardManager";
 
 function Clue ()
 {
@@ -19,17 +21,17 @@ function Clue ()
     
     const {
         remainingPrepareTime,
-    } = usePrepareContext();
-
-    const {
         setPrepareState,
         prepareSpectrumCards,
-        spectrumCardMaxCount,
     } = usePrepareContext();
 
     const {
         sendPreparedCard
     } = useConnectionManagerContext();
+
+    const {
+        players,
+    } = useAppContext();
 
     function skipSpectrumCard() {
         const newSkipCount = currentSkipCount + 1;
@@ -51,7 +53,7 @@ function Clue ()
         setCurrentSkipCount(0);
         setSkipDisabled(false);
 
-        const finishedAllSpectrumCards: boolean = preparedCardsCount >= spectrumCardMaxCount;
+        const finishedAllSpectrumCards: boolean = preparedCardsCount >= getPlayCardsPerPlayer(players.length);
         if (finishedAllSpectrumCards) {          
             setPrepareState(PrepareState.Finished);
         }
@@ -72,7 +74,7 @@ function Clue ()
 
             <Card>
                 <div>
-                    {preparedCardsCount} von {spectrumCardMaxCount}
+                    {preparedCardsCount} von {getPlayCardsPerPlayer(players.length)}
                 </div>
                 <h3>
                     Schreiben einen Hinweis                

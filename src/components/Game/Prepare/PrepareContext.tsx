@@ -5,8 +5,6 @@ import { PrepareState } from '../../../types/enums/PrepareState';
 export const PrepareContext = createContext<{
     prepareSpectrumCards: SpectrumCard[];
     setPrepareSpectrumCards: Dispatch<SetStateAction<SpectrumCard[]>>;
-    spectrumCardMaxCount: number;
-    setSpectrumCardMaxCount: Dispatch<SetStateAction<number>>;
     startPrepare: (aPrepareSpectrumCards: SpectrumCard[]) => void;
     prepareState: PrepareState;
     setPrepareState: Dispatch<SetStateAction<PrepareState>>;

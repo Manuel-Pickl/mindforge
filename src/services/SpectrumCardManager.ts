@@ -1,19 +1,19 @@
-import { cardsPerPlayer, skipsPerCard } from "../Settings";
+import { skipsPerCard } from "../Settings";
 import { Player } from "../types/class/Player";
 import { SpectrumCard } from "../types/class/SpectrumCard"
 import { maxDialhandValue } from "./Constants";
 
 export function getInitialSpectrumCards(players: Player[]): SpectrumCard[] {
-    const spectrumCards: SpectrumCard[] = [];
+    const playerCount: number = players.length;
 
-    const cardsToPlayCount: number = players.length * cardsPerPlayer;
-    const cardsToSkipCount: number = players.length * cardsPerPlayer * skipsPerCard;
-    const scalesCount: number = cardsToPlayCount + cardsToSkipCount;
+    const spectrumCards: SpectrumCard[] = [];
+    const scalesCount: number = getTotalCards(playerCount);
     const scales: [string, string][] = getRandomScales(scalesCount);
+    
     let scaleIndex: number = 0;
 
     players.forEach(player => {
-        for (let j: number = 0; j < cardsPerPlayer + cardsPerPlayer * skipsPerCard; j++) {
+        for (let i: number = 0; i < getTotalCardsPerPlayer(playerCount); i++) {
             const spectrumCard: SpectrumCard = new SpectrumCard(
                 player.username,
                 scales[scaleIndex],
@@ -25,6 +25,40 @@ export function getInitialSpectrumCards(players: Player[]): SpectrumCard[] {
     });
 
     return spectrumCards;
+}
+
+export function getPlayCardsPerPlayer(playerCount: number): number {
+    switch (playerCount) {
+        case 2: return 3;   // 6 cards overall
+        case 3: return 3;   // 9 cards overall
+        case 4: return 2;   // 8 cards overall
+        case 5: return 2;   // 10 cards overall
+        case 6: return 2;   // 12 cards overall
+        case 7: return 1;   // 7 cards overall
+        case 8: return 1;   // 8 cards overall
+        default:
+            throw new Error(`playerCount ${playerCount} is not allowed!`);
+    }
+}
+
+function getSkipCardsPerPlayer(playerCount: number): number {
+    const skipCardsPerPlayer: number = 
+        getPlayCardsPerPlayer(playerCount) * skipsPerCard;
+    
+    return skipCardsPerPlayer;
+}
+
+function getTotalCardsPerPlayer(playerCount: number): number {
+    const totalCardsPerPlayer: number = 
+        getPlayCardsPerPlayer(playerCount) + getSkipCardsPerPlayer(playerCount);
+
+    return totalCardsPerPlayer;
+}
+
+export function getTotalCards(playerCount: number): number {
+    const totalCards: number = getTotalCardsPerPlayer(playerCount) * playerCount;
+
+    return totalCards;
 }
 
 function getRandomScales(count: number): [string, string][] {

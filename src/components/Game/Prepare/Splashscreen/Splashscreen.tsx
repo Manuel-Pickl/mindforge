@@ -3,17 +3,18 @@ import { prepareSplashscreenDuration, prepareTime } from "../../../../Settings";
 import "./Splashscreen.scss";
 import Counter from "../../../Counter/Counter";
 import Card from "../../../Card/Card";
-
-interface SplashscreenProps {
-    spectrumCardMaxCount: number;
-}
+import { useAppContext } from "../../../AppContext";
+import { getPlayCardsPerPlayer } from "../../../../services/SpectrumCardManager";
   
-function Splashscreen({
-    spectrumCardMaxCount }: SplashscreenProps)
+function Splashscreen() 
 {
     const counterStart: number = prepareSplashscreenDuration;
     const [counter, setCounter] = useState<number>(counterStart);
     
+    const {
+        players,
+    } = useAppContext();
+
     useEffect(() => {
         const splashscreenInterval = setInterval(() => {
             setCounter(aCounter => aCounter - 1);
@@ -31,7 +32,7 @@ function Splashscreen({
     return (
     <div className="splashscreenComponent">
         <Card>
-            Du hast {prepareTimeInMinutes()} Minuten um {spectrumCardMaxCount} {spectrumCardMaxCount > 1 ? "Hinweise" : "Hinweis"} zu schreiben
+            Du hast {prepareTimeInMinutes()} Minuten um {getPlayCardsPerPlayer(players.length)} {getPlayCardsPerPlayer(players.length) > 1 ? "Hinweise" : "Hinweis"} zu schreiben
         </Card>
         
         <div className="counterWrapper">
