@@ -5,7 +5,7 @@ import { debugLog } from '../../services/Logger';
 import { Player } from '../../types/class/Player';
 import { GameState } from '../../types/enums/GameState';
 import { SpectrumCard } from '../../types/class/SpectrumCard';
-import { getInitialSpectrumCards, getTotalCards } from '../../services/SpectrumCardManager';
+import { getInitialSpectrumCards, getTotalPlayerCards } from '../../services/SpectrumCardManager';
 import { debugRoom, gameSolutionDuration, mqttUrl, prepareSplashscreenDuration } from '../../Settings';
 import { getMaxPoints, getTotalPoints } from '../../services/ResultManager';
 import { useGameContext } from '../Game/GameContext';
@@ -417,7 +417,7 @@ function ConnectionManager()
 
     const currentCardsCount: number = spectrumCards.length;
     
-    const prepareFinished: boolean = currentCardsCount == getTotalCards(players.length);
+    const prepareFinished: boolean = currentCardsCount == getTotalPlayerCards(players.length);
     if (prepareFinished)
     {
       startPlay_host();

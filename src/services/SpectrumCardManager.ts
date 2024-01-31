@@ -55,7 +55,13 @@ function getTotalCardsPerPlayer(playerCount: number): number {
     return totalCardsPerPlayer;
 }
 
-export function getTotalCards(playerCount: number): number {
+export function getTotalPlayerCards(playerCount: number): number {
+    const totalPlayCards: number = getPlayCardsPerPlayer(playerCount) * playerCount;
+
+    return totalPlayCards;
+}
+
+function getTotalCards(playerCount: number): number {
     const totalCards: number = getTotalCardsPerPlayer(playerCount) * playerCount;
 
     return totalCards;
