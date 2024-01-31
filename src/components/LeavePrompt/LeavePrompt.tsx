@@ -1,24 +1,21 @@
 import { useEffect } from 'react';
-import { Page } from '../../types/enums/Page';
+import { useLocation } from 'react-router-dom';
 
-interface LeavePromptProps {
-    page: Page;
-}
-function LeavePrompt({
-    page,
-}: LeavePromptProps) {
+function LeavePrompt() {
+    const location = useLocation();
+
     useEffect(() => {
         window.addEventListener('beforeunload', handleBeforeUnload);
 
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
-    }, [page]);
+    }, [location.pathname]);
 
     function handleBeforeUnload(e: BeforeUnloadEvent) {
-        if (page == Page.Offline
-            || page == Page.Start
-            || page == Page.Home) {
+        const leavePromptPaths = ["/lobby", "/game", "/result"];
+
+        if (!leavePromptPaths.includes(location.pathname)) {
             return;
         }
 

@@ -1,10 +1,9 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
-import { Page } from '../types/enums/Page';
 import { Player } from '../types/class/Player';
 
 export const AppContext = createContext<{
-    page: Page;
-    setPage: Dispatch<SetStateAction<Page>>;
+    offline: boolean;
+    setOffline: Dispatch<SetStateAction<boolean>>;
     username: string;
     setUsername: Dispatch<SetStateAction<string>>;
     room: string;

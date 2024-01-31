@@ -1,7 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Topic } from '../../types/enums/Topic';
 import mqtt, { MqttClient } from 'mqtt';
-import { Page } from '../../types/enums/Page';
 import { debugLog } from '../../services/Logger';
 import { Player } from '../../types/class/Player';
 import { GameState } from '../../types/enums/GameState';
@@ -22,6 +21,7 @@ import { useServerContext } from '../Server/ServerContext';
 import '../../services/Extensions/ArrayExtensions';
 import { UserTouch } from '../../types/class/UserTouch';
 import { useDialContext } from '../Dial/DialContext';
+import { useNavigate } from 'react-router-dom';
 
 export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const mqttHelperRef = useRef<any>();
@@ -234,6 +234,7 @@ function ConnectionManager()
 {
   const [mqttClient, setMqttClient] = useState<MqttClient | null>(null);
   let connectionLostTime: number | null = null;
+  const navigate = useNavigate();
 
   const {
     setJoined,
@@ -249,7 +250,7 @@ function ConnectionManager()
   } = useServerContext();
 
   const {
-    setPage,
+    setOffline,
     setUsername,
     setPlayers: setClientPlayers,
   } = useAppContext();
@@ -351,9 +352,6 @@ function ConnectionManager()
 
   function onConnect()
   {
-    //#region variable wrapper
-    setPage(page => {
-    //#endregion
     if (connectionLostTime)
     {
       const millisecondsPerSecond: number = 1000;
@@ -364,14 +362,8 @@ function ConnectionManager()
     {
       debugLog("connected to broker");
     }
-    
-    if (page == Page.Offline)
-    {
-      page = Page.Start;
-    }
-    //#region variable wrapper
-    return page});
-    //#endregion
+
+    setOffline(false);
   }
 
   function onClose()
@@ -517,7 +509,7 @@ function ConnectionManager()
   function onJoinSuccess()
   {
     setJoined(true);
-    setPage(Page.Lobby);
+    navigate('/lobby')
   }
 
   function onLobbyData(aPlayers: Player[])
@@ -528,7 +520,7 @@ function ConnectionManager()
   function onPrepareStart(aPrepareSpectrumCards: SpectrumCard[])
   {
     startPrepare(aPrepareSpectrumCards)
-    setPage(Page.Game);
+    navigate('/game')
   }
   
   function onRemainingPrepareTime(aRemainingPrepareTime: number)

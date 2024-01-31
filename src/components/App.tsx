@@ -1,23 +1,22 @@
 // App.tsx
 import { ReactNode, useEffect, useState } from 'react';
 import Home from './Home/Home';
-import { Page } from '../types/enums/Page';
 import Lobby from './Lobby/Lobby';
 import Game from './Game/Game';
 import ConnectionManager from './ConnectionManager/ConnectionManager';
-import { useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { AppContext, useAppContext } from './AppContext';
 import Offline from './Offline/Offline';
 import "./App.scss";
 import { Player } from '../types/class/Player';
 import { useHomeContext } from './Home/HomeContext';
 import { HomeTab } from '../types/enums/HomeTab';
-import LeavePrompt from './LeavePrompt/LeavePrompt';
 import Start from './Start/Start';
+import LeavePrompt from './LeavePrompt/LeavePrompt';
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 {
-  const [page, setPage] = useState<Page>(Page.Offline);
+  const [offline, setOffline] = useState<boolean>(true);
   const [username, setUsername] = useState<string>(sessionStorage.getItem("username") ?? "");
   const [room, setRoom] = useState<string>("");
   const [players, setPlayers] = useState<Player[]>([]);
@@ -32,7 +31,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       .filter(player =>player.username != username);
   }
 
-  return (<AppContext.Provider value={{ page, setPage, username, setUsername, room, setRoom, players, setPlayers, getPlayer, getMates }}>{children}</AppContext.Provider>);
+  return (<AppContext.Provider value={{ offline, setOffline, username, setUsername, room, setRoom, players, setPlayers, getPlayer, getMates }}>{children}</AppContext.Provider>);
 };
 
 function App() {
@@ -40,7 +39,7 @@ function App() {
   const queryParams = new URLSearchParams(search);
 
   const {
-    page,
+    offline,
     username,
     setRoom,
   } = useAppContext();
@@ -67,30 +66,19 @@ function App() {
 
   return (
     <div className="appComponent">
-      {page == Page.Offline && (
+      {offline &&
         <Offline />
-      )}
-
-      {page == Page.Start && (
-        <Start />
-      )}
+      }
 
 
-      {page == Page.Home && (
-        <Home />
-      )}
+      <Routes>
+        <Route path="/" element={<Start />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/lobby" element={<Lobby />} />
+        <Route path="/game" element={<Game />} />
+      </Routes>
 
-      {page == Page.Lobby && (
-        <Lobby />
-      )}
-
-      {page == Page.Game && (
-        <Game />
-      )}
-
-      <LeavePrompt
-        page={page} 
-      />
+      <LeavePrompt />
       <ConnectionManager />
     </div>
   );

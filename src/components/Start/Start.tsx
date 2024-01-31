@@ -1,13 +1,10 @@
 import Scroll from "../Scroll/Scroll";
 import "./Start.scss";
 import logo from "../../assets/logo.png";
-import { useAppContext } from "../AppContext";
-import { Page } from "../../types/enums/Page";
+import { useNavigate } from "react-router-dom";
 
 function Start() {
-    const {
-        setPage,
-    } = useAppContext();
+    const navigate = useNavigate();
 
     return (
         <div className="startComponent">
@@ -19,7 +16,7 @@ function Start() {
             </h1>
 
             <Scroll
-                onClick={() => setPage(Page.Home)}
+                onClick={() => navigate('/home')}
             >
                 Spielen 
             </Scroll>
