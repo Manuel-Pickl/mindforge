@@ -5,10 +5,11 @@ import { useConnectionManagerContext } from "../ConnectionManager/ConnectionMana
 import AvatarBubble from "../AvatarBubble/AvatarBubble";
 import { maxPlayers } from "../../Settings";
 import "./Lobby.scss";
-import arrowLeft from "../../assets/icons/arrow_left.svg";
-import arrowRight from "../../assets/icons/arrow_right.svg";
 import Card from "../Card/Card";
 import Scroll from "../Scroll/Scroll";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 function Lobby ()
 {
@@ -70,8 +71,8 @@ function Lobby ()
             </Card>            
 
             <div className="playerBubble">
-                <img src={arrowLeft} alt={arrowLeft}
-                    className="arrow" 
+                <FontAwesomeIcon
+                    icon={faChevronLeft}
                     onClick={() => sendChangeAvatar(-1)}
                 />
                 
@@ -82,9 +83,9 @@ function Lobby ()
                     fontSize="1.3rem"
                 />
 
-                <img src={arrowRight} alt={arrowRight}
-                    className="arrow"
-                    onClick={() => sendChangeAvatar(1)}
+                <FontAwesomeIcon
+                    icon={faChevronRight}
+                    onClick={() => sendChangeAvatar(-1)}
                 />
             </div>
 

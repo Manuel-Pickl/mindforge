@@ -48,7 +48,6 @@ function App() {
         <Offline />
       }
 
-
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/lobby" element={<Lobby />} />

@@ -13,11 +13,8 @@
         width: 75%;
         display: grid;
         grid-template-columns: 15% 70% 15%;
-        align-items: center;
-
-        .arrow {
-            padding: 15%;
-        }
+        place-items: center;
+        font-size: 2.5rem;
     }
 
     .guestCards {
