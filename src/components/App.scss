@@ -4,7 +4,7 @@
     height: 100%;
     display: grid;
     align-content: center;
-    padding: 20px;
+    padding: 1rem;
     background-image: url("../assets/background_light.png");
     background-size: cover;
     background-repeat: no-repeat;
@@ -25,7 +25,7 @@
             outline: solid 1px var(--secondary-color);
             color: black;
             outline-offset: -6px;
-            padding: 16px;
+            padding: 1rem;
             font-size: 1rem;
             
             &:focus {

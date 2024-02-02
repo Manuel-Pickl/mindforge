@@ -1,23 +1,22 @@
 .clueComponent {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 1.5rem;
     align-items: center;
-    margin-top: 32px;
+    margin-top: 2rem;
     
     .counterWrapper {
         position: absolute;
-        top: 16px;
-        left: 16px;
-        width: 56px;
+        top: 1rem;
+        left: 1rem;
+        width: 4rem;
         aspect-ratio: 1;
         font-size: 1.2rem;
     }
 
     .buttons {
         width: 100%;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
+        display: flex;
+        gap: 1rem;
     }
 }

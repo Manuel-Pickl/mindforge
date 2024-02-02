@@ -1,11 +1,11 @@
 .finishscreenComponent {
     display: grid;
     place-items: center;
-    gap: 24px;
+    gap: 1.5rem;
     margin-top: 20%;
 
     .counterWrapper {
-        width: 88px;
+        width: 5rem;
         aspect-ratio: 1;
         font-size: 2rem;
     }
