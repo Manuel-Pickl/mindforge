@@ -4,7 +4,6 @@ import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionM
 import { useAppContext } from "../../AppContext";
 import Scroll from "../../Scroll/Scroll";
 import { useNavigate } from "react-router-dom";
-import { Player } from "../../../types/class/Player";
 import "./Result.scss";
 import "./ResultAnimations.scss";
 
@@ -25,6 +24,7 @@ function Result()
     } = useResultContext();
 
     const {
+        getPlayer,
     } = useAppContext();
 
     const {
