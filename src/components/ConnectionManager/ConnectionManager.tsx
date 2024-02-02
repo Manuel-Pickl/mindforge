@@ -30,6 +30,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   const {
     setUsername,
     setRoom,
+    setPlayers: setClientPlayers,
   } = useAppContext();
 
   const {
@@ -131,12 +132,16 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   {
     //#region variable wrapper
     setUsername(username => {
+    setClientPlayers(clientPlayers => {
     //#endregion
+    clientPlayers = changeAvatar(aIndexDelta, username, clientPlayers);
+    
     mqttHelperRef.current.publish(Topic.ChangeAvatar, {
       aIndexDelta: aIndexDelta,
       aUsername: username,
     });
     //#region variable wrapper
+    return [...clientPlayers]});
     return username});
     //#endregion
   }
