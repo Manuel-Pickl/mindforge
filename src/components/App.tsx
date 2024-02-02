@@ -13,6 +13,7 @@ import { useHomeContext } from './Home/HomeContext';
 import { HomeTab } from '../types/enums/HomeTab';
 import Start from './Start/Start';
 import LeavePrompt from './LeavePrompt/LeavePrompt';
+import Result from './Game/Result/Result';
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 {
@@ -76,6 +77,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/lobby" element={<Lobby />} />
         <Route path="/game" element={<Game />} />
+        <Route path="/result" element={<Result />} />
       </Routes>
 
       <LeavePrompt />

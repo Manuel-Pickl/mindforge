@@ -1,0 +1,55 @@
+.resultComponent {
+    // from parent
+    // --height
+    // --background-color
+
+    display: grid;
+    gap: 1rem;
+
+    .result {
+        height: 16rem;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        --gap: 2rem;
+        gap: var(--gap);
+
+        .left {
+            position: relative;
+            align-content: right;
+
+            .bucket {
+                position: absolute;
+                right: 0;
+                height: 100%;
+                aspect-ratio: 0.3;
+                border: solid 0.8rem black;
+
+                .content {
+                    position: absolute;
+                    inset: auto 0 0 0;
+                    background-color: var(--background-color);
+                }
+            }
+        }
+
+        .right {
+            display: grid;
+            align-items: center;
+            margin-right: auto;
+            
+            .grade {
+                font-size: 3rem;
+            }
+
+            .points {
+                font-size: 1.3rem;
+            }
+        }
+    }
+
+    .buttons {
+        width: 100%;
+        display: flex;
+        gap: 1rem;
+    }
+}

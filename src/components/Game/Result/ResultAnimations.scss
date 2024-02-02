@@ -1,0 +1,92 @@
+.resultComponent {
+    --bucket-fill-duration: 3s;
+    --bucket-move-delay: 4s;
+    --bucket-move-duration: 1s;
+
+    --points-appear-delay: 5s;
+    --points-appear-duration: 0.5s;
+
+    --buttons-appear-delay: 7s;
+    --buttons-appear-duration: 0.5s;
+
+    .result {
+        .left {
+            .bucket {
+                animation:
+                    holdInMiddle var(--bucket-fill-duration) forwards,
+                    moveLeft var(--bucket-move-duration) var(--bucket-move-delay) forwards;
+                
+                .content {
+                    animation: result-rise var(--bucket-fill-duration) forwards;
+                }
+            }
+        }
+
+        .right {
+            animation: 
+                hide var(--points-appear-delay),
+                pointsAppear var(--points-appear-duration) var(--points-appear-delay) forwards;
+        }
+    }
+
+    .buttons {
+        .replay {
+            animation: 
+                hide var(--buttons-appear-delay) forwards,
+                slideRight var(--buttons-appear-duration) var(--buttons-appear-delay) forwards;
+        }
+
+        .end {
+            animation: 
+                hide var(--buttons-appear-delay) forwards,
+                slideRight var(--buttons-appear-duration) var(--buttons-appear-delay) forwards;
+        }
+    }
+
+
+    @keyframes result-rise {
+        0% {
+            height: 0%;
+            background-color: darkred;
+        }
+
+        100% {
+            height: var(--height);
+            background-color: var(--background-color);
+        }
+    }
+
+    @keyframes holdInMiddle {
+        0% {
+            translate: calc(50% + var(--gap) / 2) 0;
+        }
+
+        100% {
+            translate: calc(50% + var(--gap) / 2) 0;
+        }
+    }
+
+    @keyframes moveLeft {
+        0% {
+            translate: calc(50% + var(--gap) / 2) 0;
+        }
+
+        100% {
+            translate: 0;
+        }
+    }
+
+    @keyframes pointsAppear {
+        0% {
+            scale: 0;
+        }
+
+        80% {
+            scale: 1.1;
+        }
+
+        100% {
+            scale: 1;
+        }
+    }
+}
