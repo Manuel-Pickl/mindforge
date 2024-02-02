@@ -4,6 +4,7 @@ import { HomeTab } from '../../types/enums/HomeTab';
 export const HomeContext = createContext<{
     homeTab: HomeTab;
     setHomeTab: Dispatch<SetStateAction<HomeTab>>;
+    tabIsActive: (tab: HomeTab) => boolean;
 } | undefined>(undefined);
 
 export const useHomeContext = () => {

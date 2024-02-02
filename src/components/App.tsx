@@ -4,14 +4,11 @@ import Home from './Home/Home';
 import Lobby from './Lobby/Lobby';
 import Game from './Game/Game';
 import ConnectionManager from './ConnectionManager/ConnectionManager';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { AppContext, useAppContext } from './AppContext';
 import Offline from './Offline/Offline';
 import "./App.scss";
 import { Player } from '../types/class/Player';
-import { useHomeContext } from './Home/HomeContext';
-import { HomeTab } from '../types/enums/HomeTab';
-import Start from './Start/Start';
 import LeavePrompt from './LeavePrompt/LeavePrompt';
 import Result from './Game/Result/Result';
 
@@ -36,30 +33,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 };
 
 function App() {
-  const { search } = useLocation();
-  const queryParams = new URLSearchParams(search);
-
   const {
     offline,
     username,
-    setRoom,
   } = useAppContext();
-
-  const {
-    setHomeTab,
-  } = useHomeContext();
-
-  useEffect(() => {   
-    const parameterRoom: string | null = queryParams.get('room');
-    if (parameterRoom) {
-      setRoom(parameterRoom);
-    }
-
-    const parameterTab: string | null = queryParams.get('tab');
-    if (parameterTab) {
-      setHomeTab(parameterTab as unknown as HomeTab);
-    }
-  }, []);
 
   useEffect(() => {
     sessionStorage.setItem("username", username);
@@ -73,8 +50,7 @@ function App() {
 
 
       <Routes>
-        <Route path="/" element={<Start />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/" element={<Home />} />
         <Route path="/lobby" element={<Lobby />} />
         <Route path="/game" element={<Game />} />
         <Route path="/result" element={<Result />} />

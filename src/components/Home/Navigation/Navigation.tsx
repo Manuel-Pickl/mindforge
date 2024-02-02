@@ -1,20 +1,16 @@
-import { Dispatch, SetStateAction } from "react";
 import { HomeTab } from "../../../types/enums/HomeTab";
+import { useHomeContext } from "../HomeContext";
 import "./Navigation.scss";
+import "./NavigationAnimation.scss";
 
-interface NavigationProps {
-    className?: string;
-    tabIsActive: (tab: HomeTab) => boolean;
-    setHomeTab: Dispatch<SetStateAction<HomeTab>>;
-}
+function Navigation() {
+    const {
+        setHomeTab,
+        tabIsActive,
+    } = useHomeContext();
 
-function Navigation({
-    className,
-    tabIsActive,
-    setHomeTab }: NavigationProps)
-{
     return (
-        <div className={`navigationComponent ${className}`}>
+        <div className="navigationComponent">
             <div
                 className="outline"
                 data-highlighted={tabIsActive(HomeTab.Join)}

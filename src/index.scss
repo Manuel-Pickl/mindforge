@@ -11,8 +11,6 @@
   --accent-color-2: rgba(131,224,195,1);
   --accent-color-3: rgba(255,176,126,1);
   --accent-color: rgb(101, 101, 247);
-  
-  --animation-delay: 100ms;
 }
 
 * {
@@ -21,64 +19,27 @@
   margin: 0;
 }
 
-.slideUp {
-  animation: slideUp 500ms;
-  animation-fill-mode: forwards;
-  opacity: 0;
-}
-
-.slideRight {
-  animation: slideRight 500ms;
-  animation-fill-mode: forwards;
-  opacity: 0;
-}
-
-.animationDelay1 {
-  animation-delay: calc(1 * var(--animation-delay));
-}
-.animationDelay2 {
-  animation-delay: calc(2 * var(--animation-delay));
-}
-.animationDelay3 {
-  animation-delay: calc(3 * var(--animation-delay));
-}
-.animationDelay4 {
-  animation-delay: calc(4 * var(--animation-delay));
-}
-.animationDelay5 {
-  animation-delay: calc(5 * var(--animation-delay));
-}
-.animationDelay6 {
-  animation-delay: calc(6 * var(--animation-delay));
-}
-.animationDelay7 {
-  animation-delay: calc(7 * var(--animation-delay));
-}
-.animationDelay8 {
-  animation-delay: calc(8 * var(--animation-delay));
-}
-.animationDelay9 {
-  animation-delay: calc(9 * var(--animation-delay));
-}
-.animationDelay10 {
-  animation-delay: calc(10 * var(--animation-delay));
-}
-
 @keyframes slideUp {
   0% {
-      translate: 0 100%;
+    opacity: 0;
+    translate: 0 100%;
   }
+
   100% {
-      opacity: 1;
+    opacity: 1;
+    translate: 0% 0%;
   }
 }
 
 @keyframes slideRight {
   0% {
-      translate: -100% 0%;
+    opacity: 0;
+    translate: -100% 0%;
   }
+
   100% {
-      opacity: 1;
+    opacity: 1;
+    translate: 0% 0%;
   }
 }
 

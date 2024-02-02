@@ -1,0 +1,23 @@
+.joinComponent {
+    --username-delay: 0.4s;
+    --room-delay: 0.5s;
+    --scroll-delay: 1s;
+
+    .username {
+        animation:
+            hide var(--username-delay) forwards,
+            slideUp 500ms forwards var(--username-delay);
+    }
+
+    .room {
+        animation:
+            hide var(--room-delay) forwards,
+            slideUp 500ms forwards var(--room-delay);
+    }
+
+    .scroll {
+        animation:
+        hide var(--scroll-delay) forwards,
+        slideRight 500ms forwards var(--scroll-delay);
+    }
+}

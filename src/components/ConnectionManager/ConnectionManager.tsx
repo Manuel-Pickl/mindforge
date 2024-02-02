@@ -227,7 +227,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     //#endregion
   }
 
-  return (<ConnectionManagerContext.Provider value={{ setJoined, mqttHelperRef, createRoom: createRoom_host, startPrepare: startPrepare_host, joinRoom, updateGlobalDial, sendPreparedCard: sendPreparedCard, sendPlayRoundFinished, sendChangeAvatar, startPlay_host: startPlay_host, startPlayRound_host: startPlayRound_host }}>{children}</ConnectionManagerContext.Provider>);
+  return (<ConnectionManagerContext.Provider value={{ setJoined, mqttHelperRef, createRoom_host, startPrepare: startPrepare_host, joinRoom, updateGlobalDial, sendPreparedCard: sendPreparedCard, sendPlayRoundFinished, sendChangeAvatar, startPlay_host: startPlay_host, startPlayRound_host: startPlayRound_host }}>{children}</ConnectionManagerContext.Provider>);
 };
 
 function ConnectionManager()

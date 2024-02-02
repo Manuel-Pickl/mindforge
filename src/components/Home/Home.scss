@@ -1,4 +1,24 @@
 .homeComponent {
     display: grid;
     gap: 1rem;
+
+    .logo {
+        width: min(100%, 250px);
+        margin-inline: auto;
+    }
+
+    .tutorial {
+        position: absolute;
+        --margin: 1rem;
+        top: var(--margin);
+        right: var(--margin);
+        width: 2.5rem;
+        aspect-ratio: 1;
+        border: solid 1px black;
+        border-radius: 100vw;
+        background-color: var(--prime-color);
+        color: var(--secondary-color);
+        display: grid;
+        place-content: center;
+    }
 }
