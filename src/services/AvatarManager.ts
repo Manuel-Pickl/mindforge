@@ -34,8 +34,7 @@ export function changeAvatar(
     aUsername: string,
     aPlayers: Player[]): Player[]
 {
-    const player: Player = aPlayers
-        .first(player => player.username == aUsername);
+    const player: Player = aPlayers.first(player => player.username == aUsername);
 
     const currentAvatarIndex = avatars.indexOf(player.avatar);
     const newAvatarIndex = (currentAvatarIndex + aIndexDelta + avatars.length) % (avatars.length);

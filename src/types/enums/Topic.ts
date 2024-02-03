@@ -2,6 +2,7 @@ export enum Topic {
     // guest -> host
     Join = "Join",
     preparedCard = "preparedCard",
+    ChangeAvatar = "ChangeAvatar",
     
     // host -> guest
     JoinSuccess = "JoinSuccess",
@@ -12,8 +13,8 @@ export enum Topic {
     PlayRoundFinished = "PlayRoundFinished",
     ShowPlayRoundSolution = "ShowPlayRoundSolution",
     StartResult = "StartResult",
+    AvatarChanged = "AvatarChanged",
 
     // guest -> guest
-    ChangeAvatar = "ChangeAvatar",
     UpdateGlobalDial = "UpdateGlobalDial",
 }

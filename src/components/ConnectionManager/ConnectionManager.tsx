@@ -30,15 +30,15 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   const {
     setUsername,
     setRoom,
-    setPlayers: setClientPlayers,
+    setPlayers,
   } = useAppContext();
 
   const {
-    setPlayers,
-    setSpectrumCards,
-    setCurrentPlayRound,
-    setRemainingPrepareTime,
-    setRemainingPrepareTimeInterval,
+    setServerPlayers,
+    setServerSpectrumCards,
+    setServerCurrentPlayRound,
+    setServerRemainingPrepareTime,
+    setServerRemainingPrepareTimeInterval,
   } = useServerContext();
 
   // host
@@ -58,8 +58,8 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   function startPrepare_host()
   {
     //#region variable wrapper
-    setPlayers(players => {
-    setRemainingPrepareTime(remainingPrepareTime => {
+    setServerPlayers(players => {
+    setServerRemainingPrepareTime(remainingPrepareTime => {
     //#endregion
     const prepareSpectrumCards: SpectrumCard[] = getInitialSpectrumCards(players);
 
@@ -74,7 +74,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
 
     setTimeout(() =>
     {
-      setRemainingPrepareTimeInterval(
+      setServerRemainingPrepareTimeInterval(
           setInterval(() => 
           {
             const prepareTimeUp: boolean = remainingPrepareTime <= 0;
@@ -104,6 +104,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     //#endregion
     mqttHelperRef.current.subscribe(`${Topic.JoinSuccess}/${username}`);
     mqttHelperRef.current.subscribe(Topic.Players);
+    mqttHelperRef.current.subscribe(Topic.AvatarChanged);
     mqttHelperRef.current.subscribe(`${Topic.StartPrepare}/${username}`);
     mqttHelperRef.current.subscribe(Topic.RemainingPrepareTime);
     mqttHelperRef.current.subscribe(Topic.StartPlayRound);
@@ -132,16 +133,12 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   {
     //#region variable wrapper
     setUsername(username => {
-    setClientPlayers(clientPlayers => {
     //#endregion
-    clientPlayers = changeAvatar(aIndexDelta, username, clientPlayers);
-    
     mqttHelperRef.current.publish(Topic.ChangeAvatar, {
       aIndexDelta: aIndexDelta,
       aUsername: username,
     });
     //#region variable wrapper
-    return [...clientPlayers]});
     return username});
     //#endregion
   }
@@ -182,8 +179,8 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   function startPlay_host()
   {
     //#region variable wrapper
-    setSpectrumCards(spectrumCards => {;
-    setRemainingPrepareTimeInterval(remainingPrepareTimeInterval => {
+    setServerSpectrumCards(spectrumCards => {;
+    setServerRemainingPrepareTimeInterval(remainingPrepareTimeInterval => {
     //#endregion
     clearInterval(remainingPrepareTimeInterval);
 
@@ -191,7 +188,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     
     const shuffledSpectrumCards: SpectrumCard[] =
       spectrumCards.sort(() => Math.random() - 0.5);
-    setSpectrumCards(shuffledSpectrumCards);
+    setServerSpectrumCards(shuffledSpectrumCards);
 
     startPlayRound_host(shuffledSpectrumCards);
     //#region variable wrapper
@@ -203,8 +200,8 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   // host
   function startPlayRound_host(aSpectrumCards: SpectrumCard[]) {
     //#region variable wrapper
-    setCurrentPlayRound(currentPlayRound => {
-    setPlayers(players => {
+    setServerCurrentPlayRound(currentPlayRound => {
+    setServerPlayers(players => {
     //#endregion
     const playSpectrumCard: SpectrumCard = aSpectrumCards[currentPlayRound];
     currentPlayRound++;
@@ -249,15 +246,15 @@ function ConnectionManager()
   } = useConnectionManagerContext();
 
   const {
-    setPlayers,
-    setSpectrumCards,
-    setCurrentPlayRound,
+    setServerPlayers,
+    setServerSpectrumCards,
+    setServerCurrentPlayRound,
   } = useServerContext();
 
   const {
     setOffline,
     setUsername,
-    setPlayers: setClientPlayers,
+    setPlayers,
   } = useAppContext();
 
   const {
@@ -328,6 +325,9 @@ function ConnectionManager()
       case Topic.Players:
         onLobbyData(data);
         break;
+      case Topic.AvatarChanged:
+        onAvatarChanged(data);
+        break;
       case `${Topic.StartPrepare}/${username}`:
         onPrepareStart(data);
         break;
@@ -383,7 +383,7 @@ function ConnectionManager()
   function onJoin({ aUsername, aIsHost })
   {
     //#region variable wrapper
-    setPlayers(players => {
+    setServerPlayers(players => {
     //#endregion
     mqttHelperRef.current.publish(`${Topic.JoinSuccess}/${aUsername}`);
 
@@ -400,13 +400,26 @@ function ConnectionManager()
   // @ts-ignore
   function onChangeAvatar({ aIndexDelta, aUsername })
   {
+    mqttHelperRef.current.publish(Topic.AvatarChanged, { 
+      aIndexDelta: aIndexDelta,
+      aUsername: aUsername
+    });
+  }
+
+  // guest
+  // @ts-ignore
+  function onAvatarChanged({ aIndexDelta, aUsername })
+  {
     //#region variable wrapper
     setPlayers(players => {
+    setUsername(username => {
     //#endregion
-    players = changeAvatar(aIndexDelta, aUsername, players);
-    mqttHelperRef.current.publish(Topic.Players, players);
+    if (username != aUsername) {
+      players = changeAvatar(aIndexDelta, aUsername, players);
+    }
     //#region variable wrapper
-    return players });
+    return username})
+    return [...players] });
     //#endregion
   }
 
@@ -414,9 +427,9 @@ function ConnectionManager()
   function onPreparedCard(aPreparedCard: SpectrumCard) 
   {
     //#region variable wrapper
-    setPlayers(players => {
+    setServerPlayers(players => {
     setRemainingPrepareTime(remainingPrepareTime => {
-    setSpectrumCards(spectrumCards => {
+    setServerSpectrumCards(spectrumCards => {
     //#endregion variable wrapper
     spectrumCards.push(aPreparedCard);
 
@@ -440,7 +453,7 @@ function ConnectionManager()
   function onPlayRoundFinished({ aUsername, aPlayRoundFinished })
   {
     //#region variable wrapper
-    setPlayers(players => {
+    setServerPlayers(players => {
     //#endregion
     players
       .first(player => player.username == aUsername)    
@@ -462,10 +475,10 @@ function ConnectionManager()
   function finishPlayRound()
   {
     //#region variable wrapper
-    setSpectrumCards(spectrumCards => {
+    setServerSpectrumCards(spectrumCards => {
     setPlaySpectrumCard(playSpectrumCard => {
     setDial(dial => {
-    setCurrentPlayRound(currentPlayRound => {
+    setServerCurrentPlayRound(currentPlayRound => {
     //#endregion
     const currentSpectrumCard: SpectrumCard = spectrumCards
       .first(card => card.scale[0] == playSpectrumCard?.scale[0]);
@@ -497,7 +510,7 @@ function ConnectionManager()
   function showResult_host()
   {
     //#region variable wrapper
-    setSpectrumCards(spectrumCards => {
+    setServerSpectrumCards(spectrumCards => {
     //#endregion
     const totalPoints: number = getTotalPoints(spectrumCards);
     mqttHelperRef.current.publish(Topic.StartResult, {
@@ -519,7 +532,7 @@ function ConnectionManager()
 
   function onLobbyData(aPlayers: Player[])
   {
-    setClientPlayers(aPlayers);
+    setPlayers(aPlayers);
   }
 
   function onPrepareStart(aPrepareSpectrumCards: SpectrumCard[])

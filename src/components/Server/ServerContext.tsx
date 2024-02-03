@@ -3,11 +3,11 @@ import { Player } from "../../types/class/Player";
 import { SpectrumCard } from "../../types/class/SpectrumCard";
 
 export const ServerContext = createContext<{
-    setPlayers: Dispatch<SetStateAction<Player[]>>;
-    setSpectrumCards: Dispatch<SetStateAction<SpectrumCard[]>>;
-    setCurrentPlayRound: Dispatch<SetStateAction<number>>;
-    setRemainingPrepareTime: Dispatch<SetStateAction<number>>;
-    setRemainingPrepareTimeInterval: Dispatch<SetStateAction<NodeJS.Timeout | undefined>>;
+    setServerPlayers: Dispatch<SetStateAction<Player[]>>;
+    setServerSpectrumCards: Dispatch<SetStateAction<SpectrumCard[]>>;
+    setServerCurrentPlayRound: Dispatch<SetStateAction<number>>;
+    setServerRemainingPrepareTime: Dispatch<SetStateAction<number>>;
+    setServerRemainingPrepareTimeInterval: Dispatch<SetStateAction<NodeJS.Timeout | undefined>>;
 } | undefined>(undefined);
 
 

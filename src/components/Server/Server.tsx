@@ -6,13 +6,13 @@ import { SpectrumCard } from "../../types/class/SpectrumCard";
 
 export const ServerProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 {
-    const [_players, setPlayers] = useState<Player[]>([]);
-    const [_spectrumCards, setSpectrumCards] = useState<SpectrumCard[]>([]);
-    const [_currentPlayRound, setCurrentPlayRound] = useState<number>(0);
-    const [_remainingPrepareTime, setRemainingPrepareTime] = useState<number>(prepareTime);
-    const [_remainingPrepareTimeInterval, setRemainingPrepareTimeInterval] = useState<NodeJS.Timeout>();
+    const [_players, setServerPlayers] = useState<Player[]>([]);
+    const [_spectrumCards, setServerSpectrumCards] = useState<SpectrumCard[]>([]);
+    const [_currentPlayRound, setServerCurrentPlayRound] = useState<number>(0);
+    const [_remainingPrepareTime, setServerRemainingPrepareTime] = useState<number>(prepareTime);
+    const [_remainingPrepareTimeInterval, setServerRemainingPrepareTimeInterval] = useState<NodeJS.Timeout>();
 
-    return (<ServerContext.Provider value={{ setPlayers, setSpectrumCards, setCurrentPlayRound, setRemainingPrepareTime, setRemainingPrepareTimeInterval }}>{children}</ServerContext.Provider>);
+    return (<ServerContext.Provider value={{ setServerPlayers, setServerSpectrumCards, setServerCurrentPlayRound, setServerRemainingPrepareTime, setServerRemainingPrepareTimeInterval }}>{children}</ServerContext.Provider>);
 };
 
 function Server() {

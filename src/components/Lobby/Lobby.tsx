@@ -10,6 +10,7 @@ import Scroll from "../Scroll/Scroll";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { changeAvatar } from "../../services/AvatarManager";
 
 function Lobby ()
 {
@@ -18,7 +19,7 @@ function Lobby ()
     const {
         room,
         username,
-        players,
+        players, setPlayers,
         getPlayer,
         getMates,
     } = useAppContext();
@@ -56,6 +57,11 @@ function Lobby ()
         return mateCards;
     }
     
+    function switchAvatar(aIndexDelta: number) {
+        setPlayers([...changeAvatar(aIndexDelta, username, players)]);
+        sendChangeAvatar(aIndexDelta);
+    }
+    
     return (
         <div className="lobbyComponent">
             {/* <div className="packs">
@@ -73,7 +79,7 @@ function Lobby ()
             <div className="playerBubble">
                 <FontAwesomeIcon
                     icon={faChevronLeft}
-                    onClick={() => sendChangeAvatar(-1)}
+                    onClick={() => switchAvatar(1)}
                 />
                 
                 <AvatarBubble
@@ -85,7 +91,7 @@ function Lobby ()
 
                 <FontAwesomeIcon
                     icon={faChevronRight}
-                    onClick={() => sendChangeAvatar(-1)}
+                    onClick={() => switchAvatar(-1)}
                 />
             </div>
 
