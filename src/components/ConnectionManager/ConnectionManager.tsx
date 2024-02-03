@@ -30,7 +30,6 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   const {
     setUsername,
     setRoom,
-    setPlayers,
   } = useAppContext();
 
   const {
@@ -383,16 +382,17 @@ function ConnectionManager()
   function onJoin({ aUsername, aIsHost })
   {
     //#region variable wrapper
-    setServerPlayers(players => {
+    setServerPlayers(serverPlayers => {
     //#endregion
     mqttHelperRef.current.publish(`${Topic.JoinSuccess}/${aUsername}`);
 
     // ToDo: we need a delay for slow connection
     // better solution -> solve via custom topic
-    players.push(new Player(aUsername, aIsHost));
-    mqttHelperRef.current.publish(Topic.Players, players);
+    serverPlayers.push(new Player(aUsername, aIsHost));
+    console.log(serverPlayers)
+    mqttHelperRef.current.publish(Topic.Players, serverPlayers);
     //#region variable wrapper
-    return players });
+    return serverPlayers });
     //#endregion
   }
 
@@ -400,10 +400,18 @@ function ConnectionManager()
   // @ts-ignore
   function onChangeAvatar({ aIndexDelta, aUsername })
   {
+    //#region variable wrapper
+    setServerPlayers(serverPlayers => {
+    //#endregion
+    serverPlayers = changeAvatar(aIndexDelta, aUsername, serverPlayers);
+
     mqttHelperRef.current.publish(Topic.AvatarChanged, { 
       aIndexDelta: aIndexDelta,
       aUsername: aUsername
-    });
+    });    
+    //#region variable wrapper
+    return [...serverPlayers]})
+    //#endregion
   }
 
   // guest
