@@ -105,11 +105,12 @@ function Clue ()
                 >
                     Neues Spektrum    
                 </Scroll>
+
                 <Scroll
                     disabled={clue.trim().length == 0}
                     onClick={showNextSpectrumCard}
                 >
-                    Einreichen
+                    Fertig
                 </Scroll>
             </div>
         </div>

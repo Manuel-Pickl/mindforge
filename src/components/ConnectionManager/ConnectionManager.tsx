@@ -389,7 +389,6 @@ function ConnectionManager()
     // ToDo: we need a delay for slow connection
     // better solution -> solve via custom topic
     serverPlayers.push(new Player(aUsername, aIsHost));
-    console.log(serverPlayers)
     mqttHelperRef.current.publish(Topic.Players, serverPlayers);
     //#region variable wrapper
     return serverPlayers });

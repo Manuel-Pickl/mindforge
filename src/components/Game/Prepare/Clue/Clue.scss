@@ -1,8 +1,6 @@
 .clueComponent {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: 1.5rem;
-    align-items: center;
     margin-top: 2rem;
     
     .counterWrapper {
