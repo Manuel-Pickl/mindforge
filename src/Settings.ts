@@ -19,11 +19,11 @@ export const userTouchDuration: number = 1;
 export const gameSolutionDuration: number = 5;
 
 // debug
-export const debug: boolean = true;
+export const debug: boolean = false;
 export const debugRoom: string = "ZZZZ";
 
 // website name
-export const websiteUrl: string = "mindforge.netlify.app";
+export const websiteUrl: string = "https://mindforge.netlify.app";
 
 // broker
 const debugBrokerRunning: boolean = false;
