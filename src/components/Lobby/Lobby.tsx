@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppContext } from "../AppContext";
 import { Player } from "../../types/class/Player";
 import { useConnectionManagerContext } from "../ConnectionManager/ConnectionManagerContext";
@@ -11,13 +11,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { changeAvatar } from "../../services/AvatarManager";
+import { useLocation } from "react-router-dom";
 
 function Lobby ()
 {
     const [_activePacks, _setActivePacks] = useState<string[]>(["Standard", "Furios"]);
     
     const {
-        room,
+        room, setRoom,
         username,
         players, setPlayers,
         getPlayer,
@@ -27,8 +28,29 @@ function Lobby ()
     const {
         startPrepare,
         sendChangeAvatar,
+        createRoom_host,
+        joinRoom,
     } = useConnectionManagerContext();
 
+    const { search } = useLocation();
+    const queryParams = new URLSearchParams(search);
+
+    useEffect(() => {   
+        const parameterRoom: string | null = queryParams.get('room');
+        if (parameterRoom) {
+          setRoom(parameterRoom);
+        }
+    
+        const parameterRestart: string | null = queryParams.get('restart');
+        switch (parameterRestart) {
+            case "create":
+                createRoom_host(parameterRoom);
+                break;
+            case "join":
+                joinRoom(false);
+                break;
+        }
+      }, []);
     function getMateCards(): JSX.Element[]
     {
         let mateCards = []

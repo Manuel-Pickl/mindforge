@@ -14,7 +14,8 @@ export enum Topic {
     ShowPlayRoundSolution = "ShowPlayRoundSolution",
     StartResult = "StartResult",
     AvatarChanged = "AvatarChanged",
-
+    Restart = "Restart",
+    
     // guest -> guest
     UpdateGlobalDial = "UpdateGlobalDial",
 }

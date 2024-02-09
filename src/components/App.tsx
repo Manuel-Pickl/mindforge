@@ -44,16 +44,18 @@ function App() {
 
   return (
     <div className="appComponent">
-      {offline &&
+      {offline ? (
         <Offline />
-      }
-
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/lobby" element={<Lobby />} />
-        <Route path="/game" element={<Game />} />
-        <Route path="/result" element={<Result />} />
-      </Routes>
+      ) : (
+        <>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/lobby" element={<Lobby />} />
+            <Route path="/game" element={<Game />} />
+            <Route path="/result" element={<Result />} />
+          </Routes>
+        </>
+      )}
 
       <LeavePrompt />
       <ConnectionManager />

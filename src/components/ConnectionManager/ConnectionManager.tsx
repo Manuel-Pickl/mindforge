@@ -6,7 +6,7 @@ import { Player } from '../../types/class/Player';
 import { GameState } from '../../types/enums/GameState';
 import { SpectrumCard } from '../../types/class/SpectrumCard';
 import { getInitialSpectrumCards, getTotalPlayerCards } from '../../services/SpectrumCardManager';
-import { debugRoom, gameSolutionDuration, mqttUrl, prepareSplashscreenDuration } from '../../Settings';
+import { debugRoom, gameSolutionDuration, mqttUrl, prepareSplashscreenDuration, websiteUrl } from '../../Settings';
 import { getMaxPoints, getTotalPoints } from '../../services/ResultManager';
 import { useGameContext } from '../Game/GameContext';
 import { usePlayContext } from '../Game/Play/PlayContext';
@@ -41,10 +41,10 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   } = useServerContext();
 
   // host
-  function createRoom_host()
+  function createRoom_host(roomId: string | null = null)
   {
     // const roomId = debug ? debugRoom : getRoomId();
-    const roomId = debugRoom;
+    roomId ??= debugRoom;
     setRoom(roomId);
 
     mqttHelperRef.current.subscribe(Topic.Join);
@@ -74,7 +74,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     setTimeout(() =>
     {
       setServerRemainingPrepareTimeInterval(
-          setInterval(() => 
+          setInterval(() =>
           {
             const prepareTimeUp: boolean = remainingPrepareTime <= 0;
             if (prepareTimeUp)
@@ -84,7 +84,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
 
             remainingPrepareTime -= 1;
             mqttHelperRef.current.publish(Topic.RemainingPrepareTime, remainingPrepareTime);
-        
+
         }, 1000)
       );
     }, prepareSplashscreenDuration * 1000);
@@ -95,13 +95,13 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   }
 
 
-  
+
   function joinRoom(aIsHost: boolean)
   {
     //#region variable wrapper
     setUsername(username => {
+    setRoom(room => {
     //#endregion
-    mqttHelperRef.current.subscribe(`${Topic.JoinSuccess}/${username}`);
     mqttHelperRef.current.subscribe(Topic.Players);
     mqttHelperRef.current.subscribe(Topic.AvatarChanged);
     mqttHelperRef.current.subscribe(`${Topic.StartPrepare}/${username}`);
@@ -110,20 +110,26 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     mqttHelperRef.current.subscribe(Topic.UpdateGlobalDial);
     mqttHelperRef.current.subscribe(Topic.ShowPlayRoundSolution);
     mqttHelperRef.current.subscribe(Topic.StartResult);
-  
+    mqttHelperRef.current.subscribe(`${Topic.JoinSuccess}/${username}`);
+
+    if (!aIsHost) {
+      mqttHelperRef.current.subscribe(Topic.Restart);
+    }
+
     mqttHelperRef.current.publish(Topic.Join, {
-      aUsername: username, 
+      aUsername: username,
       aIsHost: aIsHost,
     });
 
     setTimeout(() => {
       setJoined(aJoined => {
         if (!aJoined) {
-          alert("Der Raum existiert nicht oder du kannst nicht mehr beitreten")
+          alert(`Der Raum ${room} existiert nicht oder du kannst nicht mehr beitreten`)
         }
       return aJoined})
     }, joinWaitingTime * 1000);
     //#region variable wrapper
+    return room})
     return username});
     //#endregion
   }
@@ -184,7 +190,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     clearInterval(remainingPrepareTimeInterval);
 
     mqttHelperRef.current.subscribe(Topic.PlayRoundFinished);
-    
+
     const shuffledSpectrumCards: SpectrumCard[] =
       spectrumCards.sort(() => Math.random() - 0.5);
     setServerSpectrumCards(shuffledSpectrumCards);
@@ -209,12 +215,12 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     {
       player.playRoundFinished = false;
     });
-    
+
     const currentCardOwner: Player = players.first(player => player.username == playSpectrumCard.owner);
     currentCardOwner.playRoundFinished = true;
-    
+
     mqttHelperRef.current.publish(Topic.Players, players);
-  
+
     mqttHelperRef.current.publish(Topic.StartPlayRound, {
       aPlaySpectrumCard: playSpectrumCard,
       aCurrentRound: currentPlayRound,
@@ -228,7 +234,26 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     //#endregion
   }
 
-  return (<ConnectionManagerContext.Provider value={{ setJoined, mqttHelperRef, createRoom_host, startPrepare: startPrepare_host, joinRoom, updateGlobalDial, sendPreparedCard: sendPreparedCard, sendPlayRoundFinished, sendChangeAvatar, startPlay_host: startPlay_host, startPlayRound_host: startPlayRound_host }}>{children}</ConnectionManagerContext.Provider>);
+  function restart_host() {
+    mqttHelperRef.current.publish(Topic.Restart);
+    restartToLobby("create");
+  }
+
+  function restartToLobby(aAction: string) {
+
+    setRoom(room => {
+
+    // change to lobby
+    const url: string = `${websiteUrl}/lobby`;
+    // const url: string = "http://localhost:5173/lobby";
+    const parameters: string = `?restart=${aAction}&room=${room}`;
+    const urlWithParameters: string = `${url}/${parameters}`
+    document.location = urlWithParameters;
+    return room})
+
+  }
+
+  return (<ConnectionManagerContext.Provider value={{ setJoined, mqttHelperRef, createRoom_host, startPrepare: startPrepare_host, joinRoom, updateGlobalDial, sendPreparedCard: sendPreparedCard, sendPlayRoundFinished, sendChangeAvatar, startPlay_host: startPlay_host, startPlayRound_host: startPlayRound_host, restart_host, restartToLobby }}>{children}</ConnectionManagerContext.Provider>);
 };
 
 function ConnectionManager()
@@ -242,6 +267,7 @@ function ConnectionManager()
     mqttHelperRef,
     startPlay_host,
     startPlayRound_host,
+    restartToLobby,
   } = useConnectionManagerContext();
 
   const {
@@ -260,12 +286,12 @@ function ConnectionManager()
     setGameState
   } = useGameContext();
 
-    
+
   const {
     startPrepare,
     setRemainingPrepareTime,
   } = usePrepareContext();
-  
+
   const {
     setPlaySpectrumCard,
     setDial,
@@ -276,7 +302,7 @@ function ConnectionManager()
   const {
     showUserTouch,
   } = useDialContext();
-  
+
   const {
     setPoints,
     setMaxPoints,
@@ -292,7 +318,7 @@ function ConnectionManager()
 
     setMqttClient(mqttClient);
   }, []);
-  
+
   // host & client
   function onMessage(aPaddedTopic: string, aData: any)
   {
@@ -344,6 +370,9 @@ function ConnectionManager()
         break;
       case Topic.StartResult:
         onStartResult(data);
+        break;
+      case Topic.Restart:
+        onRestart();
         break;
 
       default:
@@ -404,10 +433,10 @@ function ConnectionManager()
     //#endregion
     serverPlayers = changeAvatar(aIndexDelta, aUsername, serverPlayers);
 
-    mqttHelperRef.current.publish(Topic.AvatarChanged, { 
+    mqttHelperRef.current.publish(Topic.AvatarChanged, {
       aIndexDelta: aIndexDelta,
       aUsername: aUsername
-    });    
+    });
     //#region variable wrapper
     return [...serverPlayers]})
     //#endregion
@@ -431,7 +460,7 @@ function ConnectionManager()
   }
 
   // host
-  function onPreparedCard(aPreparedCard: SpectrumCard) 
+  function onPreparedCard(aPreparedCard: SpectrumCard)
   {
     //#region variable wrapper
     setServerPlayers(players => {
@@ -441,7 +470,7 @@ function ConnectionManager()
     spectrumCards.push(aPreparedCard);
 
     const currentCardsCount: number = spectrumCards.length;
-    
+
     const prepareFinished: boolean = currentCardsCount == getTotalPlayerCards(players.length);
     if (prepareFinished)
     {
@@ -463,7 +492,7 @@ function ConnectionManager()
     setServerPlayers(players => {
     //#endregion
     players
-      .first(player => player.username == aUsername)    
+      .first(player => player.username == aUsername)
       .playRoundFinished = aPlayRoundFinished;
 
     mqttHelperRef.current.publish(Topic.Players, players);
@@ -478,7 +507,7 @@ function ConnectionManager()
     return players });
     //#endregion
   }
-  
+
   function finishPlayRound()
   {
     //#region variable wrapper
@@ -499,7 +528,7 @@ function ConnectionManager()
       if (playFinished)
       {
         showResult_host();
-      } 
+      }
       else
       {
         startPlayRound_host(spectrumCards);
@@ -528,7 +557,7 @@ function ConnectionManager()
     return spectrumCards});
     //#endregion
   }
-  
+
 
 
   function onJoinSuccess()
@@ -547,7 +576,7 @@ function ConnectionManager()
     startPrepare(aPrepareSpectrumCards)
     navigate('/game')
   }
-  
+
   function onRemainingPrepareTime(aRemainingPrepareTime: number)
   {
     setRemainingPrepareTime(aRemainingPrepareTime);
@@ -591,12 +620,18 @@ function ConnectionManager()
     setMaxPoints(aMaxPoints);
     setGameState(GameState.Finish);
   }
-  
+
+  function onRestart() {
+    setTimeout(() => {
+      restartToLobby("join");
+    }, 500)
+  }
+
   return (
     <div>
       <MqttHelper
         ref={mqttHelperRef}
-        mqttClient={mqttClient}  
+        mqttClient={mqttClient}
       />
     </div>
   );

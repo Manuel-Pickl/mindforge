@@ -1,12 +1,21 @@
 .resultComponent {
-    --bucket-fill-duration: 3s;
-    --bucket-move-delay: 4s;
+    --bucket-fill-duration: 2s;
+
+    --bucket-move-delay: calc(
+        var(--bucket-fill-duration)
+        + 1s); // fixed end delay
     --bucket-move-duration: 1s;
 
-    --points-appear-delay: 5s;
+    --points-appear-delay: calc(
+        var(--bucket-move-delay)
+        + var(--bucket-move-duration)
+        + 1s); // fixed end delay
     --points-appear-duration: 0.5s;
 
-    --buttons-appear-delay: 7s;
+    --buttons-appear-delay: calc(
+        var(--points-appear-delay)
+        + var(--points-appear-duration)
+        + 1s); // fixed end delay
     --buttons-appear-duration: 0.5s;
 
     .result {

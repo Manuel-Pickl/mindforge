@@ -13,7 +13,7 @@ function LeavePrompt() {
     }, [location.pathname]);
 
     function handleBeforeUnload(e: BeforeUnloadEvent) {
-        const leavePromptPaths = ["/lobby", "/game", "/result"];
+        const leavePromptPaths = ["/lobby", "/game1"];
 
         if (!leavePromptPaths.includes(location.pathname)) {
             return;

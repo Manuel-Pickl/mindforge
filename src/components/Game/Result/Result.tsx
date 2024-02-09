@@ -1,23 +1,20 @@
 import { ReactNode, useState } from "react";
 import { ResultContext, useResultContext } from "./ResultContext";
-import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 import { useAppContext } from "../../AppContext";
 import Scroll from "../../Scroll/Scroll";
-import { useNavigate } from "react-router-dom";
 import "./Result.scss";
+import { useConnectionManagerContext } from "../../ConnectionManager/ConnectionManagerContext";
 import "./ResultAnimations.scss";
 
 export const ResultProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [points, setPoints] = useState<number>(0);
-    const [maxPoints, setMaxPoints] = useState<number>(0);
+    const [points, setPoints] = useState<number>(1);
+    const [maxPoints, setMaxPoints] = useState<number>(10);
   
     return (<ResultContext.Provider value={{ points, setPoints, maxPoints, setMaxPoints }}>{children}</ResultContext.Provider>);
 };
 
 function Result()
 {
-    const navigate = useNavigate();
-    
     const {
         points,
         maxPoints,
@@ -28,7 +25,7 @@ function Result()
     } = useAppContext();
 
     const {
-        startPrepare,
+        restart_host,
     } = useConnectionManagerContext();
 
     function getPointPercentage(): number {
@@ -69,6 +66,11 @@ function Result()
         return "F";
     }
 
+    function end() {
+        const url: string = "http://localhost:5173";
+        document.location = url;
+    }
+
     return (
         <div className="resultComponent">
             <h2>Ergebnis</h2>
@@ -79,7 +81,7 @@ function Result()
                         className="bucket"
                         style={{
                             "--height": `${getPointPercentage()}%`,
-                            "--background-color": getColor()
+                            "--background-color": getColor(),
                         } as React.CSSProperties}
                     >
                         <div className="content" />
@@ -103,11 +105,11 @@ function Result()
             </div>
             
             <div className="buttons">
-                {getPlayer()?.isHost &&
+                {getPlayer()?.isHost  &&
                     <Scroll
                         className="replay"
                         // disabled={getPlayer()?.isHost}
-                        onClick={() => startPrepare}
+                        onClick={restart_host}
                     >
                         Nochmal Spielen
                     </Scroll>
@@ -115,7 +117,7 @@ function Result()
 
                 <Scroll
                     className="end"
-                    onClick={() => navigate("/")}
+                    onClick={end}
                 >
                     Beenden
                 </Scroll>
