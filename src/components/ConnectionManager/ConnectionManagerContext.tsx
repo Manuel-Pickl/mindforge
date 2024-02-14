@@ -4,7 +4,7 @@ import { SpectrumCard } from '../../types/class/SpectrumCard';
 export const ConnectionManagerContext = createContext<{
     setJoined: Dispatch<SetStateAction<boolean>>;
     mqttHelperRef: MutableRefObject<any>;
-    createRoom_host: (roomId?: string | null) => void;
+    createRoom_host: (aRoom?: string | null) => void;
     startPrepare: () => void;
     joinRoom: (aRoom: string, aIsHost?: boolean) => void;
     updateGlobalDial: (aValue: number, aUsername?: string, x?: number, y?: number) => void;

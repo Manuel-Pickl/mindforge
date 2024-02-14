@@ -19,8 +19,9 @@ export const userTouchDuration: number = 1;
 export const gameSolutionDuration: number = 5;
 
 // debug
+export const inProduction: boolean = import.meta.env.VITE_IN_PRODUCTION === "true";
 export const debug: boolean = false;
-export const debugRoom: string = "ZZZZ";
+export const debugRoom: string = import.meta.env.VITE_DEBUG_ROOM;
 
 // website name
 export const websiteUrl: string = import.meta.env.VITE_WEBSITE_URL;

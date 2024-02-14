@@ -1,0 +1,42 @@
+.debuggerComponent {
+    --background-color: red;
+    --color: white;
+
+    z-index: 10000;
+    position: absolute;
+    inset: 0 0 auto 0;
+    background-color: var(--background-color);
+    color: var(--color);
+    transition: translate 350ms;
+
+    .content {
+        padding: 0.5rem;
+        display: flex;
+        gap: 1rem;
+
+        .link {
+            padding: 0.5rem;
+            border: solid 2px var(--color);
+            border-radius: 0.5rem;
+            display: flex;
+            gap: 0.3rem
+        }
+    }
+    
+    .chevron {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        translate: -50% 0;
+        width: 2rem;
+        height: 1.5rem;
+        background-color: var(--background-color);
+        border-radius: 0 0 0.5rem 0.5rem;
+        display: grid;
+        place-content: center;
+    
+        .closeIcon {
+            transition: transform 350ms ease; /* Define the transition for the transform property */
+        }
+    }
+}

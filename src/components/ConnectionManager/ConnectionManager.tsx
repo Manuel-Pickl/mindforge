@@ -22,6 +22,7 @@ import '../../services/Extensions/ArrayExtensions';
 import { UserTouch } from '../../types/class/UserTouch';
 import { useDialContext } from '../Dial/DialContext';
 import { useNavigate } from 'react-router-dom';
+import { getRoomId } from '../../services/RoomManager';
 
 export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const mqttHelperRef = useRef<any>();
@@ -41,10 +42,9 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   } = useServerContext();
 
   // host
-  function createRoom_host(roomId: string | null = null)
+  function createRoom_host(aRoom: string | null = null)
   {
-    // const roomId = debug ? debugRoom : getRoomId();
-    roomId ??= debugRoom;
+    const roomId = aRoom ?? debugRoom ?? getRoomId();
     setRoom(roomId);
 
     mqttHelperRef.current.subscribe(Topic.Join);

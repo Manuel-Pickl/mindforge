@@ -11,6 +11,8 @@ import "./App.scss";
 import { Player } from '../types/class/Player';
 import LeavePrompt from './LeavePrompt/LeavePrompt';
 import Result from './Game/Result/Result';
+import Debugger from './Debugger/Debugger';
+import { inProduction } from '../Settings';
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 {
@@ -54,7 +56,12 @@ function App() {
             <Route path="/game" element={<Game />} />
             <Route path="/result" element={<Result />} />
           </Routes>
+          
+          {!inProduction &&
+            <Debugger />
+          }
         </>
+
       )}
 
       <LeavePrompt />
