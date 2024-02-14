@@ -113,7 +113,7 @@ function Lobby ()
             try {
                 await navigator.share({
                     title: "Raum Einladung",
-                    text: `Trete meinem Raum *${room}* bei!\n`,
+                    text: `Trete meinem Raum *${room}* bei.\n`,
                     url: `${websiteUrl}/lobby/?action=join&room=${room}`,
                 });
             } catch (error) {
