@@ -49,7 +49,7 @@ function Join() {
     
     function tryJoin() {
         setJoinInProgress(true);
-        joinRoom(false);
+        joinRoom(room);
 
         setTimeout(() => {
             setJoinInProgress(false);

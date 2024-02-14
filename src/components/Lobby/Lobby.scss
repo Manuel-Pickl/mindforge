@@ -3,10 +3,44 @@
     place-items: center;
     gap: 3rem;
 
-    .packs {
+    // .packs {
+    //     width: 100%;
+    //     display: flex;
+    //     gap: 1rem;
+    // }
+
+    .icons {
+        font-size: 1.2rem;
+        
+        & > * {
+            margin: 0.4rem;
+        }
+    }
+    
+    .shareWindow {
+        z-index: 10;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        translate: -50% -50%;
         width: 100%;
-        display: flex;
-        gap: 1rem;
+        background-color: var(--prime-color);
+        border: solid 0.3rem var(--secondary-color);
+        padding: 2rem;
+        border-radius: 3rem;
+ 
+        .closeIcon {
+            position: absolute;
+            --padding: 1.6rem;
+            inset: var(--padding) var(--padding) auto auto;
+            font-size: 1.6rem;
+        }
+
+        .content {
+            display: grid;
+            place-items: center;
+            gap: 1rem;
+        }
     }
 
     .playerBubble {

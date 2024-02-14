@@ -23,7 +23,7 @@ export const debug: boolean = false;
 export const debugRoom: string = "ZZZZ";
 
 // website name
-export const websiteUrl: string = "https://mindforge.netlify.app";
+export const websiteUrl: string = import.meta.env.VITE_WEBSITE_URL;
 
 // broker
 const debugBrokerRunning: boolean = false;

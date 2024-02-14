@@ -7,6 +7,7 @@ interface AvatarBubbleProps {
     isShareButton?: boolean;
     username?: string;
     fontSize?: string;
+    share?: () => void;
   }
   
 function AvatarBubble({
@@ -15,12 +16,13 @@ function AvatarBubble({
     isShareButton = false,
     username = "",
     fontSize = "1rem",
+    share = () => {},
 }: AvatarBubbleProps) {
     function onClick() {
         if (avatar) {
 
         } else if (isShareButton) {
-            alert("share");
+            share();
         }
     }
 

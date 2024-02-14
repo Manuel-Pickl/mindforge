@@ -6,7 +6,7 @@ export const ConnectionManagerContext = createContext<{
     mqttHelperRef: MutableRefObject<any>;
     createRoom_host: (roomId?: string | null) => void;
     startPrepare: () => void;
-    joinRoom: (aIsHost: boolean) => void;
+    joinRoom: (aRoom: string, aIsHost?: boolean) => void;
     updateGlobalDial: (aValue: number, aUsername?: string, x?: number, y?: number) => void;
     sendPreparedCard: (aPrepareSpectrumCards: SpectrumCard) => void;
     sendPlayRoundFinished: (aValue: boolean) => void;

@@ -1,22 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppContext } from "../AppContext";
 import { Player } from "../../types/class/Player";
 import { useConnectionManagerContext } from "../ConnectionManager/ConnectionManagerContext";
 import AvatarBubble from "../AvatarBubble/AvatarBubble";
-import { maxPlayers } from "../../Settings";
+import { maxPlayers, websiteUrl } from "../../Settings";
 import "./Lobby.scss";
 import Card from "../Card/Card";
 import Scroll from "../Scroll/Scroll";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { faShareFromSquare } from '@fortawesome/free-solid-svg-icons';
+import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faQrcode } from '@fortawesome/free-solid-svg-icons';
 import { changeAvatar } from "../../services/AvatarManager";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import QRCode from "qrcode.react";
 
 function Lobby ()
 {
     const [_activePacks, _setActivePacks] = useState<string[]>(["Standard", "Furios"]);
-    
+    const [qrCodeValue, setQrCodeValue] = useState<string>("");
+    const shareWindowRef = useRef<HTMLDialogElement>(null);
+    const navigate = useNavigate();
+
     const {
         room, setRoom,
         username,
@@ -36,21 +43,37 @@ function Lobby ()
     const queryParams = new URLSearchParams(search);
 
     useEffect(() => {   
-        const parameterRoom: string | null = queryParams.get('room');
-        if (parameterRoom) {
-          setRoom(parameterRoom);
+        const parameterRoom: string | null = queryParams.get("room");
+        if (!parameterRoom) {
+            return;
         }
-    
-        const parameterRestart: string | null = queryParams.get('restart');
-        switch (parameterRestart) {
+
+        setRoom(parameterRoom);
+      
+        const parameterAction: string | null = queryParams.get("action");
+        switch (parameterAction) {
             case "create":
                 createRoom_host(parameterRoom);
                 break;
             case "join":
-                joinRoom(false);
+                if (username) {
+                    joinRoom(parameterRoom);
+                }
+                else {
+                    navigate("/");
+                    const message: string = "Wähle einen Namen, bevor du dem Raum beitrittst"
+                    alert(message)
+                    // toast(message);  
+                }
                 break;
         }
-      }, []);
+    }, []);
+
+    useEffect(() => {
+        const shareUrl: string = `${websiteUrl}/lobby/?action=join&room=${room}`; 
+        setQrCodeValue(shareUrl);
+    }, [room]);
+
     function getMateCards(): JSX.Element[]
     {
         let mateCards = []
@@ -67,6 +90,7 @@ function Lobby ()
                         isHost={currentUser?.isHost ?? false}
                         isShareButton={!addElementSet}
                         username={currentUser?.username}
+                        share={share}
                     />
                 </div>
             );
@@ -83,6 +107,24 @@ function Lobby ()
         setPlayers([...changeAvatar(aIndexDelta, username, players)]);
         sendChangeAvatar(aIndexDelta);
     }
+
+    async function share() {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'Room Invitation',
+                    text: `Join my room: ${room}`,
+                    url: `${websiteUrl}/lobby/?action=join&room=${room}`,
+                });
+            } catch (error) {
+                console.log('Error sharing:', error);
+            }
+        } else {
+            alert("Teilen hat nicht funktioniert.")
+            // toast(...)
+        }
+      }
+      
     
     return (
         <div className="lobbyComponent">
@@ -94,8 +136,41 @@ function Lobby ()
                 )}
             </div> */}
 
+            <dialog
+                ref={shareWindowRef}
+                className="shareWindow"
+            >
+                <div className="content">
+                    <FontAwesomeIcon
+                        className="closeIcon"
+                        icon={faCircleXmark}
+                        onClick={() => shareWindowRef.current?.close()}
+                    />
+
+                    <h2>Einladung</h2>
+                    
+                    <QRCode
+                        value={qrCodeValue}
+                        style={{ width: '100%', height: 'auto' }}
+                    />
+                    <div>
+                        Scanne den QR Code, um dem Raum zu joinen.
+                    </div>
+                </div>
+            </dialog> 
+
             <Card>
                 Dein Raum ist {room}
+                <div className="icons">
+                    <FontAwesomeIcon
+                        icon={faShareFromSquare}
+                        onClick={share}
+                    />
+                    <FontAwesomeIcon
+                        icon={faQrcode}
+                        onClick={() => shareWindowRef.current?.showModal()}
+                    />
+                </div>
             </Card>            
 
             <div className="playerBubble">

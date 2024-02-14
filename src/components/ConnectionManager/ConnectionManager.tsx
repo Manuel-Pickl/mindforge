@@ -50,7 +50,7 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     mqttHelperRef.current.subscribe(Topic.Join);
     mqttHelperRef.current.subscribe(Topic.ChangeAvatar);
 
-    joinRoom(true);
+    joinRoom(roomId, true);
   }
 
   // host
@@ -96,11 +96,10 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
 
 
 
-  function joinRoom(aIsHost: boolean)
+  function joinRoom(aRoom: string, aIsHost: boolean = false)
   {
     //#region variable wrapper
     setUsername(username => {
-    setRoom(room => {
     //#endregion
     mqttHelperRef.current.subscribe(Topic.Players);
     mqttHelperRef.current.subscribe(Topic.AvatarChanged);
@@ -124,12 +123,11 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
     setTimeout(() => {
       setJoined(aJoined => {
         if (!aJoined) {
-          alert(`Der Raum ${room} existiert nicht oder du kannst nicht mehr beitreten`)
+          alert(`Der Raum ${aRoom} existiert nicht oder du kannst nicht mehr beitreten`)
         }
       return aJoined})
     }, joinWaitingTime * 1000);
     //#region variable wrapper
-    return room})
     return username});
     //#endregion
   }
@@ -240,17 +238,17 @@ export const ConnectionManagerProvider: React.FC<{ children: ReactNode }> = ({ c
   }
 
   function restartToLobby(aAction: string) {
-
+    //#region variable wrapper
     setRoom(room => {
-
+    //#endregion
     // change to lobby
     const url: string = `${websiteUrl}/lobby`;
-    // const url: string = "http://localhost:5173/lobby";
-    const parameters: string = `?restart=${aAction}&room=${room}`;
+    const parameters: string = `?action=${aAction}&room=${room}`;
     const urlWithParameters: string = `${url}/${parameters}`
     document.location = urlWithParameters;
+    //#region variable wrapper
     return room})
-
+    //#endregion
   }
 
   return (<ConnectionManagerContext.Provider value={{ setJoined, mqttHelperRef, createRoom_host, startPrepare: startPrepare_host, joinRoom, updateGlobalDial, sendPreparedCard: sendPreparedCard, sendPlayRoundFinished, sendChangeAvatar, startPlay_host: startPlay_host, startPlayRound_host: startPlayRound_host, restart_host, restartToLobby }}>{children}</ConnectionManagerContext.Provider>);
@@ -624,7 +622,7 @@ function ConnectionManager()
   function onRestart() {
     setTimeout(() => {
       restartToLobby("join");
-    }, 500)
+    }, 1000)
   }
 
   return (
