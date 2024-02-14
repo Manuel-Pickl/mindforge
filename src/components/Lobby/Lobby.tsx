@@ -113,7 +113,7 @@ function Lobby ()
             try {
                 await navigator.share({
                     title: "Raum Einladung",
-                    text: `Trete meinem Raum ${room} bei!<br>`,
+                    text: `Trete meinem Raum *${room}* bei!\n`,
                     url: `${websiteUrl}/lobby/?action=join&room=${room}`,
                 });
             } catch (error) {
@@ -123,9 +123,8 @@ function Lobby ()
             alert("Teilen hat nicht funktioniert.")
             // toast(...)
         }
-      }
+    }
       
-    
     return (
         <div className="lobbyComponent">
             {/* <div className="packs">
