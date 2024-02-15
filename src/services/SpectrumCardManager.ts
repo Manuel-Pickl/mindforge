@@ -1,4 +1,4 @@
-import { skipsPerCard } from "../Settings";
+import { inProduction, skipsPerCard } from "../Settings";
 import { Player } from "../types/class/Player";
 import { SpectrumCard } from "../types/class/SpectrumCard"
 import { maxDialhandValue } from "./Constants";
@@ -28,6 +28,11 @@ export function getInitialSpectrumCards(players: Player[]): SpectrumCard[] {
 }
 
 export function getPlayCardsPerPlayer(playerCount: number): number {
+    // for better testing
+    if (!inProduction) {
+        return 1;
+    }
+
     switch (playerCount) {
         case 2: return 3;   // 6 cards overall
         case 3: return 3;   // 9 cards overall
