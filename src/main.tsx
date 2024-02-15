@@ -1,5 +1,6 @@
 // main.tsx
 import './index.scss'
+import "./stackingContext.scss";
 import ReactDOM from 'react-dom/client'
 import App, { AppProvider } from './components/App.tsx'
 import { BrowserRouter } from 'react-router-dom'
