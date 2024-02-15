@@ -16,8 +16,9 @@ import { inProduction } from '../Settings';
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 {
+  const [storage, _] = useState<Storage>(inProduction ? localStorage : sessionStorage);
   const [offline, setOffline] = useState<boolean>(true);
-  const [username, setUsername] = useState<string>(sessionStorage.getItem("username") ?? "");
+  const [username, setUsername] = useState<string>(storage.getItem("username") ?? "");
   const [room, setRoom] = useState<string>("");
   const [players, setPlayers] = useState<Player[]>([]);
 
@@ -31,17 +32,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       .filter(player =>player.username != username);
   }
 
-  return (<AppContext.Provider value={{ offline, setOffline, username, setUsername, room, setRoom, players, setPlayers, getPlayer, getMates }}>{children}</AppContext.Provider>);
+  return (<AppContext.Provider value={{ offline, setOffline, username, setUsername, room, setRoom, players, setPlayers, getPlayer, getMates, storage }}>{children}</AppContext.Provider>);
 };
 
 function App() {
   const {
     offline,
     username,
+    storage,
   } = useAppContext();
 
   useEffect(() => {
-    sessionStorage.setItem("username", username);
+    storage.setItem("username", username);
   }, [username]);
 
   return (

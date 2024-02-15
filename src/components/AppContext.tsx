@@ -12,6 +12,7 @@ export const AppContext = createContext<{
     setPlayers: Dispatch<SetStateAction<Player[]>>;
     getPlayer: (aUsername?: string | null) => Player | undefined;
     getMates: () => Player[];
+    storage: Storage;
 } | undefined>(undefined);
 
 export const useAppContext = () => {
