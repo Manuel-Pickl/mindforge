@@ -11,6 +11,7 @@ import "./Play.scss";
 import UnfinishedPlayers from "./UnfinishedPlayers/UnfinishedPlayers";
 import Scroll from "../../Scroll/Scroll";
 import Card from "../../Card/Card";
+import SwipeModal from "../../SwipeModal/SwipeModal";
 
 export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currentPlayRound, setCurrentPlayRound] = useState<number>(0);
@@ -157,13 +158,15 @@ function Play()
                     }
                 </div>
 
-                {unfinishedPlayersVisible &&
+                <SwipeModal
+                        visible={unfinishedPlayersVisible}
+                        setVisible={setUnfinishedPlayersVisible}
+                >
                     <UnfinishedPlayers
-                        setUnfinishedPlayersVisible={setUnfinishedPlayersVisible}
                         players={players}
                         cardOwner={playSpectrumCard?.owner}
                     />
-                }
+                </SwipeModal>
             </>
             )}
         </div>

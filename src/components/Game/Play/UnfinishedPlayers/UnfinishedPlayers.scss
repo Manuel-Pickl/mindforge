@@ -1,24 +1,7 @@
 .unfinishedPlayersComponent {
-    z-index: 100;
-    position: absolute;
-    inset: auto 0 0 0;
-    width: 100%;
-    background-color: var(--prime-color);
-    border-radius: 3rem 3rem 0 0;
-    padding: 1rem;
-
     display: grid;
     gap: 2rem;
-    box-shadow: 0 0 1rem black;
-
-    button {
-        position: absolute;
-        --margin: 1.5rem;
-        inset: var(--margin) var(--margin) auto auto;
-        border-radius: 50%;
-        background-color: var(--prime-color);
-        border: none;
-    }
+    padding: 1rem;
 
     .avatars {
         display: flex;

@@ -1,16 +1,13 @@
-import { Dispatch, SetStateAction } from "react";
 import { Player } from "../../../../types/class/Player";
 import AvatarBubble from "../../../AvatarBubble/AvatarBubble";
 import "./UnfinishedPlayers.scss";
 
 interface UnfinishedPlayersProps {
-    setUnfinishedPlayersVisible: Dispatch<SetStateAction<boolean>>;
     players: Player[];
     cardOwner: string | undefined;
   }
 
 function UnfinishedPlayers({
-    setUnfinishedPlayersVisible,
     players,
     cardOwner,
 }: UnfinishedPlayersProps) {
@@ -26,12 +23,6 @@ function UnfinishedPlayers({
 
     return (
         <div className="unfinishedPlayersComponent">
-            <button
-                onClick={() => setUnfinishedPlayersVisible(false)}
-            >
-                x
-            </button>
-
             <div>
                 Warten auf Konsens...
             </div>

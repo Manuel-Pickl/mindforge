@@ -1,0 +1,39 @@
+.SwipeModal {
+    // from parent
+    // --animationDurationInMs
+
+    .backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: black;
+        opacity: 0.3;
+        transition: opacity var(--animationDurationInMs);
+        display: none;
+    }
+    
+    .modal {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100vw;
+        background-color: var(--prime-color);
+        border-radius: 2.4rem 2.4rem 0 0;
+        box-shadow: 0 0 1rem black;
+        padding-top: 1.6rem;
+        transform: translateY(110%);
+
+        .swipe-bar {
+            position: absolute;
+            top: 0.6rem;
+            left: 50%;
+            translate: -50% 0;
+            width: 5rem;
+            height: 0.5rem;
+            border-radius: 2rem;
+            background-color: var(--secondary-color);
+        }
+    }
+}
