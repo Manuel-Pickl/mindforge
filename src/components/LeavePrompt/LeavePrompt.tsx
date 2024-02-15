@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { inProduction } from '../../Settings';
 
 function LeavePrompt() {
     const location = useLocation();
@@ -13,7 +14,9 @@ function LeavePrompt() {
     }, [location.pathname]);
 
     function handleBeforeUnload(e: BeforeUnloadEvent) {
-        const leavePromptPaths = ["/lobby", "/game1"];
+
+        const leavePromptPaths: string[] = inProduction
+            ? ["/game", "/result"] : [];
 
         if (!leavePromptPaths.includes(location.pathname)) {
             return;
