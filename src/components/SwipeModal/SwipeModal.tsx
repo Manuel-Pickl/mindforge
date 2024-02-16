@@ -2,10 +2,15 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "re
 import "./SwipeModal.scss";
 
 interface SwipeModalProps {
-    children: React.ReactNode;
-    closingSpeed?: number;
     animationDuration?: number;
+    barHeight?: string;
+    barWidth?: string;
     disableSwipe?: boolean;
+    showBar?: boolean;
+    swipeCloseThreshold?: number;
+    swipeOnlyFromBar?: boolean;
+
+    children: React.ReactNode;
 }
 
 export interface SwipeModalRef {
@@ -14,10 +19,15 @@ export interface SwipeModalRef {
 }
 
 const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
-    children,
-    closingSpeed = 500, // px/s
     animationDuration = 350, // ms
+    barHeight = "0.3rem",
+    barWidth = "4rem",
     disableSwipe = false,
+    showBar = true,
+    swipeCloseThreshold = 500, // px/s
+    swipeOnlyFromBar = false,
+    
+    children,
 }, ref) => {
     const [visible, setVisible] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
@@ -88,6 +98,7 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
 
     //#region touch functionality
 
+    const barRef = useRef<HTMLDivElement>(null)
     const isDraggingRef = useRef<boolean>(false);
     const positionsByTime = useRef<{[key: number]: number }>({ });
     const motionUpdatesPerSecond = 60;
@@ -102,20 +113,22 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
         }
         
         const modal = modalRef.current;
-        if (!modal) {
+        const bar = barRef.current;
+        const element = swipeOnlyFromBar ? bar : modal;
+        if (!modal || !bar || !element) {
             return;
         }
 
         resetPositionRef.current = document.documentElement.clientHeight - modal.getBoundingClientRect().height
 
-        modal.addEventListener('touchstart', onTouchStart);
-        modal.addEventListener('touchmove', onTouchMove);
-        modal.addEventListener('touchend', onTouchEnd);
+        element.addEventListener('touchstart', onTouchStart);
+        element.addEventListener('touchmove', onTouchMove);
+        element.addEventListener('touchend', onTouchEnd);
 
         return () => {
-            modal.removeEventListener('touchstart', onTouchStart);
-            modal.removeEventListener('touchmove', onTouchMove);
-            modal.removeEventListener('touchend', onTouchEnd);
+            element.removeEventListener('touchstart', onTouchStart);
+            element.removeEventListener('touchmove', onTouchMove);
+            element.removeEventListener('touchend', onTouchEnd);
         };
     }, [modalRef.current]);
 
@@ -177,7 +190,7 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
         addPosition();
         
         const swipeSpeed: number = calculateSwipeSpeed();
-        if (swipeSpeed > closingSpeed) {
+        if (swipeSpeed > swipeCloseThreshold) {
             setVisible(false);
         } else {
             toggleModal(true);
@@ -257,7 +270,11 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
     return (
         <div 
             className="SwipeModal"
-            style={{"--animationDurationInMs": `${animationDuration}ms` } as React.CSSProperties}
+            style={{
+                "--animationDurationInMs": `${animationDuration}ms`,
+                "--bar-height": barHeight,
+                "--bar-width": barWidth,
+            } as React.CSSProperties}
         >
             <div
                 ref={backdropRef}
@@ -269,7 +286,14 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
                 ref={modalRef} 
                 className="modal"
             >
-                <div className="swipe-bar" />
+                {showBar &&
+                    <div
+                        ref={barRef} 
+                        className="bar-touch-zone"
+                    >
+                        <div className="bar" />
+                    </div>
+                }
 
                 {children}
             </div>

@@ -1,7 +1,8 @@
 .SwipeModal {
-    // from parent
+    // from parent:
     // --animationDurationInMs
-    --swipe-bar-height: 0.3rem;
+    // --bar-height
+    // --bar-width
 
     .backdrop {
         position: fixed;
@@ -23,19 +24,24 @@
         background-color: var(--prime-color);
         --border-radius: 1.2rem;
         border-radius: var(--border-radius) var(--border-radius) 0 0;
-        // box-shadow: 0 0 1rem black;
-        padding-top: calc(3 * var(--swipe-bar-height));
         transform: translateY(100%);
 
-        .swipe-bar {
+        .bar-touch-zone {
+            --padding-block: 0.4rem;
+
             position: absolute;
-            top: var(--swipe-bar-height);
-            left: 50%;
-            translate: -50% 0;
-            width: 4rem;
-            height: var(--swipe-bar-height);
-            border-radius: 2rem;
-            background-color: var(--secondary-color);
+            inset: 0 0 auto 0;
+            height: calc(2 * var(--padding-block) + var(--bar-height));
+            outline: solid 2px red;
+            display: grid;
+            place-content: center;
+
+            .bar {
+                width: var(--bar-width);
+                height: var(--bar-height);
+                border-radius: 2rem;
+                background-color: var(--secondary-color);
+            }
         }
     }
 }
