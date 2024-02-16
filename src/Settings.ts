@@ -18,10 +18,6 @@ export const gameSplashscreenDuration: number = 6;
 export const userTouchDuration: number = 1;
 export const gameSolutionDuration: number = 5;
 
-// swipe modal
-export const defaultSwipeCloseSpeedThreshold = 200; // in px
-export const defaultSwipeCloseRelevantTime = 200; // in px
-
 // debug
 export const inProduction: boolean = import.meta.env.VITE_IN_PRODUCTION === "true";
 export const debug: boolean = false;

@@ -1,34 +1,55 @@
-import { Dispatch, ReactNode, SetStateAction, useEffect, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import "./SwipeModal.scss";
-import { defaultSwipeCloseRelevantTime, defaultSwipeCloseSpeedThreshold } from "../../Settings";
 
 interface SwipeModalProps {
-    children: ReactNode;
-    visible: boolean;
-    setVisible: Dispatch<SetStateAction<boolean>>;
-    swipeCloseSpeedThreshold?: number;
-    swipeCloseRelevantTime?: number;
-
+    children: React.ReactNode;
+    closingSpeed?: number;
+    animationDuration?: number;
 }
 
-function SwipeModal({
+interface SwipeModalRef {
+    show: () => void;
+    close: () => void;
+}
+
+const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
     children,
-    visible,
-    setVisible,
-    swipeCloseSpeedThreshold = defaultSwipeCloseSpeedThreshold,
-    swipeCloseRelevantTime = defaultSwipeCloseRelevantTime,
-}: SwipeModalProps) {
+    closingSpeed = 500, // px/s
+    animationDuration = 350 // ms
+}, ref) => {
+    const [visible, setVisible] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
     const backdropRef = useRef<HTMLDivElement>(null);
-    const animationDurationInMs = 350;
     const resetPositionRef = useRef<number>(0);
     
     // for swipe gesture
     const isDraggingRef = useRef<boolean>(false);
-    const modalYsRef = useRef<{[key: number]: number }>({ 0: 0 });
-    const motionUpdatesPerSecond = 30;
+    const positionsByTime = useRef<{[key: number]: number }>({ });
+    const motionUpdatesPerSecond = 60;
     const intervalSpeedInMs = 1000 / motionUpdatesPerSecond;
     const touchOffset = useRef<number>(0);
+    const relevantTimeForCalculations = 300;
+
+    function addPosition() {
+        const currentY = getPosition();
+        const timestamp = Date.now();
+        
+        positionsByTime.current[timestamp] = currentY;
+    }
+
+    function checkPositionCountLimit() {
+        const positionCountLimit: number = 1000;
+        const timestamps = Object.keys(positionsByTime.current);
+        const limitExceeded: boolean = timestamps.length > positionCountLimit;
+
+        if (limitExceeded) {
+            timestamps
+                .sort().slice(0, positionCountLimit / 2)
+                .forEach(timestamp => {
+                    delete positionsByTime.current[Number(timestamp)];
+            });
+        }
+    }
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -36,22 +57,8 @@ function SwipeModal({
                 return;
             }
 
-            const currentY = getModalY();
-            const timestamp = roundToHundred(Date.now());
-            
-            modalYsRef.current[timestamp] = currentY;
-
-            // prevent overflow
-            const overflowThreshold: number = 1000;
-            const timestamps = Object.keys(modalYsRef.current);
-            const tooManyTimeStamps: boolean = timestamps.length > overflowThreshold;
-            if (tooManyTimeStamps) {
-                timestamps
-                    .sort().slice(0, overflowThreshold / 2)
-                    .forEach(timestamp => {
-                        delete modalYsRef.current[Number(timestamp)];
-                });
-            }
+            addPosition();
+            checkPositionCountLimit()
         }, intervalSpeedInMs);
 
         return () => {
@@ -109,7 +116,7 @@ function SwipeModal({
         backdrop.style.opacity = "0";
         setTimeout(() => {
             backdrop.style.display = "none";
-        }, animationDurationInMs);
+        }, animationDuration);
     }
 
     function toggleModal(isOpen: boolean) {
@@ -118,7 +125,7 @@ function SwipeModal({
             return;
         }
 
-        modal.style.transition = `transform ${animationDurationInMs}ms`;
+        modal.style.transition = `transform ${animationDuration}ms`;
 
         requestAnimationFrame(() => {
             const transform: string = isOpen 
@@ -129,12 +136,13 @@ function SwipeModal({
         
         setTimeout(() => {
             modal.style.transition = `transform 0ms`;
-        }, animationDurationInMs);
+        }, animationDuration);
     }
 
     function onTouchStart(e: TouchEvent) {
+        touchOffset.current = e.touches[0].clientY - getPosition();
         isDraggingRef.current = true;
-        touchOffset.current = e.touches[0].clientY - getModalY();
+        addPosition();
     }
 
     function onTouchMove(e: TouchEvent) {
@@ -154,44 +162,88 @@ function SwipeModal({
     
     function onTouchEnd() {
         isDraggingRef.current = false;
-
-        const modal = modalRef.current;
-        if (!modal) {
-            return;
-        }
-
-        const currentModalY = getModalY();
-        const pastModalY = 
-            modalYsRef.current[roundToHundred(Date.now()) - swipeCloseRelevantTime] // past y before {swipeCloseRelevantTime} milliseconds
-            ?? Object.entries(modalYsRef.current)[0][1]; // fallback initial value
-        const deltaModalY = currentModalY - pastModalY;
-
-        // console.log({currentModalY})
-        // console.log({pastModalY})
-        // reset y values
-        modalYsRef.current = { };
-console.log(deltaModalY)
-        if (deltaModalY > swipeCloseSpeedThreshold) {
+        addPosition();
+        
+        const swipeSpeed: number = calculateSwipeSpeed();
+        if (swipeSpeed > closingSpeed) {
             setVisible(false);
         } else {
             toggleModal(true);
         }
+
+        // reset y values
+        positionsByTime.current = { };
     };
 
-    function getModalY(): number {
-        const modalY: number = modalRef.current?.getBoundingClientRect().top ?? 0;
+    function calculateSwipeSpeed(): number {
+        // y values are in px
+        // time values are in ms
 
-        return modalY;
+        const times = Object.keys(positionsByTime.current).map(time => Number(time));
+        
+        const currentTime = times[times.length - 1];
+        const currentPosition = positionsByTime.current[currentTime];
+
+        // past position data
+        const idealPastTime = currentTime - relevantTimeForCalculations;
+        const pastTime = findClosestTime(times, idealPastTime);
+        const pastPosition = positionsByTime.current[pastTime]
+
+        // delta calculations
+        const deltaPosition = currentPosition - pastPosition;
+        const deltaTime = currentTime - pastTime;
+
+        const swipeSpeed: number = Math.round(deltaPosition / deltaTime * 1000); // in px/s
+        console.log({deltaPosition});
+        console.log({deltaTime});
+        console.log({swipeSpeed});
+
+        return swipeSpeed;
     }
-    function roundToHundred(value: number): number {
-        const factor = 100;
-        return Math.floor(value / factor) * factor;
+
+    function findClosestTime(times: number[], idealTime: number) {
+        let start = 0;
+        let end = times.length - 1;
+        let closest = times[0];
+    
+        while (start <= end) {
+            let mid = Math.floor((start + end) / 2);
+            closest = Math.abs(times[mid] - idealTime) < Math.abs(closest - idealTime) ? times[mid] : closest;
+    
+            if (times[mid] < idealTime) {
+                start = mid + 1;
+            } else if (times[mid] > idealTime) {
+                end = mid - 1;
+            } else {
+                // Exact match found
+                return times[mid];
+            }
+        }
+    
+        // Return the closest timestamp found
+        return closest;
     }
     
+    function getPosition(): number {
+        const modal = modalRef.current;
+        if (!modal) {
+            throw Error("can't be O.o")
+        }
+        const modalBoundingBox = modalRef.current.getBoundingClientRect();
+        const position = Math.round(modalBoundingBox.top);
+
+        return position;
+    }
+    
+    useImperativeHandle(ref, () => ({
+        show: () => setVisible(true),
+        close: () => setVisible(false),
+    }));
+
     return (
         <div 
             className="SwipeModal"
-            style={{"--animationDurationInMs": `${animationDurationInMs}ms` } as React.CSSProperties}
+            style={{"--animationDurationInMs": `${animationDuration}ms` } as React.CSSProperties}
         >
             <div
                 ref={backdropRef}
@@ -209,6 +261,6 @@ console.log(deltaModalY)
             </div>
         </div>
     );
-}
+})
 
 export default SwipeModal;
