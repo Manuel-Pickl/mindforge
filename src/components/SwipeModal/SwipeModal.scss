@@ -20,18 +20,19 @@
         bottom: 0;
         width: 100vw;
         background-color: var(--prime-color);
-        border-radius: 2.4rem 2.4rem 0 0;
-        box-shadow: 0 0 1rem black;
+        --border-radius: 1.2rem;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+        // box-shadow: 0 0 1rem black;
         padding-top: 1.6rem;
-        transform: translateY(110%);
+        transform: translateY(150%);
 
         .swipe-bar {
             position: absolute;
-            top: 0.6rem;
+            top: 0.4rem;
             left: 50%;
             translate: -50% 0;
-            width: 5rem;
-            height: 0.5rem;
+            width: 4rem;
+            height: 0.3rem;
             border-radius: 2rem;
             background-color: var(--secondary-color);
         }
