@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppContext } from "../AppContext";
 import { Player } from "../../types/class/Player";
 import { useConnectionManagerContext } from "../ConnectionManager/ConnectionManagerContext";
