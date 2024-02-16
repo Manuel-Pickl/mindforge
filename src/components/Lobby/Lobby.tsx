@@ -8,7 +8,7 @@ import "./Lobby.scss";
 import Card from "../Card/Card";
 import Scroll from "../Scroll/Scroll";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQrcode, faChevronLeft, faChevronRight, faShareFromSquare } from '@fortawesome/free-solid-svg-icons';
+import { faLink, faChevronLeft, faChevronRight, faShareFromSquare } from '@fortawesome/free-solid-svg-icons';
 import { changeAvatar } from "../../services/AvatarManager";
 import { useLocation, useNavigate } from "react-router-dom";
 import QRCode from "qrcode.react";
@@ -88,7 +88,7 @@ function Lobby ()
                         isHost={currentUser?.isHost ?? false}
                         isShareButton={!addElementSet}
                         username={currentUser?.username}
-                        share={share}
+                        share={() => swipeModalRef.current?.show()}
                     />
                 </div>
             );
@@ -133,32 +133,8 @@ function Lobby ()
                 )}
             </div> */}
 
-            <SwipeModal ref={swipeModalRef}>
-                <div className="share">
-                    <h2>Einladung</h2>
-                    
-                    <QRCode
-                        value={qrCodeValue}
-                        style={{ width: '100%', height: 'auto' }}
-                    />
-                    <div>
-                        Scanne den QR Code, um dem Raum zu joinen.
-                    </div>
-                </div>
-            </SwipeModal>
-            
             <Card>
                 Dein Raum ist {room}
-                <div className="icons">
-                    <FontAwesomeIcon
-                        icon={faShareFromSquare}
-                        onClick={share}
-                    />
-                    <FontAwesomeIcon
-                        icon={faQrcode}
-                        onClick={() => swipeModalRef.current?.show()}
-                    />
-                </div>
             </Card>            
 
             <div className="playerBubble">
@@ -203,6 +179,34 @@ function Lobby ()
                     Warten auf Host
                 </Scroll>
             )}
+
+            <SwipeModal ref={swipeModalRef}>
+                <div className="share">
+                    <h2>Einladung</h2>
+                    
+                    <div>
+                        Lass den QR Code scannen oder teile den Link.
+                    </div>
+
+                    <QRCode
+                        value={qrCodeValue}
+                        style={{ 
+                            width: '100%',
+                            height: 'auto',
+                        }}
+                    />
+
+                    <div
+                        className="link"
+                        onClick={share}
+                    >
+                        Link teilen{" "}
+                        <FontAwesomeIcon icon={faLink} />{" "}
+                        <FontAwesomeIcon icon={faShareFromSquare} />
+                    </div>
+
+                </div>
+            </SwipeModal>
         </div>
     );
 }

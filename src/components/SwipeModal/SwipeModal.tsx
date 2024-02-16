@@ -130,7 +130,7 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
         requestAnimationFrame(() => {
             const transform: string = isOpen 
                 ? "translateY(0)"
-                : "translateY(110%)";
+                : "translateY(100%)";
             modal.style.transform = transform;
         });
         

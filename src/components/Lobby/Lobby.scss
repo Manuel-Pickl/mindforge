@@ -9,18 +9,18 @@
     //     gap: 1rem;
     // }
 
-    .icons {
-        font-size: 1.2rem;
-        
-        & > * {
-            margin: 0.4rem;
-        }
-    }
     
     .share {
         display: grid;
-        gap: 2rem;
-        padding: 1rem;
+        gap: 1rem;
+        padding: 2rem;
+        padding-top: 0.8rem;
+        
+        .link {
+            padding: 1rem;
+            border: solid 4px black;
+            border-radius: 0.4rem;
+        }
     }
 
     .playerBubble {
