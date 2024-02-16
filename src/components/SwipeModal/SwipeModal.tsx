@@ -1,5 +1,6 @@
 import { Dispatch, ReactNode, SetStateAction, useEffect, useRef } from "react";
 import "./SwipeModal.scss";
+import { defaultSwipeCloseRelevantTime, defaultSwipeCloseSpeedThreshold } from "../../Settings";
 
 interface SwipeModalProps {
     children: ReactNode;
@@ -14,8 +15,8 @@ function SwipeModal({
     children,
     visible,
     setVisible,
-    swipeCloseSpeedThreshold = 60, // in px
-    swipeCloseRelevantTime = 150, // in ms
+    swipeCloseSpeedThreshold = defaultSwipeCloseSpeedThreshold,
+    swipeCloseRelevantTime = defaultSwipeCloseRelevantTime,
 }: SwipeModalProps) {
     const modalRef = useRef<HTMLDivElement>(null);
     const backdropRef = useRef<HTMLDivElement>(null);
@@ -25,8 +26,8 @@ function SwipeModal({
     // for swipe gesture
     const isDraggingRef = useRef<boolean>(false);
     const modalYsRef = useRef<{[key: number]: number }>({ 0: 0 });
-    const fps = 30;
-    const intervalSpeedInMs = 1000 / fps;
+    const motionUpdatesPerSecond = 30;
+    const intervalSpeedInMs = 1000 / motionUpdatesPerSecond;
     const touchOffset = useRef<number>(0);
 
     useEffect(() => {
@@ -39,6 +40,18 @@ function SwipeModal({
             const timestamp = roundToHundred(Date.now());
             
             modalYsRef.current[timestamp] = currentY;
+
+            // prevent overflow
+            const overflowThreshold: number = 1000;
+            const timestamps = Object.keys(modalYsRef.current);
+            const tooManyTimeStamps: boolean = timestamps.length > overflowThreshold;
+            if (tooManyTimeStamps) {
+                timestamps
+                    .sort().slice(0, overflowThreshold / 2)
+                    .forEach(timestamp => {
+                        delete modalYsRef.current[Number(timestamp)];
+                });
+            }
         }, intervalSpeedInMs);
 
         return () => {
@@ -119,12 +132,12 @@ function SwipeModal({
         }, animationDurationInMs);
     }
 
-    function onTouchStart(e) {
+    function onTouchStart(e: TouchEvent) {
         isDraggingRef.current = true;
         touchOffset.current = e.touches[0].clientY - getModalY();
     }
 
-    function onTouchMove(e: any) {
+    function onTouchMove(e: TouchEvent) {
         const modal = modalRef.current;
         if (!modal) {
             return;
@@ -153,6 +166,8 @@ function SwipeModal({
             ?? Object.entries(modalYsRef.current)[0][1]; // fallback initial value
         const deltaModalY = currentModalY - pastModalY;
 
+        // console.log({currentModalY})
+        // console.log({pastModalY})
         // reset y values
         modalYsRef.current = { };
 console.log(deltaModalY)
