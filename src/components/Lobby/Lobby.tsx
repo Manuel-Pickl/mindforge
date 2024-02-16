@@ -8,20 +8,18 @@ import "./Lobby.scss";
 import Card from "../Card/Card";
 import Scroll from "../Scroll/Scroll";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
-import { faShareFromSquare } from '@fortawesome/free-solid-svg-icons';
-import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { faQrcode } from '@fortawesome/free-solid-svg-icons';
+import { faQrcode, faChevronLeft, faChevronRight, faShareFromSquare } from '@fortawesome/free-solid-svg-icons';
 import { changeAvatar } from "../../services/AvatarManager";
 import { useLocation, useNavigate } from "react-router-dom";
 import QRCode from "qrcode.react";
+import SwipeModal from "../SwipeModal/SwipeModal";
 
 function Lobby ()
 {
     const [_activePacks, _setActivePacks] = useState<string[]>(["Standard", "Furios"]);
     const [qrCodeValue, setQrCodeValue] = useState<string>("");
-    const shareWindowRef = useRef<HTMLDialogElement>(null);
+    const [shareVisible, setShareVisible] = useState<boolean>(false);
+
     const navigate = useNavigate();
 
     const {
@@ -135,17 +133,11 @@ function Lobby ()
                 )}
             </div> */}
 
-            <dialog
-                ref={shareWindowRef}
-                className="shareWindow"
+            <SwipeModal
+                    visible={shareVisible}
+                    setVisible={setShareVisible}
             >
-                <div className="content">
-                    <FontAwesomeIcon
-                        className="closeIcon"
-                        icon={faCircleXmark}
-                        onClick={() => shareWindowRef.current?.close()}
-                    />
-
+                <div className="share">
                     <h2>Einladung</h2>
                     
                     <QRCode
@@ -156,8 +148,8 @@ function Lobby ()
                         Scanne den QR Code, um dem Raum zu joinen.
                     </div>
                 </div>
-            </dialog> 
-
+            </SwipeModal>
+            
             <Card>
                 Dein Raum ist {room}
                 <div className="icons">
@@ -167,7 +159,7 @@ function Lobby ()
                     />
                     <FontAwesomeIcon
                         icon={faQrcode}
-                        onClick={() => shareWindowRef.current?.showModal()}
+                        onClick={() => setShareVisible(true)}
                     />
                 </div>
             </Card>            

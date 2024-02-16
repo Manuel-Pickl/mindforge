@@ -1,22 +1,71 @@
-import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, useEffect, useRef } from "react";
 import "./SwipeModal.scss";
 
 interface SwipeModalProps {
     children: ReactNode;
     visible: boolean;
     setVisible: Dispatch<SetStateAction<boolean>>;
+    swipeCloseSpeedThreshold?: number;
+    swipeCloseRelevantTime?: number;
+
 }
 
 function SwipeModal({
     children,
     visible,
     setVisible,
+    swipeCloseSpeedThreshold = 60, // in px
+    swipeCloseRelevantTime = 150, // in ms
 }: SwipeModalProps) {
     const modalRef = useRef<HTMLDivElement>(null);
     const backdropRef = useRef<HTMLDivElement>(null);
     const animationDurationInMs = 350;
-    const [resetPosition, setResetPosition] = useState<number>(0);
-    const [touches, setTouches] = useState<number[]>([]);
+    const resetPositionRef = useRef<number>(0);
+    
+    // for swipe gesture
+    const isDraggingRef = useRef<boolean>(false);
+    const yValuesRef = useRef<{[key: number]: number }>({ 0: 0 });
+    const fps = 30;
+    const intervalSpeedInMs = 1000 / fps;
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (!isDraggingRef.current) {
+                return;
+            }
+
+            const currentY = getCurrentY();
+            const timestamp = roundToHundred(Date.now());
+            
+            yValuesRef.current[timestamp] = currentY;
+        }, intervalSpeedInMs);
+
+        return () => {
+            clearInterval(interval);
+        };
+    });
+
+    useEffect(() => {
+        const modal = modalRef.current;
+        if (!modal) {
+            return;
+        }
+
+        resetPositionRef.current = document.documentElement.clientHeight - modal.getBoundingClientRect().height
+        
+        // add backup for y values
+        yValuesRef.current[0] = resetPositionRef.current;
+
+        modal.addEventListener('touchstart', onTouchStart);
+        modal.addEventListener('touchmove', onTouchMove);
+        modal.addEventListener('touchend', onTouchEnd);
+
+        return () => {
+            modal.removeEventListener('touchstart', onTouchStart);
+            modal.removeEventListener('touchmove', onTouchMove);
+            modal.removeEventListener('touchend', onTouchEnd);
+        };
+    }, [modalRef.current]);
 
     useEffect(() => {
         if (visible) {
@@ -72,63 +121,59 @@ function SwipeModal({
         }, animationDurationInMs);
     }
 
-    const onTouchMove = (e: any) => {
+    function onTouchStart() {
+        isDraggingRef.current = true;
+    }
+
+    function onTouchMove(e: any) {
         const modal = modalRef.current;
         if (!modal) {
             return;
         }
         
         const touch = e.touches[0].clientY;
-        const translate = touch - resetPosition;
+        const translate = touch - resetPositionRef.current;
         if (translate < 1) {
             return;
         }
 
         modal.style.transform = `translateY(${translate}px)`;
-        touches.push(touch)
     };
     
-    const onTouchEnd = () => {
+    function onTouchEnd() {
+        isDraggingRef.current = false;
+
         const modal = modalRef.current;
         if (!modal) {
             return;
         }
 
-        // const touchEndTime = Date.now();
-        // const touchDuration = touchEndTime - touchStartTime;
-        // const speed = Math.abs(touchEndY - touchStartY) / touchDuration;
+        const currentY = getCurrentY();
+        const pastY = 
+            yValuesRef.current[roundToHundred(Date.now()) - swipeCloseRelevantTime] // past y before {swipeCloseRelevantTime} milliseconds
+            ?? Object.entries(yValuesRef.current)[0][1]; // fallback initial value
+        const speed = currentY - pastY;
 
-        const currentTouch = touches[touches.length - 1];
-        const pastTouchCount = 15;
-        const pastTouch = touches[touches.length - pastTouchCount];
-        const speed = currentTouch - pastTouch;
-        setTouches([])
-
-        console.log({speed})
-        if (speed > 40) { // Adjust the speed threshold as needed
+        // reset y values
+        yValuesRef.current = { 0: resetPositionRef.current };
+console.log(speed)
+        if (speed > swipeCloseSpeedThreshold) {
             setVisible(false);
         } else {
             toggleModal(true);
         }
     };
+
+    function getCurrentY(): number {
+        const currentY: number = modalRef.current?.getBoundingClientRect().top ?? 0;
+
+        return currentY;
+    }
+    function roundToHundred(value: number): number {
+        const factor = 100;
+        return Math.floor(value / factor) * factor;
+    }
     
-    useEffect(() => {
-        const modal = modalRef.current;
-        if (!modal) {
-            return;
-        }
-
-        setResetPosition(document.documentElement.clientHeight - modal.getBoundingClientRect().height)
-
-        modal.addEventListener('touchmove', onTouchMove);
-        modal.addEventListener('touchend', onTouchEnd);
-
-        return () => {
-            modal.removeEventListener('touchmove', onTouchMove);
-            modal.removeEventListener('touchend', onTouchEnd);
-        };
-    }, [modalRef.current]);
-
     return (
         <div 
             className="SwipeModal"
