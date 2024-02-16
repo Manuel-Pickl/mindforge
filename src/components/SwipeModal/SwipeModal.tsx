@@ -3,6 +3,7 @@ import "./SwipeModal.scss";
 
 interface SwipeModalProps {
     animationDuration?: number;
+    backdropOpacity?: number;
     barHeight?: string;
     barWidth?: string;
     disableSwipe?: boolean;
@@ -20,6 +21,7 @@ export interface SwipeModalRef {
 
 const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
     animationDuration = 350, // ms
+    backdropOpacity = 0.3,
     barHeight = "0.3rem",
     barWidth = "4rem",
     disableSwipe = false,
@@ -60,7 +62,7 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
 
         backdrop.style.display = "block";
         requestAnimationFrame(() => {
-            backdrop.style.opacity = "0.3";   
+            backdrop.style.opacity = backdropOpacity.toString();   
         });
     }
 
@@ -272,8 +274,9 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
             className="SwipeModal"
             style={{
                 "--animationDurationInMs": `${animationDuration}ms`,
-                "--bar-height": barHeight,
-                "--bar-width": barWidth,
+                "--backdropOpacity": backdropOpacity,
+                "--barHeight": barHeight,
+                "--barWidth": barWidth,
             } as React.CSSProperties}
         >
             <div
