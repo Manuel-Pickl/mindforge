@@ -24,9 +24,10 @@ function SwipeModal({
     
     // for swipe gesture
     const isDraggingRef = useRef<boolean>(false);
-    const yValuesRef = useRef<{[key: number]: number }>({ 0: 0 });
+    const modalYsRef = useRef<{[key: number]: number }>({ 0: 0 });
     const fps = 30;
     const intervalSpeedInMs = 1000 / fps;
+    const touchOffset = useRef<number>(0);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -34,10 +35,10 @@ function SwipeModal({
                 return;
             }
 
-            const currentY = getCurrentY();
+            const currentY = getModalY();
             const timestamp = roundToHundred(Date.now());
             
-            yValuesRef.current[timestamp] = currentY;
+            modalYsRef.current[timestamp] = currentY;
         }, intervalSpeedInMs);
 
         return () => {
@@ -52,9 +53,6 @@ function SwipeModal({
         }
 
         resetPositionRef.current = document.documentElement.clientHeight - modal.getBoundingClientRect().height
-        
-        // add backup for y values
-        yValuesRef.current[0] = resetPositionRef.current;
 
         modal.addEventListener('touchstart', onTouchStart);
         modal.addEventListener('touchmove', onTouchMove);
@@ -121,8 +119,9 @@ function SwipeModal({
         }, animationDurationInMs);
     }
 
-    function onTouchStart() {
+    function onTouchStart(e) {
         isDraggingRef.current = true;
+        touchOffset.current = e.touches[0].clientY - getModalY();
     }
 
     function onTouchMove(e: any) {
@@ -132,7 +131,7 @@ function SwipeModal({
         }
         
         const touch = e.touches[0].clientY;
-        const translate = touch - resetPositionRef.current;
+        const translate = touch - touchOffset.current - resetPositionRef.current;
         if (translate < 1) {
             return;
         }
@@ -148,26 +147,26 @@ function SwipeModal({
             return;
         }
 
-        const currentY = getCurrentY();
-        const pastY = 
-            yValuesRef.current[roundToHundred(Date.now()) - swipeCloseRelevantTime] // past y before {swipeCloseRelevantTime} milliseconds
-            ?? Object.entries(yValuesRef.current)[0][1]; // fallback initial value
-        const speed = currentY - pastY;
+        const currentModalY = getModalY();
+        const pastModalY = 
+            modalYsRef.current[roundToHundred(Date.now()) - swipeCloseRelevantTime] // past y before {swipeCloseRelevantTime} milliseconds
+            ?? Object.entries(modalYsRef.current)[0][1]; // fallback initial value
+        const deltaModalY = currentModalY - pastModalY;
 
         // reset y values
-        yValuesRef.current = { 0: resetPositionRef.current };
-console.log(speed)
-        if (speed > swipeCloseSpeedThreshold) {
+        modalYsRef.current = { };
+console.log(deltaModalY)
+        if (deltaModalY > swipeCloseSpeedThreshold) {
             setVisible(false);
         } else {
             toggleModal(true);
         }
     };
 
-    function getCurrentY(): number {
-        const currentY: number = modalRef.current?.getBoundingClientRect().top ?? 0;
+    function getModalY(): number {
+        const modalY: number = modalRef.current?.getBoundingClientRect().top ?? 0;
 
-        return currentY;
+        return modalY;
     }
     function roundToHundred(value: number): number {
         const factor = 100;
