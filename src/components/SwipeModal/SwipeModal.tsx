@@ -7,7 +7,7 @@ interface SwipeModalProps {
     animationDuration?: number;
 }
 
-interface SwipeModalRef {
+export interface SwipeModalRef {
     show: () => void;
     close: () => void;
 }

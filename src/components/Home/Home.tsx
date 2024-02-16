@@ -8,7 +8,7 @@ import logo from "../../assets/logo.png";
 import { useLocation } from "react-router-dom";
 import Create from "./Create/Create";
 import Join from "./Join/Join";
-import SwipeModal from "../SwipeModal/SwipeModal";
+import SwipeModal, { SwipeModalRef } from "../SwipeModal/SwipeModal";
 
 export const HomeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [homeTab, setHomeTab] = useState<HomeTab>(HomeTab.Join);
@@ -47,7 +47,7 @@ function Home ()
         }
       }, []);
 
-    const swipeModalRef = useRef<any>();
+    const swipeModalRef = useRef<SwipeModalRef>(null);
 
     return (
         <div className="homeComponent">

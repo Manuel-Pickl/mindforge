@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppContext } from "../AppContext";
 import { Player } from "../../types/class/Player";
 import { useConnectionManagerContext } from "../ConnectionManager/ConnectionManagerContext";
@@ -12,13 +12,13 @@ import { faQrcode, faChevronLeft, faChevronRight, faShareFromSquare } from '@for
 import { changeAvatar } from "../../services/AvatarManager";
 import { useLocation, useNavigate } from "react-router-dom";
 import QRCode from "qrcode.react";
-import SwipeModal from "../SwipeModal/SwipeModal";
+import SwipeModal, { SwipeModalRef } from "../SwipeModal/SwipeModal";
 
 function Lobby ()
 {
     const [_activePacks, _setActivePacks] = useState<string[]>(["Standard", "Furios"]);
     const [qrCodeValue, setQrCodeValue] = useState<string>("");
-    const [shareVisible, setShareVisible] = useState<boolean>(false);
+    const swipeModalRef = useRef<SwipeModalRef>(null);
 
     const navigate = useNavigate();
 
@@ -133,10 +133,7 @@ function Lobby ()
                 )}
             </div> */}
 
-            <SwipeModal
-                    visible={shareVisible}
-                    setVisible={setShareVisible}
-            >
+            <SwipeModal ref={swipeModalRef}>
                 <div className="share">
                     <h2>Einladung</h2>
                     
@@ -159,7 +156,7 @@ function Lobby ()
                     />
                     <FontAwesomeIcon
                         icon={faQrcode}
-                        onClick={() => setShareVisible(true)}
+                        onClick={() => swipeModalRef.current?.show()}
                     />
                 </div>
             </Card>            

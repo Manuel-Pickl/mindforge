@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { SpectrumCard } from "../../../types/class/SpectrumCard";
 import { gameSplashscreenDuration } from "../../../Settings";
 import { PlayContext, usePlayContext } from "./PlayContext";
@@ -11,7 +11,7 @@ import "./Play.scss";
 import UnfinishedPlayers from "./UnfinishedPlayers/UnfinishedPlayers";
 import Scroll from "../../Scroll/Scroll";
 import Card from "../../Card/Card";
-import SwipeModal from "../../SwipeModal/SwipeModal";
+import SwipeModal, { SwipeModalRef } from "../../SwipeModal/SwipeModal";
 
 export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currentPlayRound, setCurrentPlayRound] = useState<number>(0);
@@ -20,8 +20,8 @@ export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [dial, setDial] = useState<number>(defaultValue);
     const [solutionVisible, setSolutionVisible] = useState<boolean>(false);
     const [readyButtonDisabled, setReadyButtonDisabled] = useState<boolean>(false);
-    const [splashscreenVisible, setSplashscreenVisible] = useState<boolean>(true)
-    const [unfinishedPlayersVisible, setUnfinishedPlayersVisible] = useState<boolean>(false);
+    const [splashscreenVisible, setSplashscreenVisible] = useState<boolean>(true);
+    const swipeModalRef = useRef<SwipeModalRef>(null);
 
     function startPlayRound(
         aPlaySpectrumCard: SpectrumCard,
@@ -43,10 +43,10 @@ export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     function showSolution() {
         setSolutionVisible(true);
-        setUnfinishedPlayersVisible(false);
+        swipeModalRef.current?.close();
     }
 
-    return (<PlayContext.Provider value={{ currentPlayRound, setCurrentPlayRound, roundsCount, setRoundsCount, playSpectrumCard, setPlaySpectrumCard, dial, setDial, solutionVisible, setSolutionVisible, startPlayRound, showSolution, readyButtonDisabled, setReadyButtonDisabled, splashscreenVisible, setSplashscreenVisible, unfinishedPlayersVisible, setUnfinishedPlayersVisible }}>{children}</PlayContext.Provider>);
+    return (<PlayContext.Provider value={{ currentPlayRound, setCurrentPlayRound, roundsCount, setRoundsCount, playSpectrumCard, setPlaySpectrumCard, dial, setDial, solutionVisible, setSolutionVisible, startPlayRound, showSolution, readyButtonDisabled, setReadyButtonDisabled, splashscreenVisible, setSplashscreenVisible, swipeModalRef }}>{children}</PlayContext.Provider>);
 };
 
 function Play()
@@ -59,7 +59,7 @@ function Play()
         dial, setDial,
         readyButtonDisabled, setReadyButtonDisabled,
         splashscreenVisible,
-        unfinishedPlayersVisible, setUnfinishedPlayersVisible,
+        swipeModalRef,
     } = usePlayContext();
     
     const {
@@ -143,7 +143,8 @@ function Play()
 
                 <div className="buttons">
                     <Scroll
-                        onClick={() => setUnfinishedPlayersVisible(true)}
+                        disabled={solutionVisible}
+                        onClick={() => swipeModalRef.current?.show()}
                     >
                         Spieler
                     </Scroll>
@@ -158,10 +159,7 @@ function Play()
                     }
                 </div>
 
-                <SwipeModal
-                        visible={unfinishedPlayersVisible}
-                        setVisible={setUnfinishedPlayersVisible}
-                >
+                <SwipeModal ref={swipeModalRef}>
                     <UnfinishedPlayers
                         players={players}
                         cardOwner={playSpectrumCard?.owner}
