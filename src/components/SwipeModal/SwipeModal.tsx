@@ -5,6 +5,7 @@ interface SwipeModalProps {
     children: React.ReactNode;
     closingSpeed?: number;
     animationDuration?: number;
+    disableSwipe?: boolean;
 }
 
 export interface SwipeModalRef {
@@ -15,75 +16,21 @@ export interface SwipeModalRef {
 const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
     children,
     closingSpeed = 500, // px/s
-    animationDuration = 350 // ms
+    animationDuration = 350, // ms
+    disableSwipe = false,
 }, ref) => {
     const [visible, setVisible] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
     const backdropRef = useRef<HTMLDivElement>(null);
     const resetPositionRef = useRef<number>(0);
     
-    // for swipe gesture
-    const isDraggingRef = useRef<boolean>(false);
-    const positionsByTime = useRef<{[key: number]: number }>({ });
-    const motionUpdatesPerSecond = 60;
-    const intervalSpeedInMs = 1000 / motionUpdatesPerSecond;
-    const touchOffset = useRef<number>(0);
-    const relevantTimeForCalculations = 300;
-
-    function addPosition() {
-        const currentY = getPosition();
-        const timestamp = Date.now();
-        
-        positionsByTime.current[timestamp] = currentY;
-    }
-
-    function checkPositionCountLimit() {
-        const positionCountLimit: number = 1000;
-        const timestamps = Object.keys(positionsByTime.current);
-        const limitExceeded: boolean = timestamps.length > positionCountLimit;
-
-        if (limitExceeded) {
-            timestamps
-                .sort().slice(0, positionCountLimit / 2)
-                .forEach(timestamp => {
-                    delete positionsByTime.current[Number(timestamp)];
-            });
-        }
-    }
-
     useEffect(() => {
-        const interval = setInterval(() => {
-            if (!isDraggingRef.current) {
-                return;
-            }
-
-            addPosition();
-            checkPositionCountLimit()
-        }, intervalSpeedInMs);
+        initializePositionInterval();        
 
         return () => {
-            clearInterval(interval);
+            clearInterval(positionInterval.current);
         };
     });
-
-    useEffect(() => {
-        const modal = modalRef.current;
-        if (!modal) {
-            return;
-        }
-
-        resetPositionRef.current = document.documentElement.clientHeight - modal.getBoundingClientRect().height
-
-        modal.addEventListener('touchstart', onTouchStart);
-        modal.addEventListener('touchmove', onTouchMove);
-        modal.addEventListener('touchend', onTouchEnd);
-
-        return () => {
-            modal.removeEventListener('touchstart', onTouchStart);
-            modal.removeEventListener('touchmove', onTouchMove);
-            modal.removeEventListener('touchend', onTouchEnd);
-        };
-    }, [modalRef.current]);
 
     useEffect(() => {
         if (visible) {
@@ -137,6 +84,71 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
         setTimeout(() => {
             modal.style.transition = `transform 0ms`;
         }, animationDuration);
+    }
+
+    //#region touch functionality
+
+    const isDraggingRef = useRef<boolean>(false);
+    const positionsByTime = useRef<{[key: number]: number }>({ });
+    const motionUpdatesPerSecond = 60;
+    const intervalSpeedInMs = 1000 / motionUpdatesPerSecond;
+    const touchOffset = useRef<number>(0);
+    const relevantTimeForCalculations = 300;
+    const positionInterval = useRef<NodeJS.Timeout>();
+
+    useEffect(() => {
+        if (disableSwipe) {
+            return;
+        }
+        
+        const modal = modalRef.current;
+        if (!modal) {
+            return;
+        }
+
+        resetPositionRef.current = document.documentElement.clientHeight - modal.getBoundingClientRect().height
+
+        modal.addEventListener('touchstart', onTouchStart);
+        modal.addEventListener('touchmove', onTouchMove);
+        modal.addEventListener('touchend', onTouchEnd);
+
+        return () => {
+            modal.removeEventListener('touchstart', onTouchStart);
+            modal.removeEventListener('touchmove', onTouchMove);
+            modal.removeEventListener('touchend', onTouchEnd);
+        };
+    }, [modalRef.current]);
+
+    function addPosition() {
+        const currentY = getPosition();
+        const timestamp = Date.now();
+        
+        positionsByTime.current[timestamp] = currentY;
+    }
+
+    function checkPositionCountLimit() {
+        const positionCountLimit: number = 1000;
+        const timestamps = Object.keys(positionsByTime.current);
+        const limitExceeded: boolean = timestamps.length > positionCountLimit;
+
+        if (limitExceeded) {
+            timestamps
+                .sort().slice(0, positionCountLimit / 2)
+                .forEach(timestamp => {
+                    delete positionsByTime.current[Number(timestamp)];
+            });
+        }
+    }
+
+    function initializePositionInterval() {
+        positionInterval.current = setInterval(() => {
+            if (!isDraggingRef.current) {
+                return;
+            }
+
+            addPosition();
+            checkPositionCountLimit()
+        }, intervalSpeedInMs);
     }
 
     function onTouchStart(e: TouchEvent) {
@@ -194,9 +206,9 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
         const deltaTime = currentTime - pastTime;
 
         const swipeSpeed: number = Math.round(deltaPosition / deltaTime * 1000); // in px/s
-        console.log({deltaPosition});
-        console.log({deltaTime});
-        console.log({swipeSpeed});
+        // console.log({deltaPosition});
+        // console.log({deltaTime});
+        // console.log({swipeSpeed});
 
         return swipeSpeed;
     }
@@ -234,6 +246,8 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
 
         return position;
     }
+
+    //#endregion
     
     useImperativeHandle(ref, () => ({
         show: () => setVisible(true),
