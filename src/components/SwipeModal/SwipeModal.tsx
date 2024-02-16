@@ -115,7 +115,7 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
         const modal = modalRef.current;
         const bar = barRef.current;
         const element = swipeOnlyFromBar ? bar : modal;
-        if (!modal || !bar || !element) {
+        if (!modal || !element) {
             return;
         }
 
@@ -289,7 +289,7 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
                 {showBar &&
                     <div
                         ref={barRef} 
-                        className="bar-touch-zone"
+                        className="bar-touchzone"
                     >
                         <div className="bar" />
                     </div>

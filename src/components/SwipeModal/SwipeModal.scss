@@ -26,13 +26,9 @@
         border-radius: var(--border-radius) var(--border-radius) 0 0;
         transform: translateY(100%);
 
-        .bar-touch-zone {
+        .bar-touchzone {
             --padding-block: 0.4rem;
-
-            position: absolute;
-            inset: 0 0 auto 0;
             height: calc(2 * var(--padding-block) + var(--bar-height));
-            outline: solid 2px red;
             display: grid;
             place-content: center;
 
