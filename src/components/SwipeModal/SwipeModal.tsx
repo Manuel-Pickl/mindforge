@@ -5,10 +5,12 @@ interface SwipeModalProps {
     animationDuration?: number;
     backdropOpacity?: number;
     barColor?: string;
+    closeTrigger?: "swipeDown"|"minHeight";
+    closeTriggerPercentage?: number;
+    closeTriggerSpeed?: number;
     disableSwipe?: boolean;
     modalColor?: string;
     showBar?: boolean;
-    swipeCloseThreshold?: number;
     swipeOnlyFromBar?: boolean;
     // additonal styling
     backdropStyle?: React.CSSProperties;
@@ -27,10 +29,12 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
     animationDuration = 350, // ms
     backdropOpacity = 0.3,
     barColor = "hsl(0, 0%, 40%)",
+    closeTrigger = "swipeDown",
+    closeTriggerPercentage = 50, // in %
+    closeTriggerSpeed = 500, // px/s
     disableSwipe = false,
     modalColor = "hsl(0, 0%, 10%)",
     showBar = true,
-    swipeCloseThreshold = 500, // px/s
     swipeOnlyFromBar = false,
     // additonal styling
     backdropStyle,
@@ -199,8 +203,29 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
         isDraggingRef.current = false;
         addPosition();
         
-        const swipeSpeed: number = calculateSwipeSpeed();
-        if (swipeSpeed > swipeCloseThreshold) {
+        var closeModal: boolean = false;
+        switch (closeTrigger) {
+            case "swipeDown":
+                const swipeSpeed: number = calculateSwipeSpeed();
+                closeModal = swipeSpeed > closeTriggerSpeed;    
+                break;
+        
+            case "minHeight":
+                if (!modalRef.current) {
+                    break;
+                }
+
+                const modalBoundingBox = modalRef.current.getBoundingClientRect();
+                const openValue = document.documentElement.clientHeight - modalBoundingBox.top;
+                const openPercentage = openValue / modalBoundingBox.height * 100;
+                closeModal = openPercentage < closeTriggerPercentage;
+                break;
+
+            default:
+                break;
+        }
+
+        if (closeModal) {
             setVisible(false);
         } else {
             toggleModal(true);
