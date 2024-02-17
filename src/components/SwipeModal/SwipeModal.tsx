@@ -4,11 +4,13 @@ import "./SwipeModal.scss";
 interface SwipeModalProps {
     animationDuration?: number;
     backdropOpacity?: number;
+    barColor?: string;
     disableSwipe?: boolean;
+    modalColor?: string;
     showBar?: boolean;
     swipeCloseThreshold?: number;
     swipeOnlyFromBar?: boolean;
-    // styles
+    // additonal styling
     backdropStyle?: React.CSSProperties;
     barStyle?: React.CSSProperties; 
     modalStyle?: React.CSSProperties;
@@ -24,11 +26,13 @@ export interface SwipeModalRef {
 const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
     animationDuration = 350, // ms
     backdropOpacity = 0.3,
+    barColor = "hsl(0, 0%, 40%)",
     disableSwipe = false,
+    modalColor = "hsl(0, 0%, 10%)",
     showBar = true,
     swipeCloseThreshold = 500, // px/s
     swipeOnlyFromBar = false,
-    // styles
+    // additonal styling
     backdropStyle,
     barStyle,
     modalStyle,
@@ -279,6 +283,8 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
             style={{
                 "--animationDurationInMs": `${animationDuration}ms`,
                 "--backdropOpacity": backdropOpacity,
+                "--barColor": barColor,
+                "--modalColor": modalColor,
             } as React.CSSProperties}
         >
             <div
