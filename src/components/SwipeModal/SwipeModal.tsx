@@ -5,12 +5,12 @@ interface SwipeModalProps {
     animationDuration?: number;
     backdropOpacity?: number;
     barColor?: string;
-    closeTrigger?: "swipeDown"|"minHeight";
+    closeTrigger?: "swipe"|"height";
     closeTriggerPercentage?: number;
     closeTriggerSpeed?: number;
     disableSwipe?: boolean;
     modalColor?: string;
-    showBar?: boolean;
+    hideBar?: boolean;
     swipeOnlyFromBar?: boolean;
     // additonal styling
     backdropStyle?: React.CSSProperties;
@@ -28,13 +28,13 @@ export interface SwipeModalRef {
 const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
     animationDuration = 350, // ms
     backdropOpacity = 0.3,
-    barColor = "hsl(0, 0%, 40%)",
-    closeTrigger = "swipeDown",
+    barColor = "dimgrey",
+    closeTrigger = "swipe",
     closeTriggerPercentage = 50, // in %
     closeTriggerSpeed = 500, // px/s
     disableSwipe = false,
-    modalColor = "hsl(0, 0%, 10%)",
-    showBar = true,
+    modalColor = "hsl(0, 0%, 10%)", // bright black
+    hideBar = false,
     swipeOnlyFromBar = false,
     // additonal styling
     backdropStyle,
@@ -205,12 +205,12 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
         
         var closeModal: boolean = false;
         switch (closeTrigger) {
-            case "swipeDown":
+            case "swipe":
                 const swipeSpeed: number = calculateSwipeSpeed();
                 closeModal = swipeSpeed > closeTriggerSpeed;    
                 break;
         
-            case "minHeight":
+            case "height":
                 if (!modalRef.current) {
                     break;
                 }
@@ -222,7 +222,7 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
                 break;
 
             default:
-                break;
+                throw Error(`unknown closeTrigger '${closeTrigger}'`);
         }
 
         if (closeModal) {
@@ -324,7 +324,7 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
                 className="modal"
                 style={modalStyle}
             >
-                {showBar &&
+                {!hideBar &&
                     <div
                         ref={barRef} 
                         className="bar-touchzone"
