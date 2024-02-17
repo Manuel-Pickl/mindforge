@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import "./SwipeModal.scss";
+import "./SwipeModal1.scss";
 
-interface SwipeModalProps {
+interface SwipeModal1Props {
     children?: React.ReactNode;
 
     // functionality
@@ -28,12 +28,12 @@ interface SwipeModalProps {
     onClose?: () => void;
 }
 
-export interface SwipeModalRef {
+export interface SwipeModal1Ref {
     show: () => void;
     close: () => void;
 }
 
-const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
+const SwipeModal1 = forwardRef<SwipeModal1Ref, SwipeModal1Props>(({
     children,
     
     // functionality
@@ -334,7 +334,7 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
 
     return (
         <div 
-            className="SwipeModal"
+            className="SwipeModal1"
             style={{
                 "--animationDurationInMs": `${animationDuration}ms`,
                 "--backdropOpacity": backdropOpacity,
@@ -372,4 +372,4 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
     );
 })
 
-export default SwipeModal;
+export default SwipeModal1;

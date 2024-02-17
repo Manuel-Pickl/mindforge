@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
 import { SpectrumCard } from '../../../types/class/SpectrumCard';
-import { SwipeModalRef } from '../../SwipeModal/SwipeModal';
+import { SwipeModalRef } from '../../SwipeModal1/SwipeModal1';
 
 export const PlayContext = createContext<{
     currentPlayRound : number;

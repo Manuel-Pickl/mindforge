@@ -12,7 +12,7 @@ import { faLink, faChevronLeft, faChevronRight, faShareFromSquare } from '@forta
 import { changeAvatar } from "../../services/AvatarManager";
 import { useLocation, useNavigate } from "react-router-dom";
 import QRCode from "qrcode.react";
-import SwipeModal, { SwipeModalRef } from "../SwipeModal/SwipeModal";
+import SwipeModal, { SwipeModalRef } from "../SwipeModal1/SwipeModal1";
 
 function Lobby ()
 {
