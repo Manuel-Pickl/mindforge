@@ -159,7 +159,10 @@ function Play()
                     }
                 </div>
 
-                <SwipeModal ref={swipeModalRef}>
+                <SwipeModal
+                    ref={swipeModalRef}
+                    modalColor={getComputedStyle(document.body).getPropertyValue('--prime-color').trim()}
+                >
                     <UnfinishedPlayers
                         players={players}
                         cardOwner={playSpectrumCard?.owner}

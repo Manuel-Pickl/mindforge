@@ -180,7 +180,10 @@ function Lobby ()
                 </Scroll>
             )}
 
-            <SwipeModal ref={swipeModalRef}>
+            <SwipeModal
+                ref={swipeModalRef}
+                modalColor={getComputedStyle(document.body).getPropertyValue('--prime-color').trim()}
+            >
                 <div className="share">
                     <h2>Einladung</h2>
                     
