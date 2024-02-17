@@ -2,22 +2,30 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "re
 import "./SwipeModal.scss";
 
 interface SwipeModalProps {
-    animationDuration?: number;
-    backdropOpacity?: number;
-    barColor?: string;
+    children?: React.ReactNode;
+
+    // functionality
     closeTrigger?: "swipe"|"height";
     closeTriggerPercentage?: number;
     closeTriggerSpeed?: number;
     disableSwipe?: boolean;
-    modalColor?: string;
-    hideBar?: boolean;
     swipeOnlyFromBar?: boolean;
+    
+    // styling
+    animationDuration?: number;
+    backdropOpacity?: number;
+    barColor?: string;
+    hideBar?: boolean;
+    modalColor?: string;
+    
     // additonal styling
     backdropStyle?: React.CSSProperties;
     barStyle?: React.CSSProperties; 
     modalStyle?: React.CSSProperties;
-
-    children: React.ReactNode;
+    
+    // callbacks
+    onShow?: () => void;
+    onClose?: () => void;
 }
 
 export interface SwipeModalRef {
@@ -26,22 +34,30 @@ export interface SwipeModalRef {
 }
 
 const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
-    animationDuration = 350, // ms
-    backdropOpacity = 0.3,
-    barColor = "dimgrey",
+    children,
+    
+    // functionality
     closeTrigger = "swipe",
     closeTriggerPercentage = 50, // in %
     closeTriggerSpeed = 500, // px/s
     disableSwipe = false,
-    modalColor = "hsl(0, 0%, 10%)", // bright black
-    hideBar = false,
     swipeOnlyFromBar = false,
+
+    // styling
+    animationDuration = 350, // ms
+    backdropOpacity = 0.3,
+    barColor = "dimgrey",
+    hideBar = false,
+    modalColor = "hsl(0, 0%, 10%)", // bright black
+    
     // additonal styling
     backdropStyle,
     barStyle,
     modalStyle,
     
-    children,
+    // callbacks
+    onShow = () => {},
+    onClose = () => {},
 }, ref) => {
     const [visible, setVisible] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
@@ -60,9 +76,11 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
         if (visible) {
             showBackdrop();
             toggleModal(true);
+            onShow();
         } else {
             hideBackdrop();
             toggleModal(false);
+            onClose();
         }
     }, [visible]);
 
@@ -246,7 +264,7 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
 
         return closeModal;
     }
-    
+
     function calculateSwipeSpeed(): number {
         // y values are in px
         // time values are in ms
