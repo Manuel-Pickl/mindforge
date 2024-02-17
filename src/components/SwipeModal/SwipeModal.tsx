@@ -3,16 +3,15 @@ import "./SwipeModal.scss";
 
 interface SwipeModalProps {
     animationDuration?: number;
-    backdropColor?: string;
     backdropOpacity?: number;
-    barColor?: string;
-    barHeight?: string;
-    barWidth?: string;
     disableSwipe?: boolean;
-    modalColor?: string;
     showBar?: boolean;
     swipeCloseThreshold?: number;
     swipeOnlyFromBar?: boolean;
+    // styles
+    backdropStyle?: React.CSSProperties;
+    barStyle?: React.CSSProperties; 
+    modalStyle?: React.CSSProperties;
 
     children: React.ReactNode;
 }
@@ -24,16 +23,15 @@ export interface SwipeModalRef {
 
 const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
     animationDuration = 350, // ms
-    backdropColor = "black",
     backdropOpacity = 0.3,
-    barColor = "hsl(0, 0%, 40%)",
-    barHeight = "0.3rem",
-    barWidth = "4rem",
     disableSwipe = false,
-    modalColor = "hsl(0, 0%, 10%)",
     showBar = true,
     swipeCloseThreshold = 500, // px/s
     swipeOnlyFromBar = false,
+    // styles
+    backdropStyle,
+    barStyle,
+    modalStyle,
     
     children,
 }, ref) => {
@@ -280,30 +278,30 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
             className="SwipeModal"
             style={{
                 "--animationDurationInMs": `${animationDuration}ms`,
-                "--backdropColor": backdropColor,
                 "--backdropOpacity": backdropOpacity,
-                "--barColor": barColor,
-                "--barHeight": barHeight,
-                "--barWidth": barWidth,
-                "--modalColor": modalColor,
             } as React.CSSProperties}
         >
             <div
                 ref={backdropRef}
                 className="backdrop"
                 onClick={() => setVisible(false)}
+                style={backdropStyle}
             />
             
             <div
                 ref={modalRef} 
                 className="modal"
+                style={modalStyle}
             >
                 {showBar &&
                     <div
                         ref={barRef} 
                         className="bar-touchzone"
-                    >
-                        <div className="bar" />
+                        >
+                        <div 
+                            className="bar"
+                            style={barStyle}
+                        />
                     </div>
                 }
 

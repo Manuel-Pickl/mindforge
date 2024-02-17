@@ -2,12 +2,7 @@
     /*
         from parent:
         --animationDurationInMs
-        --backdropColor
         --backdropOpacity
-        --barColor
-        --barHeight
-        --barWidth
-        --modalColor
     */
 
     .backdrop {
@@ -16,7 +11,7 @@
         left: 0;
         width: 100vw;
         height: 100vh;
-        background-color: var(--backdropColor);
+        background-color: black;
         opacity: var(--backdropOpacity);
         transition: opacity var(--animationDurationInMs);
         display: none;
@@ -27,22 +22,21 @@
         left: 0;
         bottom: 0;
         width: 100vw;
-        background-color: var(--modalColor);
+        background-color: hsl(0, 0%, 10%);
         --border-radius: 1.2rem;
         border-radius: var(--border-radius) var(--border-radius) 0 0;
         transform: translateY(100%);
 
         .bar-touchzone {
-            --padding-block: 0.4rem;
-            height: calc(2 * var(--padding-block) + var(--barHeight));
             display: grid;
-            place-content: center;
+            place-items: center;
 
             .bar {
-                width: var(--barWidth);
-                height: var(--barHeight);
+                height: 0.3rem;
+                width: 4rem;
+                margin-block: 0.4rem;
                 border-radius: 2rem;
-                background-color: var(--barColor);
+                background-color: hsl(0, 0%, 40%);
             }
         }
     }
