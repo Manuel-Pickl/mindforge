@@ -206,19 +206,11 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
         var closeModal: boolean = false;
         switch (closeTrigger) {
             case "swipe":
-                const swipeSpeed: number = calculateSwipeSpeed();
-                closeModal = swipeSpeed > closeTriggerSpeed;    
+                closeModal = closeOnSwipe();    
                 break;
         
             case "height":
-                if (!modalRef.current) {
-                    break;
-                }
-
-                const modalBoundingBox = modalRef.current.getBoundingClientRect();
-                const openValue = document.documentElement.clientHeight - modalBoundingBox.top;
-                const openPercentage = openValue / modalBoundingBox.height * 100;
-                closeModal = openPercentage < closeTriggerPercentage;
+                closeModal = closeOnHeight();
                 break;
 
             default:
@@ -235,6 +227,26 @@ const SwipeModal = forwardRef<SwipeModalRef, SwipeModalProps>(({
         positionsByTime.current = { };
     };
 
+    function closeOnSwipe(): boolean {
+        const swipeSpeed: number = calculateSwipeSpeed();
+        const closeModal = swipeSpeed > closeTriggerSpeed;
+
+        return closeModal;
+    }
+
+    function closeOnHeight(): boolean {
+        if (!modalRef.current) {
+            return false;
+        }
+
+        const modalBoundingBox = modalRef.current.getBoundingClientRect();
+        const openValue = document.documentElement.clientHeight - modalBoundingBox.top;
+        const openPercentage = openValue / modalBoundingBox.height * 100;
+        const closeModal = openPercentage < closeTriggerPercentage;
+
+        return closeModal;
+    }
+    
     function calculateSwipeSpeed(): number {
         // y values are in px
         // time values are in ms
