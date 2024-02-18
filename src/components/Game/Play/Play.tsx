@@ -11,7 +11,7 @@ import "./Play.scss";
 import UnfinishedPlayers from "./UnfinishedPlayers/UnfinishedPlayers";
 import Scroll from "../../Scroll/Scroll";
 import Card from "../../Card/Card";
-import SwipeModal, { SwipeModalRef } from "../../SwipeModal1/SwipeModal1";
+import SwipeModal, { SwipeModalRef } from "react-swipe-modal";
 
 export const PlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currentPlayRound, setCurrentPlayRound] = useState<number>(0);
