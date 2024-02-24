@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
 import { SpectrumCard } from '../../../types/class/SpectrumCard';
-import { SwipeModalRef } from '../../SwipeModal1/SwipeModal1';
 
 export const PlayContext = createContext<{
     currentPlayRound : number;
@@ -19,7 +18,7 @@ export const PlayContext = createContext<{
     setReadyButtonDisabled: Dispatch<SetStateAction<boolean>>;
     splashscreenVisible: boolean;
     setSplashscreenVisible: Dispatch<SetStateAction<boolean>>;
-    swipeModalRef: React.RefObject<SwipeModalRef>;    
+    swipeModalRef: React.RefObject<any>;    
 } | undefined>(undefined);
 
 export const usePlayContext = () => {

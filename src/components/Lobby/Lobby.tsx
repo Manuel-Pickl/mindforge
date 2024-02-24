@@ -192,6 +192,7 @@ function Lobby ()
                     </div>
 
                     <QRCode
+                        className="code"
                         value={qrCodeValue}
                         style={{ 
                             width: '100%',
