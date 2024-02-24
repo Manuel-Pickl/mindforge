@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import "./Home.scss";
 import Navigation from "./Navigation/Navigation";
 import { useAppContext } from "../AppContext";
@@ -8,7 +8,6 @@ import logo from "../../assets/logo.png";
 import { useLocation } from "react-router-dom";
 import Create from "./Create/Create";
 import Join from "./Join/Join";
-import SwipeModal, { SwipeModalRef } from "react-swipe-modal";
 
 export const HomeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [homeTab, setHomeTab] = useState<HomeTab>(HomeTab.Join);
@@ -47,9 +46,7 @@ function Home ()
         }
       }, []);
 
-    const swipeModalRef = useRef<SwipeModalRef>(null);
-
-    return (
+      return (
         <div className="homeComponent">
             <img className="logo" src={logo} alt={logo} />
 
@@ -71,12 +68,6 @@ function Home ()
             <div className="tutorial">
                 ?
             </div>
-
-            <div onClick={() => swipeModalRef.current?.show()}>open</div>
- 
-            <SwipeModal ref={swipeModalRef}>
-                <br/><br/><br/><br/><br/><br/><br/><br/>
-            </SwipeModal>
         </div>
     );
 }
