@@ -16,7 +16,7 @@ function LeavePrompt() {
     function handleBeforeUnload(e: BeforeUnloadEvent) {
 
         const leavePromptPaths: string[] = inProduction
-            ? ["/game", "/result"] : [];
+            ? ["/game"] : [];
 
         if (!leavePromptPaths.includes(location.pathname)) {
             return;
