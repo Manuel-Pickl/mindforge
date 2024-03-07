@@ -4,7 +4,7 @@ import Navigation from "./Navigation/Navigation";
 import { useAppContext } from "../AppContext";
 import { HomeContext, useHomeContext } from "./HomeContext";
 import { HomeTab } from "../../types/enums/HomeTab";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo/logo_colored.svg";
 import { useLocation } from "react-router-dom";
 import Create from "./Create/Create";
 import Join from "./Join/Join";
